@@ -1,0 +1,19 @@
+{
+  "name": "@snk/demo",
+  "version": "1.0.0",
+  "dependencies": {
+    "@snk/compute": "1.0.0"
+  },
+  "devDependencies": {
+    "webpack": "4.43.0",
+    "webpack-cli": "3.3.12",
+    "webpack-dev-server": "3.11.0",
+    "ts-loader": "8.0.1",
+    "html-webpack-plugin": "4.3.0"
+  },
+  "scripts": {
+    "prepare": "tsc webpack.config.ts",
+    "build": "yarn prepare ; webpack",
+    "dev": "yarn prepare ; webpack-dev-server --port ${PORT-3000}"
+  }
+}

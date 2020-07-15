@@ -1,0 +1,23 @@
+{
+  "name": "snk",
+  "version": "1.0.0",
+  "private": true,
+  "repository": "github:platane/snk",
+  "devDependencies": {
+    "@types/jest": "26.0.4",
+    "jest": "26.1.0",
+    "prettier": "2.0.5",
+    "ts-jest": "26.1.2",
+    "typescript": "3.9.6"
+  },
+  "workspaces": [
+    "packages/**"
+  ],
+  "scripts": {
+    "type": "tsc --noEmit",
+    "lint": "yarn prettier -c '**/*.{ts,js,json,md,yml,yaml}' '!dist/**'",
+    "test": "jest --verbose --passWithNoTests",
+    "build": "( cd packages/demo ; yarn build )",
+    "dev": "( cd packages/demo ; yarn dev )"
+  }
+}
