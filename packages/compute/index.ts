@@ -1,13 +1,44 @@
-import { Grid, Color } from "./grid";
+import { Grid, Color, copyGrid, isInsideLarge } from "./grid";
+import { Point, around4 } from "./point";
+import { stepSnake, step } from "./step";
+import { copySnake, snakeSelfCollide } from "./snake";
 
-type Point = { x: number; y: number };
+const isGridEmpty = (grid: Grid) => grid.data.every((x) => x === null);
 
 export const computeBestRun = (
-  pattern: Color[],
   grid: Grid,
-  originalPosition: Point
+  snake: Point[],
+  options: { maxSnakeLength: number }
 ) => {
-  console.log(pattern, grid, originalPosition);
+  const g = copyGrid(grid);
+  const s = copySnake(snake);
+  const q: Color[] = [];
 
-  return [];
+  const commands: Point[] = [];
+
+  let u = 100;
+
+  while (!isGridEmpty(g) && u-- > 0) {
+    let direction;
+
+    for (let k = 10; k--; ) {
+      direction = around4[Math.floor(Math.random() * around4.length)];
+
+      const sn = copySnake(s);
+      stepSnake(sn, direction, options);
+
+      if (isInsideLarge(g, 1, sn[0].x, sn[0].y) && !snakeSelfCollide(sn)) {
+        break;
+      } else {
+        direction = undefined;
+      }
+    }
+
+    if (direction !== undefined) {
+      step(g, s, q, direction, options);
+      commands.push(direction);
+    }
+  }
+
+  return commands;
 };

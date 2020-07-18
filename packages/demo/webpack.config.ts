@@ -38,6 +38,10 @@ const config: Configuration = {
   ],
 
   devtool: false,
+  stats: "errors-only",
+
+  // @ts-ignore
+  devServer: {},
 };
 
 export default config;
