@@ -1,0 +1,17 @@
+{
+  "name": "@snk/gif-creator",
+  "version": "1.0.0",
+  "dependencies": {
+    "@snk/compute": "1.0.0",
+    "@snk/draw": "1.0.0",
+    "canvas": "2.6.1",
+    "mkdirp": "1.0.4"
+  },
+  "devDependencies": {
+    "@types/mkdirp": "1.0.1",
+    "@zeit/ncc": "0.22.3"
+  },
+  "scripts": {
+    "dev": "ncc run __tests__/dev.ts"
+  }
+}
