@@ -11,6 +11,6 @@ RUN    ( cd ./generate-snake-game-from-github-contribution-grid ; yarn install -
 
 RUN    ( cd ./generate-snake-game-from-github-contribution-grid ; yarn build:action )
 
-CMD    ["find", "./generate-snake-game-from-github-contribution-grid"]
+CMD    ["find", "/github"]
 # CMD    ["node", "./generate-snake-game-from-github-contribution-grid/packages/action/dist/index.js"]
 
