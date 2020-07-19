@@ -16,7 +16,7 @@ export const computeBestRun = (
 
   const commands: Point[] = [];
 
-  let u = 100;
+  let u = 500;
 
   while (!isGridEmpty(g) && u-- > 0) {
     let direction;

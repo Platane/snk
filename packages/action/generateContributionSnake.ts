@@ -5,8 +5,8 @@ import { computeBestRun } from "@snk/compute";
 import { createGif } from "../gif-creator";
 
 export const userContributionToGrid = (cells: Cell[]) => {
-  const width = Math.max(...cells.map((c) => c.x));
-  const height = Math.max(...cells.map((c) => c.y));
+  const width = Math.max(0, ...cells.map((c) => c.x)) + 1;
+  const height = Math.max(0, ...cells.map((c) => c.y)) + 1;
 
   const grid = generateEmptyGrid(width, height);
   for (const c of cells) setColor(grid, c.x, c.y, c.k === 0 ? null : c.k);
@@ -39,9 +39,9 @@ export const generateContributionSnake = async (userName: string) => {
 
   const gameOptions = { maxSnakeLength: 5 };
 
-  const gifOptions = { delay: 20 };
+  const gifOptions = { delay: 10 };
 
-  const commands = computeBestRun(grid0, snake0, gameOptions).slice(0, 50);
+  const commands = computeBestRun(grid0, snake0, gameOptions);
 
   const buffer = await createGif(
     grid0,
