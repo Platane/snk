@@ -20,7 +20,7 @@ jobs:
       # - run: yarn test --ci
       # - run: yarn build:lib
 
-      - uses: actions/hello-world-javascript-action@v1
+      - uses: actions/github-contribution-grid-snake@v1
         with:
           github_user_name: platane
 
