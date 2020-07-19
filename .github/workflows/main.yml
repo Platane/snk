@@ -15,6 +15,11 @@ jobs:
 
       - uses: bahmutov/npm-install@v1
 
-      - run: yarn type
-      - run: yarn lint
-      - run: yarn test --ci
+      # - run: yarn type
+      # - run: yarn lint
+      # - run: yarn test --ci
+      # - run: yarn build:lib
+
+      - uses: platane/github-contribution-grid-snake
+        with:
+          github_user_name: platane
