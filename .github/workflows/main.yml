@@ -20,6 +20,6 @@ jobs:
       # - run: yarn test --ci
       # - run: yarn build:lib
 
-      - uses: platane/github-contribution-grid-snake@v0.0.1
+      - uses: platane/github-contribution-grid-snake@master
         with:
           github_user_name: platane
