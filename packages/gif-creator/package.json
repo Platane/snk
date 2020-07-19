@@ -5,13 +5,15 @@
     "@snk/compute": "1.0.0",
     "@snk/draw": "1.0.0",
     "canvas": "2.6.1",
-    "mkdirp": "1.0.4"
+    "execa": "4.0.3",
+    "tmp": "0.2.1"
   },
   "devDependencies": {
-    "@types/mkdirp": "1.0.1",
+    "@types/execa": "2.0.0",
+    "@types/tmp": "0.2.0",
     "@zeit/ncc": "0.22.3"
   },
   "scripts": {
-    "dev": "ncc run __tests__/dev.ts"
+    "dev": "ncc run __tests__/dev.ts --quiet | tail -n +2 > out.gif "
   }
 }

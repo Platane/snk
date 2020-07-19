@@ -14,7 +14,9 @@ const drawOptions = {
 
 const gameOptions = { maxSnakeLength: 5 };
 
-const grid = generateGrid(14, 7, { colors: [1, 2, 3, 4], emptyP: 3 });
+const gifOptions = { delay: 100 };
+
+const grid = generateGrid(42, 7, { colors: [1, 2, 3, 4], emptyP: 3 });
 
 const snake = [
   { x: 4, y: -1 },
@@ -26,4 +28,8 @@ const snake = [
 
 const commands = computeBestRun(grid, snake, gameOptions);
 
-createGif(grid, snake, commands, drawOptions, gameOptions);
+createGif(grid, snake, commands, drawOptions, gameOptions, gifOptions).then(
+  (buffer) => {
+    process.stdout.write(buffer);
+  }
+);
