@@ -9,9 +9,9 @@ outputs:
 runs:
   using: "docker"
   image: "Dockerfile"
-  args:
-    - ${{ inputs.github_user_name }}
-    - ${{ inputs.gif_out_path }}
+  # args:
+  #   - ${{ inputs.github_user_name }}
+  #   - ${{ inputs.gif_out_path }}
 
 inputs:
   github_user_name:
