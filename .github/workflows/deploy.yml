@@ -21,7 +21,7 @@ jobs:
         env:
           BASE_PATHNAME: "snk"
 
-      - uses: crazy-max/ghaction-github-pages@068e494
+      - uses: crazy-max/ghaction-github-pages@v2.1.1
         with:
           target_branch: gh-pages
           build_dir: packages/demo/dist
