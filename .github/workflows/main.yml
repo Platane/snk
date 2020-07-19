@@ -3,11 +3,11 @@ name: main
 on: [push, pull_request]
 
 jobs:
-  deploy-test:
+  test:
     runs-on: ubuntu-latest
 
     steps:
-      - run: sudo apt-get install gifsicle graphicsmagick
+      # - run: sudo apt-get install gifsicle graphicsmagick
       - uses: actions/checkout@v1
       - uses: actions/setup-node@v1
         with:
@@ -20,6 +20,8 @@ jobs:
       # - run: yarn test --ci
       # - run: yarn build:lib
 
-      - uses: platane/github-contribution-grid-snake@master
+      - uses: actions/hello-world-javascript-action@v1
         with:
           github_user_name: platane
+
+      - run: ls
