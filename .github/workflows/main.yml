@@ -26,4 +26,3 @@ jobs:
           github_user_name: platane
 
       - run: ls
-      - run: ls
