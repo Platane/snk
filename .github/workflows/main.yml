@@ -21,7 +21,7 @@ jobs:
       # - run: yarn build:lib
 
       - name: generate-snake-game-from-github-contribution-grid
-        uses: Platane/snk@v0.0.2
+        uses: Platane/snk@master
         with:
           github_user_name: platane
 
