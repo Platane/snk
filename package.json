@@ -15,7 +15,7 @@
   ],
   "scripts": {
     "type": "tsc --noEmit",
-    "lint": "yarn prettier -c '**/*.{ts,js,json,md,yml,yaml}' '!dist/**'",
+    "lint": "yarn prettier -c '**/*.{ts,js,json,md,yml,yaml}' '!packages/action/dist/**' '!packages/demo/dist/**' '!packages/demo/webpack.config.js'",
     "test": "jest --verbose --passWithNoTests --no-cache",
     "build:demo": "( cd packages/demo ; yarn build )",
     "build:action": "( cd packages/action ; yarn build )"
