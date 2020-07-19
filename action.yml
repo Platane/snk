@@ -1,0 +1,23 @@
+name: "github-contribution-grid-snake"
+description: ""
+author: "platane"
+
+outputs:
+  gif_out_path:
+    description: ""
+
+runs:
+  using: "docker"
+  image: "Dockerfile"
+  args:
+    - ${{ inputs.github_user_name }}
+    - ${{ inputs.gif_out_path }}
+
+inputs:
+  github_user_name:
+    description: ""
+    required: true
+  gif_out_path:
+    description: ""
+    required: false
+    default: "./github-contribution-grid-snake.gif"

@@ -17,7 +17,7 @@
     "type": "tsc --noEmit",
     "lint": "yarn prettier -c '**/*.{ts,js,json,md,yml,yaml}' '!dist/**'",
     "test": "jest --verbose --passWithNoTests --no-cache",
-    "build": "( cd packages/demo ; yarn build )",
-    "dev": "( cd packages/demo ; yarn dev )"
+    "build:demo": "( cd packages/demo ; yarn build )",
+    "build:action": "( cd packages/action ; yarn build )"
   }
 }
