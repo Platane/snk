@@ -7,7 +7,13 @@ import { generateContributionSnake } from "./generateContributionSnake";
     console.log(core.getInput("user_name"));
     console.log(core.getInput("gif_out_path"));
     console.log("--");
+    console.log("--");
     console.log(process.cwd());
+    console.log("--");
+    console.log(fs.readdirSync(process.cwd()));
+    console.log("--");
+    console.log("--");
+    console.log(process.env.GITHUB_WORKSPACE);
     console.log("--");
     console.log(fs.readdirSync(process.cwd()));
 
