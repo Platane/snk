@@ -1,0 +1,10 @@
+{
+  "name": "@snk/github-user-contribution",
+  "version": "1.0.0",
+  "dependencies": {
+    "jsdom": "16.3.0"
+  },
+  "devDependencies": {
+    "@types/jsdom": "16.2.3"
+  }
+}
