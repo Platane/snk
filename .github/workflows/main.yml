@@ -3,7 +3,7 @@ name: main
 on: [push, pull_request]
 
 jobs:
-  test:
+  deploy-test:
     runs-on: ubuntu-latest
 
     steps:
@@ -20,6 +20,6 @@ jobs:
       # - run: yarn test --ci
       # - run: yarn build:lib
 
-      - uses: platane/github-contribution-grid-snake
+      - uses: platane/github-contribution-grid-snake@v0.0.1
         with:
           github_user_name: platane
