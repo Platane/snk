@@ -13,7 +13,7 @@ const config: Configuration = {
   entry: "./index",
   resolve: { extensions: [".ts", ".js"] },
   output: {
-    path: path.join(__dirname, "dist", "demo"),
+    path: path.join(__dirname, "dist"),
     filename: "[contenthash].js",
     publicPath: "/" + basePathname.map((x) => x + "/").join(""),
   },
