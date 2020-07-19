@@ -1,10 +1,10 @@
 name: "github-contribution-grid-snake"
-description: ""
+description: "Generates a snake game from a github user contributions grid and output a screen capture as gif"
 author: "platane"
 
 outputs:
   gif_out_path:
-    description: ""
+    description: "path of the generated gif"
 
 runs:
   using: "docker"
@@ -15,9 +15,9 @@ runs:
 
 inputs:
   github_user_name:
-    description: ""
+    description: "github user name"
     required: true
   gif_out_path:
-    description: ""
+    description: "path of the generated gif"
     required: false
     default: "./github-contribution-grid-snake.gif"

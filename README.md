@@ -1,3 +1,3 @@
 # snk
 
-Generate a snake game screen capture from your github contributions grid
+Generates a snake game from a github user contributions grid and output a screen capture as gif
