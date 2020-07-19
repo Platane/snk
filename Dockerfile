@@ -4,7 +4,12 @@ RUN    apt-get update \
     && apt-get install -y --no-install-recommends gifsicle graphicsmagick \
     && rm -rf /var/lib/apt/lists/* 
 
-COPY packages/action/dist/* ./generate-snake-game-from-github-contribution-grid/
+COPY   tsconfig.json package.json yarn.lock ./generate-snake-game-from-github-contribution-grid/
+COPY   packages ./generate-snake-game-from-github-contribution-grid/packages/
 
-CMD ["node", "generate-snake-game-from-github-contribution-grid/index.js"]
+RUN    ( cd ./generate-snake-game-from-github-contribution-grid ; yarn install --frozen-lockfile )
+
+RUN    ( cd ./generate-snake-game-from-github-contribution-grid ; yarn build:action )
+
+CMD ["node", "generate-snake-game-from-github-contribution-grid/packages/action/dist/index.js"]
 
