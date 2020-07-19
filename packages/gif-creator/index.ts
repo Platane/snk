@@ -57,6 +57,7 @@ export const createGif = async (
     }
 
     const outFileName = path.join(dir, "out.gif");
+    const optimizedFileName = path.join(dir, "out.optimized.gif");
 
     await execa(
       "gm",
@@ -74,7 +75,17 @@ export const createGif = async (
       ].flat()
     );
 
-    return fs.readFileSync(outFileName);
+    await execa(
+      "gifsicle",
+      [
+        //
+        "--optimize=3",
+        outFileName,
+        ["--output", optimizedFileName],
+      ].flat()
+    );
+
+    return fs.readFileSync(optimizedFileName);
   } finally {
     cleanUp();
   }

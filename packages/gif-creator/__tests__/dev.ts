@@ -14,7 +14,7 @@ const drawOptions = {
 
 const gameOptions = { maxSnakeLength: 5 };
 
-const gifOptions = { delay: 100 };
+const gifOptions = { delay: 20 };
 
 const grid = generateGrid(42, 7, { colors: [1, 2, 3, 4], emptyP: 3 });
 
