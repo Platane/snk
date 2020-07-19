@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "jsx": "preserve",
     "lib": ["dom", "ES2020"],
     "strict": true,
     "skipLibCheck": true,
