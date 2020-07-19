@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - run: sudo apt-get install gifsicle graphicsmagick
+      # - run: sudo apt-get install gifsicle graphicsmagick
       - uses: actions/checkout@v1
       - uses: actions/setup-node@v1
         with:
@@ -15,6 +15,14 @@ jobs:
 
       - uses: bahmutov/npm-install@v1
 
-      - run: yarn type
-      - run: yarn lint
-      - run: yarn test --ci
+      # - run: yarn type
+      # - run: yarn lint
+      # - run: yarn test --ci
+      # - run: yarn build:lib
+
+      - name: generate-snake-game-from-github-contribution-grid
+        uses: Platane/snk@v0.0.2
+        with:
+          github_user_name: platane
+
+      - run: ls

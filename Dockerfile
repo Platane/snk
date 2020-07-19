@@ -4,7 +4,7 @@ RUN    apt-get update \
     && apt-get install -y --no-install-recommends gifsicle graphicsmagick \
     && rm -rf /var/lib/apt/lists/* 
 
-COPY packages/action/dist/* ./github-contribution-grid-snake
+COPY packages/action/dist/* ./generate-snake-game-from-github-contribution-grid/
 
-CMD ["node", "github-contribution-grid-snake/index.js"]
+CMD ["node", "generate-snake-game-from-github-contribution-grid/index.js"]
 
