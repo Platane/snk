@@ -22,7 +22,7 @@ export const run = async () => {
 
   const gameOptions = { maxSnakeLength: 5 };
 
-  const grid0 = generateGrid(14, 7, { colors: [1, 2, 3, 4], emptyP: 3 });
+  const grid0 = generateGrid(42, 7, { colors: [1, 2, 3, 4], emptyP: 3 });
 
   const snake0 = [
     { x: 4, y: -1 },
