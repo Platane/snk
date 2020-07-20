@@ -18,6 +18,8 @@ import { generateContributionSnake } from "./generateContributionSnake";
     console.log(process.env.GITHUB_WORKSPACE);
     console.log("--");
     console.log(fs.readdirSync(process.cwd()));
+    console.log("--");
+    console.log(process.env);
 
     const buffer = await generateContributionSnake(core.getInput("user_name"));
     fs.writeFileSync(core.getInput("gif_out_path"), buffer);

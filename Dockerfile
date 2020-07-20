@@ -16,7 +16,4 @@ RUN    ( \
     && rm -rf packages tsconfig.json package.json yarn.lock node_modules \
     )
 
-CMD    ["find", "/github/platane.aa"]
-
-# CMD    ["node", "./generate-snake-game-from-github-contribution-grid/packages/action/dist/index.js"]
-
+CMD    ["node", "/github/platane.aa/index.js"]
