@@ -1,5 +1,6 @@
 {
   "name": "snk",
+  "description": "Generates a snake game from a github user contributions grid and output a screen capture as gif",
   "version": "1.0.0",
   "private": true,
   "repository": "github:platane/snk",

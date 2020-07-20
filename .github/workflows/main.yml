@@ -9,12 +9,38 @@ jobs:
     steps:
       - run: sudo apt-get install gifsicle graphicsmagick
       - uses: actions/checkout@v1
-      - uses: actions/setup-node@v1
+      - uses: actions/setup-node@v1.4.2
         with:
           node-version: 14
 
-      - uses: bahmutov/npm-install@v1
+      - uses: bahmutov/npm-install@v1.4.1
 
       - run: yarn type
       - run: yarn lint
       - run: yarn test --ci
+      - run: yarn build:action
+
+  test-action:
+    runs-on: ubuntu-latest
+
+    steps:
+      - run: mkdir dist
+
+      - name: generate-snake-game-from-github-contribution-grid
+        id: snake-gif
+        uses: Platane/snk@master
+        with:
+          github_user_name: platane
+          gif_out_path: dist/github-contribution-grid-snake.gif
+
+      - name: ensure the generated file exists
+        run: |
+          ls -l ${{ steps.snake-gif.outputs.gif_out_path }}
+          test -f ${{ steps.snake-gif.outputs.gif_out_path }}
+
+      - uses: crazy-max/ghaction-github-pages@v2.1.1
+        with:
+          target_branch: output
+          build_dir: dist
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN_GH_PAGES }}

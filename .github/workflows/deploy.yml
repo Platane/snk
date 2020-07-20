@@ -6,22 +6,22 @@ on:
       - master
 
 jobs:
-  test:
+  deploy-demo:
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v1
-      - uses: actions/setup-node@v1
+      - uses: actions/setup-node@v1.4.2
         with:
           node-version: 14
 
-      - uses: bahmutov/npm-install@v1
+      - uses: bahmutov/npm-install@v1.4.1
 
       - run: yarn build:demo
         env:
           BASE_PATHNAME: "snk"
 
-      - uses: crazy-max/ghaction-github-pages@068e494
+      - uses: crazy-max/ghaction-github-pages@v2.1.1
         with:
           target_branch: gh-pages
           build_dir: packages/demo/dist
