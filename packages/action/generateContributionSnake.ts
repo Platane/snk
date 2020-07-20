@@ -42,7 +42,7 @@ export const generateContributionSnake = async (userName: string) => {
     colors: Array.from({ length: colorScheme.length - 1 }, (_, i) => i + 1),
   };
 
-  const gifOptions = { delay: 10 };
+  const gifOptions = { delay: 3 };
 
   const commands = computeBestRun(grid0, snake0, gameOptions);
 

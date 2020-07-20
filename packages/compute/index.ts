@@ -20,13 +20,25 @@ const createComputeHeuristic = (
   const values = colors
     .map((k) => Array.from({ length: colorCount[k] }, () => k))
     .flat();
+  const weights = colors
+    .map((k) =>
+      Array.from({ length: colorCount[k] }).map(
+        (_, i, arr) => i / (arr.length - 1)
+      )
+    )
+    .flat();
 
   return (_grid: Grid, _snake: Snake, stack: Color[]) => {
     let score = 0;
 
     for (let i = 0; i < stack.length; i++) {
-      const k = Math.abs(stack[i] - values[i]);
-      score += k === 0 ? 100 : -100 * k;
+      const u = stack[i] - values[i];
+
+      if (u !== 0) debugger;
+
+      if (u > 0) score -= 100 * u * (1 + 1 - weights[i]);
+      else if (u < 0) score -= 100 * -u * (1 + weights[i]);
+      else score += 100;
     }
 
     return score;
@@ -45,13 +57,11 @@ const createCell = (
   grid: Grid,
   snake: Snake,
   stack: Color[],
-  direction: Point | null,
   parent: any | null,
   heuristic: number
 ) => ({
   key,
   parent,
-  direction,
   grid,
   snake,
   stack,
@@ -60,13 +70,12 @@ const createCell = (
 });
 
 const unwrap = (c: ReturnType<typeof createCell> | null): Point[] =>
-  c && c.direction ? [...unwrap(c.parent), c.direction] : [];
-// c && c.parent
-//   ? [
-//       ...unwrap(c.parent),
-//       { x: c.snake[1].x - c.snake[0].x, y: c.snake[1].y - c.snake[0].y },
-//     ]
-//   : [];
+  c && c.parent
+    ? [
+        ...unwrap(c.parent),
+        { x: c.snake[0].x - c.snake[1].x, y: c.snake[0].y - c.snake[1].y },
+      ]
+    : [];
 
 export const computeBestRun = (
   grid0: Grid,
@@ -91,12 +100,11 @@ export const computeBestRun = (
       snake0,
       [],
       null,
-      null,
       computeHeuristic(grid0, snake0, [])
     ),
   ];
 
-  let u = 7000;
+  let u = 8000;
 
   let best = openList[0];
 
@@ -130,7 +138,6 @@ export const computeBestRun = (
             grid,
             snake,
             stack,
-            direction,
             c,
             computeHeuristic(grid, snake, stack)
           )

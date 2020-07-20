@@ -15,9 +15,9 @@ const drawOptions = {
   colorSnake: "purple",
 };
 
-const gameOptions = { colors: [1, 2, 3, 4], maxSnakeLength: 5 };
+const gameOptions = { colors: [1, 2, 3], maxSnakeLength: 5 };
 
-const grid0 = generateRandomGrid(42, 7, { ...gameOptions, emptyP: 3 });
+const grid0 = generateRandomGrid(18, 7, { ...gameOptions, emptyP: 2 });
 
 const snake0 = [
   { x: 4, y: -1 },
