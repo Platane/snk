@@ -4,25 +4,14 @@ import { generateContributionSnake } from "./generateContributionSnake";
 
 (async () => {
   try {
-    console.log("argv", process.argv);
+    const userName = core.getInput("github_user_name");
+    const gifOutPath = core.getInput("gif_out_path");
 
-    console.log(core.getInput("user_name"));
-    console.log(core.getInput("gif_out_path"));
-    console.log("--");
-    console.log("--");
-    console.log(process.cwd());
-    console.log("--");
-    console.log(fs.readdirSync(process.cwd()));
-    console.log("--");
-    console.log("--");
-    console.log(process.env.GITHUB_WORKSPACE);
-    console.log("--");
-    console.log(fs.readdirSync(process.cwd()));
-    console.log("--");
-    console.log(process.env);
+    const buffer = await generateContributionSnake(userName);
 
-    const buffer = await generateContributionSnake(core.getInput("user_name"));
-    fs.writeFileSync(core.getInput("gif_out_path"), buffer);
+    console.log({ userName, gifOutPath }, buffer.length);
+
+    fs.writeFileSync(gifOutPath, buffer);
   } catch (e) {
     core.setFailed(`Action failed with "${e.message}"`);
   }

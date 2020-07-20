@@ -26,8 +26,8 @@ jobs:
           github_user_name: platane
 
       - run: ls
-      - run: ls
-      - run: ls
+      - run: ls -l github-contribution-grid-snake.gif
+      - run: ls -l
       - run: ls
       - run: ls
       - run: ls
