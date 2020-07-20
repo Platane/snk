@@ -71,19 +71,23 @@ document.body.appendChild(input);
 const autoplayButton = document.createElement("button");
 let cancel: any;
 const loop = () => {
-  input.value = (1 + input.value) % +input.max;
+  debugger;
+
+  input.value = (+input.value + 1) % +input.max;
   update(+input.value);
   cancelAnimationFrame(cancel);
   cancel = requestAnimationFrame(loop);
 };
 const setAutoPlay = (a: boolean) => {
-  autoplayButton.innerHTML = a ? "pause ⏸" : "play ▶";
+  autoplayButton.innerHTML = a ? "pause" : "play";
   if (a) loop();
   else cancelAnimationFrame(cancel);
 };
-autoplayButton.addEventListener("click", () =>
-  setAutoPlay(autoplayButton.innerHTML === "pause ⏸")
-);
+autoplayButton.addEventListener("click", () => {
+  debugger;
+  setAutoPlay(autoplayButton.innerHTML === "play");
+});
+document.body.appendChild(autoplayButton);
 
 setAutoPlay(true);
 update(+input.value);
