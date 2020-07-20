@@ -15,9 +15,9 @@ const drawOptions = {
   colorSnake: "purple",
 };
 
-const gameOptions = { maxSnakeLength: 5 };
+const gameOptions = { colors: [1, 2, 3, 4], maxSnakeLength: 5 };
 
-const grid0 = generateRandomGrid(42, 7, { colors: [1, 2, 3, 4], emptyP: 3 });
+const grid0 = generateRandomGrid(42, 7, { ...gameOptions, emptyP: 3 });
 
 const snake0 = [
   { x: 4, y: -1 },
@@ -71,8 +71,6 @@ document.body.appendChild(input);
 const autoplayButton = document.createElement("button");
 let cancel: any;
 const loop = () => {
-  debugger;
-
   input.value = (+input.value + 1) % +input.max;
   update(+input.value);
   cancelAnimationFrame(cancel);

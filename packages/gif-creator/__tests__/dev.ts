@@ -12,11 +12,11 @@ const drawOptions = {
   colorSnake: "purple",
 };
 
-const gameOptions = { maxSnakeLength: 5 };
+const gameOptions = { maxSnakeLength: 5, colors: [1, 2, 3, 4] };
 
 const gifOptions = { delay: 20 };
 
-const grid = generateRandomGrid(42, 7, { colors: [1, 2, 3, 4], emptyP: 3 });
+const grid = generateRandomGrid(42, 7, { ...gameOptions, emptyP: 3 });
 
 const snake = [
   { x: 4, y: -1 },

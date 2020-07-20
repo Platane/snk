@@ -45,7 +45,7 @@ export const drawWorld = (
 ) => {
   ctx.save();
 
-  ctx.translate(2 * o.sizeCell, 2 * o.sizeCell);
+  ctx.translate(1 * o.sizeCell, 2 * o.sizeCell);
   drawGrid(ctx, grid, o);
   drawSnake(ctx, snake, o);
 

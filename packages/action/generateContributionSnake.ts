@@ -37,7 +37,10 @@ export const generateContributionSnake = async (userName: string) => {
     colorSnake: "purple",
   };
 
-  const gameOptions = { maxSnakeLength: 5 };
+  const gameOptions = {
+    maxSnakeLength: 5,
+    colors: Array.from({ length: colorScheme.length - 1 }, (_, i) => i + 1),
+  };
 
   const gifOptions = { delay: 10 };
 
