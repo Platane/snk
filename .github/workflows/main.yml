@@ -21,13 +21,21 @@ jobs:
       # - run: yarn build:lib
 
       - name: generate-snake-game-from-github-contribution-grid
+        id: snake-gif
         uses: Platane/snk@master
         with:
           github_user_name: platane
 
+      # - uses: crazy-max/ghaction-github-pages@v2.1.1
+      #   with:
+      #     target_branch: gh-pages
+      #     build_dir: packages/demo/dist
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN_GH_PAGES }}
+
       - run: ls
       - run: ls -l github-contribution-grid-snake.gif
-      - run: ls -l
+      - run: ls -l ${{ steps.snake-gif.outputs.gif_out_path }}
       - run: ls
       - run: ls
       - run: ls

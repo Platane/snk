@@ -12,6 +12,8 @@ import { generateContributionSnake } from "./generateContributionSnake";
     console.log({ userName, gifOutPath }, buffer.length);
 
     fs.writeFileSync(gifOutPath, buffer);
+
+    console.log(`::set-output name=gif_out_path::${gifOutPath}`);
   } catch (e) {
     core.setFailed(`Action failed with "${e.message}"`);
   }
