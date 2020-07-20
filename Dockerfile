@@ -5,12 +5,18 @@ RUN    apt-get update \
     && rm -rf /var/lib/apt/lists/* 
 
 COPY   tsconfig.json package.json yarn.lock /github/platane.aa/
-COPY   packages /github/platane.aa/
+COPY   packages /github/platane.aa/packages
 
-RUN    ( cd /github/platane.aa/ ; yarn install --frozen-lockfile )
+RUN    ( \ 
+    cd /github/platane.aa \
+    && find . \
+    && yarn install --frozen-lockfile \
+    && yarn build:action \
+    && mv packages/action/dist/* . \
+    && rm -rf packages tsconfig.json package.json yarn.lock node_modules \
+    )
 
-RUN    ( cd /github/platane.aa/ ; yarn build:action )
+CMD    ["find", "/github/platane.aa"]
 
-CMD    ["find", "/github"]
 # CMD    ["node", "./generate-snake-game-from-github-contribution-grid/packages/action/dist/index.js"]
 
