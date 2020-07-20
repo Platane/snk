@@ -27,7 +27,6 @@ const config: Configuration = {
     ],
   },
   plugins: [
-    // game
     new HtmlWebpackPlugin({
       title: "demo",
       filename: "index.html",
@@ -39,9 +38,6 @@ const config: Configuration = {
 
   devtool: false,
   stats: "errors-only",
-
-  // @ts-ignore
-  devServer: {},
 };
 
 export default config;

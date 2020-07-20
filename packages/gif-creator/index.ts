@@ -7,7 +7,6 @@ import { copySnake } from "@snk/compute/snake";
 import { drawWorld } from "@snk/draw/drawWorld";
 import { step } from "@snk/compute/step";
 import * as tmp from "tmp";
-// @ts-ignore
 import * as execa from "execa";
 
 export const createGif = async (

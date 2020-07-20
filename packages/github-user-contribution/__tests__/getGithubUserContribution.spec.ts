@@ -3,7 +3,7 @@ import { getGithubUserContribution } from "..";
 it("should get user contribution", async () => {
   const { cells, colorScheme } = await getGithubUserContribution("platane");
 
-  expect(cells).toBeDefined();
+  expect(cells.length).toBeGreaterThan(300);
   expect(colorScheme).toEqual([
     "#ebedf0",
     "#9be9a8",

@@ -1,7 +1,9 @@
 import { Point } from "./point";
 
+export type Snake = Point[];
+
 export const snakeSelfCollideNext = (
-  snake: Point[],
+  snake: Snake,
   direction: Point,
   options: { maxSnakeLength: number }
 ) => {
@@ -14,11 +16,11 @@ export const snakeSelfCollideNext = (
   return false;
 };
 
-export const snakeSelfCollide = (snake: Point[]) => {
+export const snakeSelfCollide = (snake: Snake) => {
   for (let i = 1; i < snake.length; i++)
     if (snake[i].x === snake[0].x && snake[i].y === snake[0].y) return true;
 
   return false;
 };
 
-export const copySnake = (x: Point[]) => x.map((p) => ({ ...p }));
+export const copySnake = (x: Snake) => x.map((p) => ({ ...p }));

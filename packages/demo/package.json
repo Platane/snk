@@ -2,7 +2,8 @@
   "name": "@snk/demo",
   "version": "1.0.0",
   "dependencies": {
-    "@snk/compute": "1.0.0"
+    "@snk/compute": "1.0.0",
+    "@snk/draw": "1.0.0"
   },
   "devDependencies": {
     "webpack": "4.43.0",
