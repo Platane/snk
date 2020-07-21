@@ -17,7 +17,7 @@ const drawOptions = {
 
 const gameOptions = { colors: [1, 2, 3], maxSnakeLength: 5 };
 
-const grid0 = generateRandomGrid(18, 7, { ...gameOptions, emptyP: 2 });
+const grid0 = generateRandomGrid(42, 7, { ...gameOptions, emptyP: 2 });
 
 const snake0 = [
   { x: 4, y: -1 },
@@ -34,10 +34,16 @@ const chain = computeBestRun(grid0, snake0, gameOptions);
 // draw
 
 const canvas = document.createElement("canvas");
-canvas.width = drawOptions.sizeCell * (grid0.width + 4);
-canvas.height = drawOptions.sizeCell * (grid0.height + 4) + 100;
+const upscale = 2;
+const width = drawOptions.sizeCell * (grid0.width + 4);
+const height = drawOptions.sizeCell * (grid0.height + 4) + 100;
+canvas.width = width * upscale;
+canvas.height = height * upscale;
+canvas.style.width = width + "px";
+canvas.style.height = height + "px";
 document.body.appendChild(canvas);
 const ctx = canvas.getContext("2d")!;
+ctx.scale(upscale, upscale);
 
 const update = (n: number) => {
   const snake = copySnake(snake0);
