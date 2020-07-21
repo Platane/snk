@@ -1,6 +1,5 @@
 import { getGithubUserContribution, Cell } from "@snk/github-user-contribution";
-import { generateEmptyGrid } from "@snk/compute/generateGrid";
-import { setColor } from "@snk/compute/grid";
+import { setColor, createEmptyGrid } from "@snk/compute/grid";
 import { computeBestRun } from "@snk/compute";
 import { createGif } from "../gif-creator";
 
@@ -8,7 +7,7 @@ export const userContributionToGrid = (cells: Cell[]) => {
   const width = Math.max(0, ...cells.map((c) => c.x)) + 1;
   const height = Math.max(0, ...cells.map((c) => c.y)) + 1;
 
-  const grid = generateEmptyGrid(width, height);
+  const grid = createEmptyGrid(width, height);
   for (const c of cells) setColor(grid, c.x, c.y, c.k === 0 ? null : c.k);
 
   return grid;

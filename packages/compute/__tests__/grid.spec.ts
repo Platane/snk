@@ -1,8 +1,7 @@
-import { generateEmptyGrid } from "../generateGrid";
-import { setColor, getColor, isInside } from "../grid";
+import { createEmptyGrid, setColor, getColor, isInside } from "../grid";
 
 it("should set / get cell", () => {
-  const grid = generateEmptyGrid(2, 3);
+  const grid = createEmptyGrid(2, 3);
 
   expect(getColor(grid, 0, 1)).toBe(null);
 
@@ -20,7 +19,7 @@ test.each([
   [2, 1, false],
   [0, 3, false],
 ])("isInside", (x, y, output) => {
-  const grid = generateEmptyGrid(2, 3);
+  const grid = createEmptyGrid(2, 3);
 
   expect(isInside(grid, x, y)).toBe(output);
 });

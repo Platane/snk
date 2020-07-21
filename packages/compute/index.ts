@@ -80,12 +80,9 @@ const unwrap = (c: ReturnType<typeof createCell> | null): Point[] =>
 export const computeBestRun = (
   grid0: Grid,
   snake0: Snake,
-  options: { maxSnakeLength: number; colors: Color[] }
+  options: { maxSnakeLength: number; colors: Color[] },
+  u = 8000
 ) => {
-  // const grid = copyGrid(grid0);
-  // const snake = copySnake(snake0);
-  // const stack: Color[] = [];
-
   const computeHeuristic = createComputeHeuristic(
     grid0,
     snake0,
@@ -103,8 +100,6 @@ export const computeBestRun = (
       computeHeuristic(grid0, snake0, [])
     ),
   ];
-
-  let u = 8000;
 
   let best = openList[0];
 
@@ -147,28 +142,4 @@ export const computeBestRun = (
   }
 
   return unwrap(best);
-
-  // while (!isGridEmpty(g) && u-- > 0) {
-  //   let direction;
-
-  //   for (let k = 10; k--; ) {
-  //     direction = around4[Math.floor(Math.random() * around4.length)];
-
-  //     const sn = copySnake(s);
-  //     stepSnake(sn, direction, options);
-
-  //     if (isInsideLarge(g, 1, sn[0].x, sn[0].y) && !snakeSelfCollide(sn)) {
-  //       break;
-  //     } else {
-  //       direction = undefined;
-  //     }
-  //   }
-
-  //   if (direction !== undefined) {
-  //     step(g, s, q, direction, options);
-  //     commands.push(direction);
-  //   }
-  // }
-
-  // return commands;
 };

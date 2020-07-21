@@ -20,6 +20,19 @@ jobs:
       - run: yarn test --ci
       - run: yarn build:action
 
+  test-benchmark:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-node@v1.4.2
+        with:
+          node-version: 14
+
+      - uses: bahmutov/npm-install@v1.4.1
+
+      - run: ( cd packages/compute ; yarn benchmark )
+
   test-action:
     runs-on: ubuntu-latest
 

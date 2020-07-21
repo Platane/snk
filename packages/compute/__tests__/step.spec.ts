@@ -1,10 +1,9 @@
 import { step } from "../step";
-import { generateEmptyGrid } from "../generateGrid";
 import { around4 } from "../point";
-import { setColor, getColor } from "../grid";
+import { createEmptyGrid, setColor, getColor } from "../grid";
 
 it("should move snake", () => {
-  const grid = generateEmptyGrid(4, 3);
+  const grid = createEmptyGrid(4, 3);
   const snake = [{ x: 1, y: 1 }];
   const direction = around4[0];
   const stack: number[] = [];
@@ -36,7 +35,7 @@ it("should move snake", () => {
 });
 
 it("should move short snake", () => {
-  const grid = generateEmptyGrid(8, 3);
+  const grid = createEmptyGrid(8, 3);
   const snake = [{ x: 1, y: 1 }];
   const direction = around4[0];
   const stack: number[] = [];
@@ -75,7 +74,7 @@ it("should move short snake", () => {
 });
 
 it("should pick up fruit", () => {
-  const grid = generateEmptyGrid(4, 3);
+  const grid = createEmptyGrid(4, 3);
   const snake = [{ x: 1, y: 1 }];
   const direction = around4[0];
   const stack: number[] = [];

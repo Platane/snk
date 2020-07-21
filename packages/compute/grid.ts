@@ -28,3 +28,9 @@ export const setColor = (
 ) => {
   grid.data[getIndex(grid, x, y)] = color;
 };
+
+export const createEmptyGrid = (width: number, height: number) => ({
+  width,
+  height,
+  data: Array.from({ length: width * height }, () => null),
+});

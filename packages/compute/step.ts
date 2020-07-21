@@ -1,7 +1,7 @@
 import { Grid, Color, getColor, isInside, setColor } from "./grid";
 import { Point } from "./point";
 
-const moveSnake = (snake: Point[], headx: number, heady: number) => {
+export const moveSnake = (snake: Point[], headx: number, heady: number) => {
   for (let k = snake.length - 1; k > 0; k--) {
     snake[k].x = snake[k - 1].x;
     snake[k].y = snake[k - 1].y;

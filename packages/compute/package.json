@@ -1,4 +1,11 @@
 {
   "name": "@snk/compute",
-  "version": "1.0.0"
+  "version": "1.0.0",
+  "devDependencies": {
+    "@zeit/ncc": "0.22.3",
+    "park-miller": "1.1.0"
+  },
+  "scripts": {
+    "benchmark": "ncc run __tests__/benchmark.ts --quiet"
+  }
 }

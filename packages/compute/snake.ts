@@ -16,6 +16,17 @@ export const snakeSelfCollideNext = (
   return false;
 };
 
+export const snakeWillSelfCollide = (
+  snake: Snake,
+  headx: number,
+  heady: number
+) => {
+  for (let i = 0; i < snake.length - 1; i++)
+    if (snake[i].x === headx && snake[i].y === heady) return true;
+
+  return false;
+};
+
 export const snakeSelfCollide = (snake: Snake) => {
   for (let i = 1; i < snake.length; i++)
     if (snake[i].x === snake[0].x && snake[i].y === snake[0].y) return true;
