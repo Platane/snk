@@ -1,7 +1,7 @@
 import * as path from "path";
-
 // @ts-ignore
 import * as HtmlWebpackPlugin from "html-webpack-plugin";
+
 import type { Configuration } from "webpack";
 
 const basePathname = (process.env.BASE_PATHNAME || "")
@@ -10,7 +10,11 @@ const basePathname = (process.env.BASE_PATHNAME || "")
 
 const config: Configuration = {
   mode: "development",
-  entry: "./index",
+  entry: {
+    "demo.getAvailableRoutes": "./demo.getAvailableRoutes",
+    "demo.getBestRoute": "./demo.getBestRoute",
+    "demo.index": "./demo.index",
+  },
   resolve: { extensions: [".ts", ".js"] },
   output: {
     path: path.join(__dirname, "dist"),
@@ -28,11 +32,16 @@ const config: Configuration = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      title: "demo",
       filename: "index.html",
-      meta: {
-        viewport: "width=device-width, initial-scale=1, shrink-to-fit=no",
-      },
+      chunks: ["demo.index"],
+    }),
+    new HtmlWebpackPlugin({
+      filename: "demo-getAvailableRoutes.html",
+      chunks: ["demo.getAvailableRoutes"],
+    }),
+    new HtmlWebpackPlugin({
+      filename: "demo-getBestRoute.html",
+      chunks: ["demo.getBestRoute"],
     }),
   ],
 

@@ -1,6 +1,6 @@
 import { createGif } from "..";
 import { generateRandomGrid } from "@snk/compute/generateGrid";
-import { computeBestRun } from "@snk/compute";
+import { getBestRoute } from "@snk/compute/getBestRoute";
 
 const drawOptions = {
   sizeBorderRadius: 2,
@@ -17,7 +17,7 @@ const gameOptions = { maxSnakeLength: 5, colors: [1, 2, 3, 4] };
 const gifOptions = { delay: 200 };
 
 it("should generate gif", async () => {
-  const grid = generateRandomGrid(14, 7, { ...gameOptions, emptyP: 3 });
+  const grid = generateRandomGrid(7, 7, { ...gameOptions, emptyP: 3 });
 
   const snake = [
     { x: 4, y: -1 },
@@ -27,7 +27,7 @@ it("should generate gif", async () => {
     { x: 0, y: -1 },
   ];
 
-  const commands = computeBestRun(grid, snake, gameOptions).slice(0, 9);
+  const commands = getBestRoute(grid, snake, gameOptions, 50).slice(0, 9);
 
   const gif = await createGif(
     grid,

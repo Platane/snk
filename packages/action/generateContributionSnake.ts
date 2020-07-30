@@ -1,7 +1,7 @@
 import { getGithubUserContribution, Cell } from "@snk/github-user-contribution";
 import { setColor, createEmptyGrid } from "@snk/compute/grid";
-import { computeBestRun } from "@snk/compute";
-import { createGif } from "../gif-creator";
+import { createGif } from "@snk/gif-creator";
+import { getBestRoute } from "@snk/compute/getBestRoute";
 
 export const userContributionToGrid = (cells: Cell[]) => {
   const width = Math.max(0, ...cells.map((c) => c.x)) + 1;
@@ -43,7 +43,7 @@ export const generateContributionSnake = async (userName: string) => {
 
   const gifOptions = { delay: 3 };
 
-  const commands = computeBestRun(grid0, snake0, gameOptions);
+  const commands = getBestRoute(grid0, snake0, gameOptions, 600);
 
   const buffer = await createGif(
     grid0,

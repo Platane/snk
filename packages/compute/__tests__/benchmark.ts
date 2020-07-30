@@ -3,7 +3,7 @@ import * as ParkMiller from "park-miller";
 import { generateRandomGrid } from "../generateGrid";
 import { Snake } from "../snake";
 import { Grid } from "../grid";
-import { computeBestRun } from "..";
+import { getBestRoute } from "../getBestRoute";
 import { performance } from "perf_hooks";
 
 const snake0 = [
@@ -19,16 +19,18 @@ const gameOptions = {
   colors: [1, 2, 3, 4],
 };
 
+const MAX_DURATION = 60 * 1000;
+const MAX_ITERATION = 10;
+
 const run = (grid: Grid, snake0: Snake, k: number) => {
   const stats: number[] = [];
   const s0 = performance.now();
 
-  const M = 60 * 1000;
-  let n = 40;
+  let n = 0;
 
-  while (performance.now() - s0 < M && n-- > 0) {
+  while (performance.now() - s0 < MAX_DURATION && n++ < MAX_ITERATION) {
     const s = performance.now();
-    computeBestRun(grid, snake0, gameOptions, k);
+    getBestRoute(grid, snake0, gameOptions, k);
 
     stats.push(performance.now() - s);
   }
@@ -59,17 +61,19 @@ const report = (arr: number[]) => {
 
 [
   //
-  [10, 10, 1000],
-  [21, 7, 1000],
-  [42, 7, 1000],
-  [42, 7, 5000],
-  [42, 7, 14000],
-  [42, 7, 30000],
+  [10, 10, 100],
+  [30, 7, 100],
+  [52, 7, 100],
+
+  [10, 10, 800],
+  [30, 7, 800],
+  [52, 7, 800],
 ].forEach(([w, h, k]) => {
-  const random = new ParkMiller(1);
+  const random = new ParkMiller(10);
   const grid = generateRandomGrid(w, h, { ...gameOptions, emptyP: 3 }, (a, b) =>
-    random.integerInRange(a, b)
+    random.integerInRange(a, b - 1)
   );
   const stats = run(grid, snake0, k);
+
   console.log(`${w}x${h} : ${k}\n  ${report(stats)}\n`);
 });
