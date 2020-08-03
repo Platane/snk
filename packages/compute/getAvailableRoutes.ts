@@ -1,13 +1,16 @@
-import { Grid, isInsideLarge, getColor, isInside, Color } from "./grid";
+import { Grid, isInsideLarge, getColor, isInside } from "./grid";
 import { around4, Point, pointEquals } from "./point";
 import { snakeWillSelfCollide, Snake } from "./snake";
 
-const computeSnakeKey = (snake: Snake) =>
-  snake.map((p) => p.x + "." + p.y).join(",");
+const computeSnakeKey = (snake: Snake) => {
+  let key = "";
+  for (let i = 0; i < snake.length; i++) key += snake[i].x + "," + snake[i].y;
+  return key;
+};
 
 type I = {
-  h: number;
-  f: number;
+  // h: number;
+  // f: number;
   w: number;
   key: string;
   snake: Snake;
@@ -44,21 +47,13 @@ export const getAvailableRoutes = (
     {
       key: computeSnakeKey(snake0),
       snake: snake0,
-
-      // weight, step from origin
       w: 0,
-
-      // heuristic
-      h: 0,
-
-      // fitness, smaller is better
-      f: 0,
       parent: null,
     },
   ];
   const closeList: Record<string, I> = {};
 
-  const solutions: { color: Color; snakeN: Snake; directions: Point[] }[] = [];
+  const solutions: { snakeN: Snake; directions: Point[] }[] = [];
 
   while (
     openList.length &&
@@ -66,34 +61,28 @@ export const getAvailableRoutes = (
     openList[0].w <= maxWeight &&
     solutions.length < maxSolutions
   ) {
-    openList.sort((a, b) => a.f - b.f);
+    openList.sort((a, b) => a.w - b.w);
     const c = openList.shift()!;
 
     closeList[c.key] = c;
-
-    // snakeSteps.push(copySnake(c.snake));
 
     const [head] = c.snake;
     const color =
       isInside(grid, head.x, head.y) && getColor(grid, head.x, head.y);
 
     if (color) {
-      const solution = {
-        color,
-        snakeN: c.snake,
-        directions: unwrap(c.parent, c.snake[0]),
-      };
-
       const s0 = solutions.find((s) =>
-        snakeEquals(s.snakeN, solution.snakeN, maxLengthEquality + 1)
+        snakeEquals(s.snakeN, c.snake, maxLengthEquality + 1)
       );
 
-      if (!s0 || solution.directions.length < s0.directions.length)
-        solutions.push(solution);
+      const directions = unwrap(c.parent, c.snake[0]);
+
+      if (!s0 || directions.length < s0.directions.length)
+        solutions.push({ snakeN: c.snake, directions });
     } else {
-      for (const direction of around4) {
-        const x = head.x + direction.x;
-        const y = head.y + direction.y;
+      for (let i = 0; i < around4.length; i++) {
+        const x = head.x + around4[i].x;
+        const y = head.y + around4[i].y;
 
         if (
           isInsideLarge(grid, 1, x, y) &&
@@ -105,16 +94,8 @@ export const getAvailableRoutes = (
           const key = computeSnakeKey(snake);
 
           if (!closeList[key] && !openList.some((s) => s.key === key)) {
-            const h =
-              Math.abs(snake[0].x - snake0[0].x) +
-              Math.abs(snake[0].y - snake0[0].y);
-
             const w = 1 + c.w;
-
-            const f = w;
-            // const f = h * 0.6 - w;
-
-            openList.push({ key, snake, f, w, h, parent: c });
+            openList.push({ key, snake, w, parent: c });
           } else {
             // console.log(key, closeList);
             // debugger;
