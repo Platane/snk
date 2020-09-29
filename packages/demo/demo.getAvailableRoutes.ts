@@ -1,6 +1,6 @@
 import { createCanvas } from "./canvas";
 import { samples } from "./samples";
-import { getAvailableRoutes } from "@snk/compute/getAvailableRoutes";
+import { getInterestingAvailableRoutes } from "@snk/compute/getAvailableRoutes";
 import { createSnake, Snake, snakeToCells } from "@snk/compute/snake";
 import { GUI } from "dat.gui";
 import { Point } from "@snk/compute/point";
@@ -23,10 +23,15 @@ const snake0 = createSnake([
   { x: -1, y: 3 },
 ]);
 const routes: Snake[][] = [];
-getAvailableRoutes(grid0, snake0, (snakes) => {
-  routes.push(snakes);
-  return routes.length > 10;
-});
+getInterestingAvailableRoutes(
+  grid0,
+  snake0,
+  (snakes) => {
+    routes.push(snakes);
+    return routes.length > 10;
+  },
+  2
+);
 
 const config = { routeN: 0, routeK: 0 };
 

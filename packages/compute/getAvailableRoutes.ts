@@ -56,3 +56,28 @@ export const getAvailableRoutes = (
     }
   }
 };
+
+export const getInterestingAvailableRoutes = (
+  grid: Grid,
+  snake0: Snake,
+  onSolution: (snakes: Snake[], color: Color) => boolean,
+  n = snake0.length
+) => {
+  const solutions: Snake[] = [];
+
+  getAvailableRoutes(grid, snake0, (snakes, color) => {
+    const [snake] = snakes;
+
+    for (let j = solutions.length; j--; ) {
+      let same = true;
+      for (let i = 0; i < n * 2; i++)
+        same = same && solutions[j][i] === snake[i];
+
+      if (same) return false;
+    }
+
+    solutions.push(snake);
+
+    return onSolution(snakes, color);
+  });
+};
