@@ -1,37 +1,44 @@
 import { Point } from "./point";
 
-export type Snake = Point[];
+export type Snake = Uint8Array & { _tag: "__Snake__" };
 
-export const snakeSelfCollideNext = (
-  snake: Snake,
-  direction: Point,
-  options: { maxSnakeLength: number }
-) => {
-  const hx = snake[0].x + direction.x;
-  const hy = snake[0].y + direction.y;
+export const getHeadX = (snake: Snake) => snake[0] - 2;
+export const getHeadY = (snake: Snake) => snake[1] - 2;
 
-  for (let i = 0; i < Math.min(options.maxSnakeLength, snake.length); i++)
-    if (snake[i].x === hx && snake[i].y === hy) return true;
+export const snakeEquals = (a: Snake, b: Snake) => {
+  for (let i = 0; i < a.length; i++) if (a[i] !== b[i]) return false;
+  return true;
+};
+
+export const nextSnake = (snake: Snake, dx: number, dy: number) => {
+  const copy = new Uint8Array(snake.length);
+  for (let i = 2; i < snake.length; i++) copy[i] = snake[i - 2];
+  copy[0] = snake[0] + dx;
+  copy[1] = snake[1] + dy;
+  return copy as Snake;
+};
+
+export const snakeWillSelfCollide = (snake: Snake, dx: number, dy: number) => {
+  const nx = snake[0] + dx;
+  const ny = snake[1] + dy;
+
+  for (let i = 2; i < snake.length - 2; i += 2)
+    if (snake[i + 0] === nx && snake[i + 1] === ny) return true;
 
   return false;
 };
 
-export const snakeWillSelfCollide = (
-  snake: Snake,
-  headx: number,
-  heady: number
-) => {
-  for (let i = 0; i < snake.length - 1; i++)
-    if (snake[i].x === headx && snake[i].y === heady) return true;
+export const snakeToCells = (snake: Snake) =>
+  Array.from({ length: snake.length / 2 }, (_, i) => ({
+    x: snake[i * 2 + 0] - 2,
+    y: snake[i * 2 + 1] - 2,
+  }));
 
-  return false;
+export const createSnake = (points: Point[]) => {
+  const snake = new Uint8Array(points.length * 2);
+  for (let i = points.length; i--; ) {
+    snake[i * 2 + 0] = points[i].x + 2;
+    snake[i * 2 + 1] = points[i].y + 2;
+  }
+  return snake as Snake;
 };
-
-export const snakeSelfCollide = (snake: Snake) => {
-  for (let i = 1; i < snake.length; i++)
-    if (snake[i].x === snake[0].x && snake[i].y === snake[0].y) return true;
-
-  return false;
-};
-
-export const copySnake = (x: Snake) => x.map((p) => ({ ...p }));

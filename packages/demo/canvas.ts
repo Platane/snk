@@ -44,5 +44,5 @@ export const createCanvas = ({
     drawWorld(ctx, grid, snake, stack, drawOptions);
   };
 
-  return { draw, canvas };
+  return { draw, canvas, ctx };
 };
