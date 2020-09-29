@@ -1,111 +1,58 @@
-import { Grid, isInsideLarge, getColor, isInside } from "./grid";
-import { around4, Point, pointEquals } from "./point";
-import { snakeWillSelfCollide, Snake } from "./snake";
-
-const computeSnakeKey = (snake: Snake) => {
-  let key = "";
-  for (let i = 0; i < snake.length; i++) key += snake[i].x + "," + snake[i].y;
-  return key;
-};
-
-type I = {
-  // h: number;
-  // f: number;
-  w: number;
-  key: string;
-  snake: Snake;
-  parent: I | null;
-};
-
-const unwrap = (o: I | null, headN: Point): Point[] => {
-  if (!o) return [];
-
-  const head0 = o.snake[0];
-
-  return [
-    ...unwrap(o.parent, head0),
-    { x: headN.x - head0.x, y: headN.y - head0.y },
-  ];
-};
-
-const snakeEquals = (a: Snake, b: Snake, n = 99999) => {
-  for (let i = 0; i < Math.min(a.length, b.length, n); i++)
-    if (!pointEquals(a[i], b[i])) return false;
-  return true;
-};
+import { Grid, isInsideLarge, getColor, isInside, Color } from "./grid";
+import { around4 } from "./point";
+import {
+  getHeadX,
+  getHeadY,
+  nextSnake,
+  Snake,
+  snakeEquals,
+  snakeWillSelfCollide,
+} from "./snake";
 
 export const getAvailableRoutes = (
   grid: Grid,
   snake0: Snake,
-  options: { maxSnakeLength: number },
-  maxSolutions = 10,
-  maxLengthEquality = 1,
-  maxWeight = 30,
-  maxIterations = 500
+  onSolution: (snakes: Snake[], color: Color) => boolean
 ) => {
-  const openList: I[] = [
-    {
-      key: computeSnakeKey(snake0),
-      snake: snake0,
-      w: 0,
-      parent: null,
-    },
-  ];
-  const closeList: Record<string, I> = {};
+  const openList: Snake[][] = [[snake0]];
+  const closeList: Snake[] = [];
 
-  const solutions: { snakeN: Snake; directions: Point[] }[] = [];
-
-  while (
-    openList.length &&
-    maxIterations-- > 0 &&
-    openList[0].w <= maxWeight &&
-    solutions.length < maxSolutions
-  ) {
-    openList.sort((a, b) => a.w - b.w);
+  while (openList.length) {
     const c = openList.shift()!;
+    const [snake] = c;
 
-    closeList[c.key] = c;
+    closeList.push(snake);
 
-    const [head] = c.snake;
-    const color =
-      isInside(grid, head.x, head.y) && getColor(grid, head.x, head.y);
+    const cx = getHeadX(snake);
+    const cy = getHeadY(snake);
 
-    if (color) {
-      const s0 = solutions.find((s) =>
-        snakeEquals(s.snakeN, c.snake, maxLengthEquality + 1)
-      );
+    for (let i = 0; i < around4.length; i++) {
+      const { x: dx, y: dy } = around4[i];
 
-      const directions = unwrap(c.parent, c.snake[0]);
+      const nx = cx + dx;
+      const ny = cy + dy;
 
-      if (!s0 || directions.length < s0.directions.length)
-        solutions.push({ snakeN: c.snake, directions });
-    } else {
-      for (let i = 0; i < around4.length; i++) {
-        const x = head.x + around4[i].x;
-        const y = head.y + around4[i].y;
+      if (
+        isInsideLarge(grid, 1, nx, ny) &&
+        !snakeWillSelfCollide(snake, dx, dy)
+      ) {
+        const nsnake = nextSnake(snake, dx, dy);
 
-        if (
-          isInsideLarge(grid, 1, x, y) &&
-          !snakeWillSelfCollide(c.snake, x, y)
-        ) {
-          const snake = c.snake.slice(0, options.maxSnakeLength - 1);
-          snake.unshift({ x, y });
+        if (!closeList.some((s) => snakeEquals(nsnake, s))) {
+          const color = isInside(grid, nx, ny) && getColor(grid, nx, ny);
 
-          const key = computeSnakeKey(snake);
+          const chain = [nsnake, ...c];
 
-          if (!closeList[key] && !openList.some((s) => s.key === key)) {
-            const w = 1 + c.w;
-            openList.push({ key, snake, w, parent: c });
+          if (color) {
+            if (onSolution(chain, color)) return;
           } else {
-            // console.log(key, closeList);
-            // debugger;
+            if (!openList.some(([s]) => snakeEquals(nsnake, s))) {
+              openList.push(chain);
+              openList.sort((a, b) => a.length - b.length);
+            }
           }
         }
       }
     }
   }
-
-  return solutions;
 };
-
-export const snakeSteps: Snake[] = [];

@@ -1,7 +1,7 @@
 import { Grid, Color } from "@snk/compute/grid";
 import { pathRoundedRect } from "./pathRoundedRect";
-import { Point } from "@snk/compute/point";
 import { drawGrid } from "./drawGrid";
+import { Snake, snakeToCells } from "@snk/compute/snake";
 
 type Options = {
   colorDots: Record<Color, string>;
@@ -15,15 +15,17 @@ type Options = {
 
 export const drawSnake = (
   ctx: CanvasRenderingContext2D,
-  snake: Point[],
+  snake: Snake,
   o: Options
 ) => {
-  for (let i = 0; i < snake.length; i++) {
+  const cells = snakeToCells(snake);
+
+  for (let i = 0; i < cells.length; i++) {
     const u = (i + 1) * 0.6;
 
     ctx.save();
     ctx.fillStyle = o.colorSnake;
-    ctx.translate(snake[i].x * o.sizeCell + u, snake[i].y * o.sizeCell + u);
+    ctx.translate(cells[i].x * o.sizeCell + u, cells[i].y * o.sizeCell + u);
     ctx.beginPath();
     pathRoundedRect(
       ctx,
@@ -39,7 +41,7 @@ export const drawSnake = (
 export const drawWorld = (
   ctx: CanvasRenderingContext2D,
   grid: Grid,
-  snake: Point[],
+  snake: Snake,
   stack: Color[],
   o: Options
 ) => {
@@ -60,4 +62,10 @@ export const drawWorld = (
     ctx.fillRect(i * m, 0, m, 10);
   }
   ctx.restore();
+
+  // ctx.save();
+  // ctx.translate(o.sizeCell + 100, (grid.height + 4) * o.sizeCell + 100);
+  // ctx.scale(0.6, 0.6);
+  // drawCircleStack(ctx, stack, o);
+  // ctx.restore();
 };

@@ -1,105 +1,75 @@
-import { copyGrid } from "@snk/compute/grid";
-import { copySnake } from "@snk/compute/snake";
 import { createCanvas } from "./canvas";
-import { stepSnake } from "@snk/compute/step";
 import { samples } from "./samples";
 import { getAvailableRoutes } from "@snk/compute/getAvailableRoutes";
+import { createSnake, Snake, snakeToCells } from "@snk/compute/snake";
+import { GUI } from "dat.gui";
+import { Point } from "@snk/compute/point";
 
 //
 // init
 
 const label = new URLSearchParams(window.location.search).get("sample");
-const { grid: grid0, snake: snake0, gameOptions } =
-  samples.find((s) => s.label === label) || samples[0];
+const { grid: grid0 } = samples.find((s) => s.label === label) || samples[0];
 
 //
 // compute
 
-const routes = getAvailableRoutes(grid0, snake0, gameOptions, 20);
+const snake0 = createSnake([
+  //
+  { x: -1, y: -1 },
+  { x: -1, y: 0 },
+  { x: -1, y: 1 },
+  { x: -1, y: 2 },
+  { x: -1, y: 3 },
+]);
+const routes: Snake[][] = [];
+getAvailableRoutes(grid0, snake0, (snakes) => {
+  routes.push(snakes);
+  return routes.length > 10;
+});
+
+const config = { routeN: 0, routeK: 0 };
 
 //
 // draw
 
-const { canvas, draw } = createCanvas(grid0);
+const { canvas, ctx, draw } = createCanvas(grid0);
+document.body.appendChild(canvas);
 
-const update = (n: number, k: number) => {
-  const snake = copySnake(snake0);
-  const grid = copyGrid(grid0);
-  const route = routes[n];
+draw(grid0, snake0, []);
 
-  const trace = [{ ...snake[0] }];
+let cancel: number;
 
-  for (let i = 0; i < k; i++) {
-    stepSnake(snake, route.directions[i], gameOptions);
-    trace.push({ ...snake[0] });
-  }
+const mod = (x: number, m: number) => ((x % m) + m) % m;
 
-  draw(grid, snake, []);
+const onChange = () => {
+  const t = Math.floor(Date.now() / 300);
 
-  const [cell] = route.snakeN;
+  cancelAnimationFrame(cancel);
+  cancel = requestAnimationFrame(onChange);
 
-  const ctx = canvas.getContext("2d")!;
+  const chain = routes[config.routeN] || [snake0];
 
-  for (let i = 0; i < routes.length; i++) {
-    ctx.fillStyle = "orange";
-    ctx.fillRect(
-      16 * (routes[i].snakeN[0].x + 1) + 6,
-      16 * (routes[i].snakeN[0].y + 2) + 6,
-      4,
-      4
-    );
-  }
+  draw(grid0, chain[mod(-t, chain.length)], []);
+
+  const cells: Point[] = [];
+  chain.forEach((s) => cells.push(...snakeToCells(s)));
 
   ctx.fillStyle = "orange";
-  ctx.fillRect(16 * (cell.x + 1) + 4, 16 * (cell.y + 2) + 4, 8, 8);
+  ctx.fillRect(0, 0, 1, 1);
 
-  for (let i = 0; i < trace.length; i++) {
-    ctx.fillStyle = "purple";
-    ctx.fillRect(16 * (trace[i].x + 1) + 6, 16 * (trace[i].y + 2) + 6, 4, 4);
-  }
+  cells
+    .filter((x, i, arr) => i === arr.indexOf(x))
+    .forEach((c) => {
+      ctx.beginPath();
+      ctx.fillRect((1 + c.x + 0.5) * 16 - 2, (2 + c.y + 0.5) * 16 - 2, 4, 4);
+    });
 };
 
 //
-// controls
+// ui
 
-// const input0: any = document.createElement("input");
-// input0.type = "range";
-// input0.style.width = "100%";
-// input0.min = 0;
-// input0.max = snakeSteps.length - 1;
-// input0.step = 1;
-// input0.value = 0;
-// input0.addEventListener("input", () => {
-//   const grid = copyGrid(grid0);
-//   draw(grid, snakeSteps[+input0.value], []);
-// });
-// document.body.appendChild(input0);
+const gui = new GUI();
+gui.add(config, "routeN", 0, routes.length - 1, 1).onChange(onChange);
 
-const inputA: any = document.createElement("input");
-inputA.type = "range";
-inputA.style.width = "100%";
-inputA.min = 0;
-inputA.max = routes.length - 1;
-inputA.step = 1;
-inputA.value = 0;
-inputA.addEventListener("input", () => {
-  inputB.value = inputB.max = routes[+inputA.value].directions.length;
-  update(+inputA.value, +inputB.value);
-});
-document.body.appendChild(inputA);
-
-const inputB: any = document.createElement("input");
-inputB.type = "range";
-inputB.style.width = "100%";
-inputB.min = 0;
-inputB.step = 1;
-inputB.value = 0;
-inputB.addEventListener("input", () => {
-  update(+inputA.value, +inputB.value);
-});
-document.body.appendChild(inputB);
-
-if (routes[+inputA.value]) {
-  inputB.value = inputB.max = routes[+inputA.value].directions.length;
-  update(+inputA.value, +inputB.value);
-}
+onChange();

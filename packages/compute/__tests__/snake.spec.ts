@@ -1,62 +1,43 @@
-import { snakeSelfCollide, snakeWillSelfCollide } from "../snake";
+import {
+  createSnake,
+  nextSnake,
+  snakeToCells,
+  snakeWillSelfCollide,
+} from "../snake";
 
-test.each([
-  [[{ x: 0, y: 0 }], false],
-  [
-    [
-      { x: 0, y: 0 },
-      { x: 0, y: 0 },
-    ],
-    true,
-  ],
-  [
-    [
-      { x: 1, y: 7 },
-      { x: 0, y: 6 },
-      { x: 2, y: 8 },
-      { x: 1, y: 7 },
-      { x: 3, y: 9 },
-    ],
-    true,
-  ],
-])("should report snake collision", (snake, collide) => {
-  expect(snakeSelfCollide(snake)).toBe(collide);
+it("should convert to point", () => {
+  const snk0 = [
+    { x: 1, y: -1 },
+    { x: 1, y: 0 },
+    { x: 0, y: 0 },
+  ];
+
+  expect(snakeToCells(createSnake(snk0))).toEqual(snk0);
 });
 
-test.each([
-  [
-    [
-      { x: 1, y: 7 },
-      { x: 0, y: 7 },
-      { x: 0, y: 8 },
-      { x: 0, y: 9 },
-      { x: 1, y: 9 },
-    ],
-    { x: 1, y: 7 },
-    true,
-  ],
-  [
-    [
-      { x: 1, y: 7 },
-      { x: 0, y: 7 },
-      { x: 0, y: 8 },
-      { x: 0, y: 9 },
-      { x: 1, y: 9 },
-    ],
-    { x: 1, y: 8 },
-    false,
-  ],
-  [
-    [
-      { x: 1, y: 7 },
-      { x: 0, y: 7 },
-      { x: 0, y: 8 },
-      { x: 0, y: 9 },
-      { x: 1, y: 9 },
-    ],
-    { x: 1, y: 8 },
-    false,
-  ],
-])("should report snake collision next", (snake, { x, y }, collide) => {
-  expect(snakeWillSelfCollide(snake, x, y)).toBe(collide);
+it("should return next snake", () => {
+  const snk0 = [
+    { x: 1, y: 1 },
+    { x: 1, y: 0 },
+    { x: 0, y: 0 },
+  ];
+
+  const snk1 = [
+    { x: 2, y: 1 },
+    { x: 1, y: 1 },
+    { x: 1, y: 0 },
+  ];
+
+  expect(snakeToCells(nextSnake(createSnake(snk0), 1, 0))).toEqual(snk1);
+});
+
+it("should test snake collision", () => {
+  const snk0 = [
+    { x: 1, y: 1 },
+    { x: 1, y: 0 },
+    { x: 0, y: 0 },
+  ];
+
+  expect(snakeWillSelfCollide(createSnake(snk0), 1, 0)).toBe(false);
+  expect(snakeWillSelfCollide(createSnake(snk0), 0, -1)).toBe(true);
 });

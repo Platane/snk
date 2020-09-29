@@ -3,7 +3,7 @@ import { createEmptyGrid, setColor, getColor, isInside } from "../grid";
 it("should set / get cell", () => {
   const grid = createEmptyGrid(2, 3);
 
-  expect(getColor(grid, 0, 1)).toBe(null);
+  expect(getColor(grid, 0, 1)).toBe(0);
 
   setColor(grid, 0, 1, 1);
 

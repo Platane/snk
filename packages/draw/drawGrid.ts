@@ -19,7 +19,7 @@ export const drawGrid = (
     for (let y = grid.height; y--; ) {
       const c = getColor(grid, x, y);
       // @ts-ignore
-      const color = c === null ? o.colorEmpty : o.colorDots[c];
+      const color = !c ? o.colorEmpty : o.colorDots[c];
       ctx.save();
       ctx.translate(
         x * o.sizeCell + (o.sizeCell - o.sizeDot) / 2,
