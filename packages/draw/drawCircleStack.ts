@@ -69,6 +69,8 @@ export const drawCircleStack = (
       x * o.sizeCell + (o.sizeCell - o.sizeDot) / 2,
       y * o.sizeCell + (o.sizeCell - o.sizeDot) / 2
     );
+
+    //@ts-ignore
     ctx.fillStyle = o.colorDots[stack[i]];
     ctx.strokeStyle = o.colorBorder;
     ctx.lineWidth = 1;

@@ -1,11 +1,11 @@
-import { createEmptyGrid, setColor, getColor, isInside } from "../grid";
+import { createEmptyGrid, setColor, getColor, isInside, Color } from "../grid";
 
 it("should set / get cell", () => {
   const grid = createEmptyGrid(2, 3);
 
   expect(getColor(grid, 0, 1)).toBe(0);
 
-  setColor(grid, 0, 1, 1);
+  setColor(grid, 0, 1, 1 as Color);
 
   expect(getColor(grid, 0, 1)).toBe(1);
 });

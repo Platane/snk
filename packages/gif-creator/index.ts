@@ -2,8 +2,7 @@ import * as fs from "fs";
 import * as path from "path";
 import { createCanvas } from "canvas";
 import { Grid, copyGrid, Color } from "@snk/compute/grid";
-import { Point } from "@snk/compute/point";
-import { copySnake } from "@snk/compute/snake";
+import { Snake } from "@snk/compute/snake";
 import { drawWorld } from "@snk/draw/drawWorld";
 import { step } from "@snk/compute/step";
 import * as tmp from "tmp";
@@ -11,17 +10,15 @@ import * as execa from "execa";
 
 export const createGif = async (
   grid0: Grid,
-  snake0: Point[],
-  commands: Point[],
+  chain: Snake[],
   drawOptions: Parameters<typeof drawWorld>[4],
-  gameOptions: Parameters<typeof step>[4],
   gifOptions: { delay: number }
 ) => {
+  let snake = chain[0];
   const grid = copyGrid(grid0);
-  const snake = copySnake(snake0);
   const stack: Color[] = [];
 
-  const width = drawOptions.sizeCell * (grid.width + 4);
+  const width = drawOptions.sizeCell * (grid.width + 2);
   const height = drawOptions.sizeCell * (grid.height + 4) + 100;
 
   const { name: dir, removeCallback: cleanUp } = tmp.dirSync({
@@ -48,11 +45,11 @@ export const createGif = async (
   };
 
   try {
-    writeImage(0);
+    for (let i = 0; i < chain.length; i++) {
+      snake = chain[i];
 
-    for (let i = 0; i < commands.length; i++) {
-      step(grid, snake, stack, commands[i], gameOptions);
-      writeImage(i + 1);
+      step(grid, stack, snake);
+      writeImage(i);
     }
 
     const outFileName = path.join(dir, "out.gif");

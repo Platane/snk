@@ -1,4 +1,5 @@
-export type Color = number;
+export type Color = (1 | 2 | 3 | 4 | 5 | 6) & { _tag: "__Color__" };
+export type Empty = 0 & { _tag: "__Empty__" };
 
 export type Grid = {
   width: number;
@@ -15,22 +16,46 @@ export const isInside = (grid: Grid, x: number, y: number) =>
 export const isInsideLarge = (grid: Grid, m: number, x: number, y: number) =>
   x >= -m && y >= -m && x < grid.width + m && y < grid.height + m;
 
-export const getColor = (grid: Grid, x: number, y: number) =>
-  grid.data[getIndex(grid, x, y)];
-
 export const copyGrid = ({ width, height, data }: Grid) => ({
   width,
   height,
   data: Uint8Array.from(data),
 });
 
+export const getColor = (grid: Grid, x: number, y: number) =>
+  grid.data[getIndex(grid, x, y)] as Color | Empty;
+
+export const isEmpty = (color: Color | Empty): color is Empty => color === 0;
+
 export const setColor = (
   grid: Grid,
   x: number,
   y: number,
-  color: Color | null
+  color: Color | Empty
 ) => {
   grid.data[getIndex(grid, x, y)] = color || 0;
+};
+
+export const setColorEmpty = (grid: Grid, x: number, y: number) => {
+  setColor(grid, x, y, 0 as Empty);
+};
+
+export const isGridEmpty = (grid: Grid) => grid.data.every((x) => x === 0);
+
+export const gridEquals = (a: Grid, b: Grid) =>
+  a.data.every((_, i) => a.data[i] === b.data[i]);
+
+export const getGridKey = ({ data }: Grid) => {
+  let key = "";
+  const n = 5;
+  const radius = 1 << n;
+  for (let k = 0; k < data.length; k += n) {
+    let u = 0;
+    for (let i = n; i--; ) u += (1 << i) * +!!data[k + i];
+
+    key += u.toString(radius);
+  }
+  return key;
 };
 
 export const createEmptyGrid = (width: number, height: number) => ({

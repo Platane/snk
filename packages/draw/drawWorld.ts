@@ -33,6 +33,7 @@ export const drawWorld = (
   ctx.save();
   ctx.translate(o.sizeCell, (grid.height + 4) * o.sizeCell);
   for (let i = 0; i < stack.length; i++) {
+    // @ts-ignore
     ctx.fillStyle = o.colorDots[stack[i]];
     ctx.fillRect(i * m, 0, m, 10);
   }

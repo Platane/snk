@@ -1,14 +1,15 @@
 import { getGithubUserContribution, Cell } from "@snk/github-user-contribution";
-import { setColor, createEmptyGrid } from "@snk/compute/grid";
+import { setColor, createEmptyGrid, Color } from "@snk/compute/grid";
 import { createGif } from "@snk/gif-creator";
 import { getBestRoute } from "@snk/compute/getBestRoute";
+import { createSnake } from "@snk/compute/snake";
 
 export const userContributionToGrid = (cells: Cell[]) => {
   const width = Math.max(0, ...cells.map((c) => c.x)) + 1;
   const height = Math.max(0, ...cells.map((c) => c.y)) + 1;
 
   const grid = createEmptyGrid(width, height);
-  for (const c of cells) setColor(grid, c.x, c.y, c.k === 0 ? null : c.k);
+  for (const c of cells) if (c.k) setColor(grid, c.x, c.y, c.k as Color);
 
   return grid;
 };
@@ -18,13 +19,13 @@ export const generateContributionSnake = async (userName: string) => {
 
   const grid0 = userContributionToGrid(cells);
 
-  const snake0 = [
+  const snake0 = createSnake([
     { x: 4, y: -1 },
     { x: 3, y: -1 },
     { x: 2, y: -1 },
     { x: 1, y: -1 },
     { x: 0, y: -1 },
-  ];
+  ]);
 
   const drawOptions = {
     sizeBorderRadius: 2,
@@ -36,23 +37,11 @@ export const generateContributionSnake = async (userName: string) => {
     colorSnake: "purple",
   };
 
-  const gameOptions = {
-    maxSnakeLength: 5,
-    colors: Array.from({ length: colorScheme.length - 1 }, (_, i) => i + 1),
-  };
-
   const gifOptions = { delay: 3 };
 
-  const commands = getBestRoute(grid0, snake0, gameOptions, 600);
+  const chain = getBestRoute(grid0, snake0)!;
 
-  const buffer = await createGif(
-    grid0,
-    snake0,
-    commands,
-    drawOptions,
-    gameOptions,
-    gifOptions
-  );
+  const buffer = await createGif(grid0, chain, drawOptions, gifOptions);
 
   return buffer;
 };

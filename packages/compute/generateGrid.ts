@@ -1,25 +1,21 @@
-import { Grid, Color, setColor, createEmptyGrid } from "./grid";
+import { Grid, Color, setColor, setColorEmpty } from "./grid";
 
 const defaultRand = (a: number, b: number) =>
   Math.floor(Math.random() * (b - a)) + a;
 
-export const generateRandomGrid = (
-  width: number,
-  height: number,
-  options: { colors: Color[]; emptyP: number } = {
-    colors: [1, 2, 3],
-    emptyP: 2,
-  },
+export const fillRandomGrid = (
+  grid: Grid,
+  {
+    colors = [1, 2, 3] as Color[],
+    emptyP = 2,
+  }: { colors?: Color[]; emptyP?: number } = {},
   rand = defaultRand
-): Grid => {
-  const grid = createEmptyGrid(width, height);
+) => {
+  for (let x = grid.width; x--; )
+    for (let y = grid.height; y--; ) {
+      const k = rand(-emptyP, colors.length);
 
-  for (let x = width; x--; )
-    for (let y = height; y--; ) {
-      const k = rand(-options.emptyP, options.colors.length);
-
-      if (k >= 0) setColor(grid, x, y, options.colors[k]);
+      if (k >= 0) setColor(grid, x, y, colors[k]);
+      else setColorEmpty(grid, x, y);
     }
-
-  return grid;
 };

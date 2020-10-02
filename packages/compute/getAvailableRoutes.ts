@@ -1,4 +1,11 @@
-import { Grid, isInsideLarge, getColor, isInside, Color } from "./grid";
+import {
+  Grid,
+  isInsideLarge,
+  getColor,
+  isInside,
+  Color,
+  isEmpty,
+} from "./grid";
 import { around4 } from "./point";
 import {
   getHeadX,
@@ -41,12 +48,11 @@ export const getAvailableRoutes = (
         if (!closeList.some((s) => snakeEquals(nsnake, s))) {
           const color = isInside(grid, nx, ny) && getColor(grid, nx, ny);
 
-          const chain = [nsnake, ...c];
-
-          if (color) {
-            if (onSolution(chain, color)) return;
+          if (color && !isEmpty(color)) {
+            if (onSolution([nsnake, ...c.slice(0, -1)], color)) return;
           } else {
             if (!openList.some(([s]) => snakeEquals(nsnake, s))) {
+              const chain = [nsnake, ...c];
               openList.push(chain);
               openList.sort((a, b) => a.length - b.length);
             }
@@ -57,7 +63,7 @@ export const getAvailableRoutes = (
   }
 };
 
-export const getInterestingAvailableRoutes = (
+export const getAvailableInterestingRoutes = (
   grid: Grid,
   snake0: Snake,
   onSolution: (snakes: Snake[], color: Color) => boolean,

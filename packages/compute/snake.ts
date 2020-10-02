@@ -42,3 +42,5 @@ export const createSnake = (points: Point[]) => {
   }
   return snake as Snake;
 };
+
+export const copySnake = (snake: Snake) => snake.slice() as Snake;
