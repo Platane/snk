@@ -8,9 +8,9 @@
   "devDependencies": {
     "@types/dat.gui": "0.7.5",
     "dat.gui": "0.7.7",
-    "html-webpack-plugin": "4.3.0",
-    "ts-loader": "8.0.1",
-    "webpack": "4.43.0",
+    "html-webpack-plugin": "4.5.0",
+    "ts-loader": "8.0.4",
+    "webpack": "4.44.2",
     "webpack-cli": "3.3.12",
     "webpack-dev-server": "3.11.0"
   },
