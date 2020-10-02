@@ -1,6 +1,9 @@
+import * as fs from "fs";
+import * as path from "path";
 import { createGif } from "..";
-import { generateRandomGrid } from "@snk/compute/generateGrid";
 import { getBestRoute } from "@snk/compute/getBestRoute";
+import * as grids from "@snk/compute/__fixtures__/grid";
+import { snake3 as snake } from "@snk/compute/__fixtures__/snake";
 
 const drawOptions = {
   sizeBorderRadius: 2,
@@ -12,31 +15,29 @@ const drawOptions = {
   colorSnake: "purple",
 };
 
-const gameOptions = { maxSnakeLength: 5, colors: [1, 2, 3, 4] };
+const gifOptions = { delay: 18 };
 
-const gifOptions = { delay: 200 };
+const dir = path.resolve(__dirname, "__snapshots__");
 
-it("should generate gif", async () => {
-  const grid = generateRandomGrid(7, 7, { ...gameOptions, emptyP: 3 });
+try {
+  fs.mkdirSync(dir);
+} catch (err) {}
 
-  const snake = [
-    { x: 4, y: -1 },
-    { x: 3, y: -1 },
-    { x: 2, y: -1 },
-    { x: 1, y: -1 },
-    { x: 0, y: -1 },
-  ];
+for (const key of [
+  "empty",
+  "simple",
+  "corner",
+  "small",
+  "smallPacked",
+] as const)
+  it(`should generate ${key} gif`, async () => {
+    const grid = grids[key];
 
-  const commands = getBestRoute(grid, snake, gameOptions, 50).slice(0, 9);
+    const chain = [snake, ...getBestRoute(grid, snake)!];
 
-  const gif = await createGif(
-    grid,
-    snake,
-    commands,
-    drawOptions,
-    gameOptions,
-    gifOptions
-  );
+    const gif = await createGif(grid, chain, drawOptions, gifOptions);
 
-  expect(gif).toBeDefined();
-});
+    expect(gif).toBeDefined();
+
+    fs.writeFileSync(path.resolve(dir, key + ".gif"), gif);
+  });

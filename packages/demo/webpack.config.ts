@@ -13,7 +13,6 @@ const config: Configuration = {
   entry: {
     "demo.getAvailableRoutes": "./demo.getAvailableRoutes",
     "demo.getBestRoute": "./demo.getBestRoute",
-    "demo.index": "./demo.index",
   },
   resolve: { extensions: [".ts", ".js"] },
   output: {
@@ -27,14 +26,16 @@ const config: Configuration = {
         exclude: /node_modules/,
         test: /\.(js|ts)$/,
         loader: "ts-loader",
+        options: {
+          compilerOptions: {
+            lib: ["dom", "ES2020"],
+            target: "ES2020",
+          },
+        },
       },
     ],
   },
   plugins: [
-    new HtmlWebpackPlugin({
-      filename: "index.html",
-      chunks: ["demo.index"],
-    }),
     new HtmlWebpackPlugin({
       filename: "demo-getAvailableRoutes.html",
       chunks: ["demo.getAvailableRoutes"],

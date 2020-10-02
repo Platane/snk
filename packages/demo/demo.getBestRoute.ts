@@ -1,48 +1,45 @@
-import { copyGrid } from "@snk/compute/grid";
-import { copySnake } from "@snk/compute/snake";
 import { createCanvas } from "./canvas";
+import { getBestRoute } from "../compute/getBestRoute";
+import { Color, copyGrid } from "../compute/grid";
+import { grid, snake } from "./sample";
 import { step } from "@snk/compute/step";
-import { getBestRoute } from "@snk/compute/getBestRoute";
-import { samples } from "./samples";
 
-//
-// init
-
-const label = new URLSearchParams(window.location.search).get("sample");
-const { grid: grid0, snake: snake0, gameOptions } =
-  samples.find((s) => s.label === label) || samples[0];
-
-//
-// compute
-
-const s0 = Date.now();
-const bestRoute = getBestRoute(grid0, snake0, gameOptions);
-console.log(`computed in ${Date.now() - s0}ms`);
+const chain = [snake, ...getBestRoute(grid, snake)!];
 
 //
 // draw
 
-const { draw } = createCanvas(grid0);
+let k = 0;
 
-//
-// controls
+const { canvas, draw } = createCanvas(grid);
+document.body.appendChild(canvas);
 
-const inputK: any = document.createElement("input");
-inputK.type = "range";
-inputK.style.width = "100%";
-inputK.min = 0;
-inputK.max = bestRoute.length;
-inputK.step = 1;
-inputK.value = 0;
-inputK.addEventListener("input", () => {
-  const snake = copySnake(snake0);
-  const grid = copyGrid(grid0);
-  const stack: any[] = [];
+const onChange = () => {
+  debugger;
 
-  for (let i = 0; i < +inputK.value; i++)
-    step(grid, snake, stack, bestRoute[i], gameOptions);
+  const grid0 = copyGrid(grid);
+  const stack0: Color[] = [];
+  let snake0 = snake;
+  chain.slice(0, k).forEach((s) => {
+    snake0 = s;
+    step(grid0, stack0, snake0);
+  });
 
-  draw(grid, snake, stack);
+  draw(grid0, snake0, stack0);
+};
+
+onChange();
+
+const input = document.createElement("input") as any;
+input.type = "range";
+input.value = 0;
+input.step = 1;
+input.min = 0;
+input.max = chain.length;
+input.style.width = "90%";
+input.addEventListener("input", () => {
+  k = +input.value;
+  onChange();
 });
-document.body.appendChild(inputK);
-draw(grid0, snake0, []);
+document.body.append(input);
+document.body.addEventListener("click", () => input.focus());

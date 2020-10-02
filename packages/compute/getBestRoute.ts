@@ -1,152 +1,183 @@
-import { Grid, Color, copyGrid, getColor, setColor } from "./grid";
-import { Point } from "./point";
-import { Snake } from "./snake";
-import { getAvailableRoutes } from "./getAvailableRoutes";
+import { getAvailableInterestingRoutes } from "./getAvailableRoutes";
+import {
+  Color,
+  copyGrid,
+  getColor,
+  Grid,
+  gridEquals,
+  isEmpty,
+  setColorEmpty,
+} from "./grid";
+import { copySnake, getHeadX, getHeadY, Snake, snakeEquals } from "./snake";
 
-const isGridEmpty = (grid: Grid) => grid.data.every((x) => x === null);
-
-const createComputeHeuristic = (
-  grid0: Grid,
-  _snake0: Snake,
-  colors: Color[]
-) => {
-  const colorCount: Record<Color, number> = {};
+const createHeuristic = (grid0: Grid) => {
+  const colorCount: Record<Color, number> = [];
   for (let x = grid0.width; x--; )
     for (let y = grid0.height; y--; ) {
-      const c = getColor(grid0, x, y);
-      if (c !== null) colorCount[c] = 1 + (colorCount[c] || 0);
+      const color = getColor(grid0, x, y);
+      if (!isEmpty(color))
+        // @ts-ignore
+        colorCount[color] = (0 | colorCount[color]) + 1;
     }
 
-  const values = colors
-    .map((k) => Array.from({ length: colorCount[k] }, () => k))
+  const target = Object.entries(colorCount)
+    .sort(([a], [b]) => +a - +b)
+    .map(([color, length]: any) => Array.from({ length }, () => +color))
     .flat();
 
-  return (_grid: Grid, _snake: Snake, stack: Color[]) => {
-    let score = 0;
+  const getHeuristic = (_grid: Grid, _snake: Snake, stack: Color[]) =>
+    stack.reduce((s, x, i) => s + (target[i] === x ? 1 : 0), 0);
 
-    for (let i = 0; i < stack.length; i++) {
-      if (stack[i] === values[i]) {
-        score += 52;
-      } else {
-        const u = Math.abs(stack[i] - values[i]);
+  const getNextColorHeuristic = (
+    _grid: Grid,
+    _snake: Snake,
+    stack: Color[]
+  ) => {
+    const x = target[stack.length];
 
-        score += 5 - u;
-      }
-    }
-
-    return score;
+    return (c: Color) => (x === c ? 1 : 0);
   };
+
+  const isEnd = (_grid: Grid, _snake: Snake, stack: Color[]) =>
+    stack.length === target.length;
+
+  return { isEnd, getHeuristic, getNextColorHeuristic };
 };
 
-const computeKey = (grid: Grid, snake: Snake, stack: Color[]) =>
-  grid.data.map((x) => x || 0).join("") +
-  "|" +
-  snake.map((p) => p.x + "." + p.y).join(",") +
-  "|" +
-  stack.join("");
-
-type I = {
-  h: number;
-  f: number;
-  w: number;
-  key: string;
-  snake: Snake;
+type OpenListItem = {
   grid: Grid;
+  snake: Snake;
+  chain: Snake[];
   stack: Color[];
-  parent: I | null;
-  directions: Point[];
+  weight: number;
+  heuristic: number;
+  parent: OpenListItem | null;
 };
 
-export const getBestRoute = (
-  grid0: Grid,
-  snake0: Snake,
-  options: { maxSnakeLength: number; colors: Color[] },
-  maxIterations = 500
-) => {
-  const computeHeuristic = createComputeHeuristic(
-    grid0,
-    snake0,
-    options.colors
-  );
+const unroll = (o: OpenListItem | null): Snake[] =>
+  !o ? [] : [...unroll(o.parent), ...o.chain.slice().reverse()];
 
-  const closeList: Record<string, I> = {};
-  const openList: I[] = [];
+const itemEquals = (
+  a: { grid: Grid; snake: Snake },
+  b: { grid: Grid; snake: Snake }
+) => snakeEquals(a.snake, b.snake) && gridEquals(a.grid, b.grid);
 
-  {
-    const h = computeHeuristic(grid0, snake0, []);
-    const w = 0;
-    const f = h + w;
-    openList.push({
-      key: computeKey(grid0, snake0, []),
+export const getBestRoute = (grid0: Grid, snake0: Snake) => {
+  const { isEnd, getNextColorHeuristic } = createHeuristic(grid0);
+
+  let grid = copyGrid(grid0);
+  let snake = copySnake(snake0);
+  let stack: Color[] = [];
+
+  const fullChain: Snake[] = [];
+
+  while (!isEnd(grid, snake, stack)) {
+    const getColorHeuristic = getNextColorHeuristic(grid, snake, stack);
+
+    let solution: {
+      heuristic: number;
+      chain: Snake[];
+      color: Color;
+    } | null = null;
+
+    getAvailableInterestingRoutes(
+      grid,
+      snake,
+      (chain: Snake[], color: Color) => {
+        const heuristic = getColorHeuristic(color);
+
+        if (!solution || solution.heuristic < heuristic)
+          solution = { heuristic, chain, color };
+
+        return solution.heuristic === 1;
+      },
+      2
+    );
+
+    if (!solution) return null;
+
+    const { chain, color } = solution!;
+
+    snake = chain[0];
+    const x = getHeadX(snake);
+    const y = getHeadY(snake);
+
+    setColorEmpty(grid, x, y);
+
+    stack.push(color);
+
+    for (let i = chain.length; i--; ) fullChain.push(chain[i]);
+  }
+
+  return fullChain;
+};
+
+export const getBestRoute2 = (grid0: Grid, snake0: Snake) => {
+  const { isEnd, getHeuristic, getNextColorHeuristic } = createHeuristic(grid0);
+
+  const closeList: { grid: Grid; snake: Snake }[] = [];
+
+  const openList: OpenListItem[] = [
+    {
       grid: grid0,
-      snake: snake0,
       stack: [],
+      snake: snake0,
       parent: null,
-      f,
-      h,
-      w,
-      directions: [],
-    });
-  }
+      weight: 0,
+      heuristic: getHeuristic(grid0, snake0, []),
+      chain: [],
+    },
+  ];
 
-  let best = openList[0];
+  while (openList.length) {
+    const parent = openList.shift()!;
 
-  while (openList.length && maxIterations-- > 0) {
-    openList.sort((a, b) => a.f - b.f);
-    const c = openList.shift()!;
+    if (isEnd(parent.grid, parent.snake, parent.stack)) return unroll(parent);
 
-    closeList[c.key] = c;
+    const solutions: { snake: Snake; chain: Snake[]; color: Color }[] = [];
+    const getColorHeuristic = getNextColorHeuristic(
+      parent.grid,
+      parent.snake,
+      parent.stack
+    );
 
-    if (c.f < best.f) best = c;
+    getAvailableInterestingRoutes(
+      parent.grid,
+      parent.snake,
+      (chain: Snake[], color: Color) => {
+        if (
+          !solutions[0] ||
+          getColorHeuristic(solutions[0].color) <= getColorHeuristic(color)
+        )
+          solutions.unshift({ snake: chain[0], chain, color });
 
-    if (!isGridEmpty(c.grid)) {
-      const availableRoutes = getAvailableRoutes(
-        c.grid,
-        c.snake,
-        options,
-        30,
-        1,
-        20,
-        500
-      );
+        return solutions.length >= 3;
+      },
+      2
+    );
 
-      for (const route of availableRoutes) {
-        const stack = c.stack.slice();
-        const grid = copyGrid(c.grid);
-        const snake = route.snakeN;
+    for (const { snake, chain, color } of solutions) {
+      const x = getHeadX(snake);
+      const y = getHeadY(snake);
 
-        const { x, y } = route.snakeN[0];
+      const grid = copyGrid(parent.grid);
+      setColorEmpty(grid, x, y);
 
-        stack.push(getColor(grid, x, y)!);
-        setColor(grid, x, y, null);
+      const stack = [...parent.stack, color];
 
-        const key = computeKey(grid, snake, stack);
+      const weight = parent.weight + chain.length;
+      const heuristic = getHeuristic(grid, snake, stack);
 
-        if (!closeList[key] && !openList.some((s) => s.key === key)) {
-          const h = computeHeuristic(grid, snake, stack);
-          const w = c.w + route.directions.length;
-          const f = w - h;
+      const item = { grid, stack, snake, chain, weight, heuristic, parent };
 
-          openList.push({
-            key,
-            grid,
-            snake,
-            stack,
-            parent: c,
-            h,
-            w,
-            f,
-            directions: route.directions,
-          });
-        }
-      }
+      if (!closeList.some((c) => itemEquals(c, item))) {
+        closeList.push(item);
+        openList.push(item);
+      } else console.log("hit");
     }
+
+    openList.sort((a, b) => a.heuristic - b.heuristic);
   }
 
-  return unwrap(best);
-};
-
-const unwrap = (o: I | null): Point[] => {
-  if (!o) return [];
-  return [...unwrap(o.parent), ...o.directions];
+  return null;
 };

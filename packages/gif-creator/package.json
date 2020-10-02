@@ -10,10 +10,6 @@
   },
   "devDependencies": {
     "@types/execa": "2.0.0",
-    "@types/tmp": "0.2.0",
-    "@zeit/ncc": "0.22.3"
-  },
-  "scripts": {
-    "dev": "ncc run __tests__/dev.ts --quiet | tail -n +2 > out.gif "
+    "@types/tmp": "0.2.0"
   }
 }

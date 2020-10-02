@@ -1,33 +1,19 @@
 import { createCanvas } from "./canvas";
-import { samples } from "./samples";
-import { getInterestingAvailableRoutes } from "@snk/compute/getAvailableRoutes";
-import { createSnake, Snake, snakeToCells } from "@snk/compute/snake";
+import { Snake, snakeToCells } from "@snk/compute/snake";
 import { GUI } from "dat.gui";
-import { Point } from "@snk/compute/point";
-
-//
-// init
-
-const label = new URLSearchParams(window.location.search).get("sample");
-const { grid: grid0 } = samples.find((s) => s.label === label) || samples[0];
+import { grid, snake } from "./sample";
+import { getAvailableInterestingRoutes } from "@snk/compute/getAvailableRoutes";
+import type { Point } from "@snk/compute/point";
 
 //
 // compute
 
-const snake0 = createSnake([
-  //
-  { x: -1, y: -1 },
-  { x: -1, y: 0 },
-  { x: -1, y: 1 },
-  { x: -1, y: 2 },
-  { x: -1, y: 3 },
-]);
 const routes: Snake[][] = [];
-getInterestingAvailableRoutes(
-  grid0,
-  snake0,
-  (snakes) => {
-    routes.push(snakes);
+getAvailableInterestingRoutes(
+  grid,
+  snake,
+  (chain) => {
+    routes.push(chain);
     return routes.length > 10;
   },
   2
@@ -38,10 +24,10 @@ const config = { routeN: 0, routeK: 0 };
 //
 // draw
 
-const { canvas, ctx, draw } = createCanvas(grid0);
+const { canvas, ctx, draw } = createCanvas(grid);
 document.body.appendChild(canvas);
 
-draw(grid0, snake0, []);
+draw(grid, snake, []);
 
 let cancel: number;
 
@@ -53,9 +39,9 @@ const onChange = () => {
   cancelAnimationFrame(cancel);
   cancel = requestAnimationFrame(onChange);
 
-  const chain = routes[config.routeN] || [snake0];
+  const chain = routes[config.routeN] || [snake];
 
-  draw(grid0, chain[mod(-t, chain.length)], []);
+  draw(grid, chain[mod(-t, chain.length)], []);
 
   const cells: Point[] = [];
   chain.forEach((s) => cells.push(...snakeToCells(s)));
