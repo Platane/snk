@@ -1,6 +1,6 @@
 name: main
 
-on: [push, pull_request]
+on: push
 
 jobs:
   test:
@@ -55,5 +55,26 @@ jobs:
         with:
           target_branch: output
           build_dir: dist
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN_GH_PAGES }}
+
+  deploy-ghpages:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-node@v1.4.2
+        with:
+          node-version: 14
+
+      - run: yarn build:demo
+        env:
+          BASE_PATHNAME: "snk"
+
+      - uses: crazy-max/ghaction-github-pages@v2.1.1
+        if: success() && github.ref == 'refs/heads/master'
+        with:
+          target_branch: gh-pages
+          build_dir: packages/demo/dist
         env:
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN_GH_PAGES }}
