@@ -20,6 +20,8 @@ const createHeuristic = (grid0: Grid) => {
         colorCount[color] = (0 | colorCount[color]) + 1;
     }
 
+  // const colors = Object.keys(colorCount).map((x) => +x);
+
   const target = Object.entries(colorCount)
     .sort(([a], [b]) => +a - +b)
     .map(([color, length]: any) => Array.from({ length }, () => +color))
@@ -33,9 +35,22 @@ const createHeuristic = (grid0: Grid) => {
     _snake: Snake,
     stack: Color[]
   ) => {
-    const x = target[stack.length];
+    const colorTarget = target[stack.length];
 
-    return (c: Color) => (x === c ? 1 : 0);
+    // const cc = { ...colorCount };
+    // for (const color of stack) cc[color]--;
+
+    // let colorTarget;
+    // for (let i = colors.length; i--; )
+    //   if (cc[colors[i]] > 0) colorTarget = colors[i];
+
+    return (c: Color) => {
+      if (colorTarget === c) return 1;
+
+      return 0;
+
+      // return 1 - Math.abs(colorTarget - c) / 10;
+    };
   };
 
   const isEnd = (_grid: Grid, _snake: Snake, stack: Color[]) =>
