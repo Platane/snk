@@ -15,8 +15,6 @@ const { canvas, draw } = createCanvas(grid);
 document.body.appendChild(canvas);
 
 const onChange = () => {
-  debugger;
-
   const grid0 = copyGrid(grid);
   const stack0: Color[] = [];
   let snake0 = snake;

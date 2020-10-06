@@ -13,6 +13,25 @@ type Options = {
   sizeBorderRadius: number;
 };
 
+export const drawStack = (
+  ctx: CanvasRenderingContext2D,
+  stack: Color[],
+  max: number,
+  width: number,
+  o: { colorDots: Record<Color, string> }
+) => {
+  ctx.save();
+
+  const m = width / max;
+
+  for (let i = 0; i < stack.length; i++) {
+    // @ts-ignore
+    ctx.fillStyle = o.colorDots[stack[i]];
+    ctx.fillRect(i * m, 0, m + width * 0.005, 10);
+  }
+  ctx.restore();
+};
+
 export const drawWorld = (
   ctx: CanvasRenderingContext2D,
   grid: Grid,
@@ -28,15 +47,13 @@ export const drawWorld = (
 
   ctx.restore();
 
-  const m = 5;
-
   ctx.save();
+
   ctx.translate(o.sizeCell, (grid.height + 4) * o.sizeCell);
-  for (let i = 0; i < stack.length; i++) {
-    // @ts-ignore
-    ctx.fillStyle = o.colorDots[stack[i]];
-    ctx.fillRect(i * m, 0, m, 10);
-  }
+
+  const max = grid.data.reduce((sum, x) => sum + +!!x, stack.length);
+  drawStack(ctx, stack, max, grid.width * o.sizeCell, o);
+
   ctx.restore();
 
   // ctx.save();
