@@ -3,30 +3,43 @@ import { getBestRoute } from "../compute/getBestRoute";
 import { Color, copyGrid } from "../compute/grid";
 import { grid, snake } from "./sample";
 import { step } from "@snk/compute/step";
+import { isStableAndBound, stepSpring } from "./springUtils";
 
 const chain = [snake, ...getBestRoute(grid, snake)!];
 
 //
 // draw
 
-let k = 0;
+const spring = { x: 0, v: 0, target: 0 };
+const springParams = { tension: 120, friction: 20, maxVelocity: 50 };
+let animationFrame: number;
 
-const { canvas, draw } = createCanvas(grid);
+const { canvas, drawLerp } = createCanvas(grid);
 document.body.appendChild(canvas);
 
-const onChange = () => {
+const clamp = (x: number, a: number, b: number) => Math.max(a, Math.min(b, x));
+
+const loop = () => {
+  cancelAnimationFrame(animationFrame);
+
+  stepSpring(spring, springParams, spring.target);
+  const stable = isStableAndBound(spring, spring.target);
+
   const grid0 = copyGrid(grid);
   const stack0: Color[] = [];
-  let snake0 = snake;
-  chain.slice(0, k).forEach((s) => {
-    snake0 = s;
-    step(grid0, stack0, snake0);
-  });
+  for (let i = 0; i < Math.min(chain.length, spring.x); i++)
+    step(grid0, stack0, chain[i]);
 
-  draw(grid0, snake0, stack0);
+  const snake0 = chain[clamp(Math.floor(spring.x), 0, chain.length - 1)];
+  const snake1 = chain[clamp(Math.ceil(spring.x), 0, chain.length - 1)];
+  const k = spring.x % 1;
+
+  drawLerp(grid0, snake0, snake1, stack0, k);
+
+  if (!stable) animationFrame = requestAnimationFrame(loop);
 };
 
-onChange();
+loop();
 
 const input = document.createElement("input") as any;
 input.type = "range";
@@ -36,8 +49,9 @@ input.min = 0;
 input.max = chain.length;
 input.style.width = "90%";
 input.addEventListener("input", () => {
-  k = +input.value;
-  onChange();
+  spring.target = +input.value;
+  cancelAnimationFrame(animationFrame);
+  animationFrame = requestAnimationFrame(loop);
 });
 document.body.append(input);
 document.body.addEventListener("click", () => input.focus());

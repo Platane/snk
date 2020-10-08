@@ -5,6 +5,8 @@ import { getBestRoute } from "@snk/compute/getBestRoute";
 import * as grids from "@snk/compute/__fixtures__/grid";
 import { snake3 as snake } from "@snk/compute/__fixtures__/snake";
 
+jest.setTimeout(20 * 1000);
+
 const drawOptions = {
   sizeBorderRadius: 2,
   sizeCell: 16,
@@ -15,7 +17,7 @@ const drawOptions = {
   colorSnake: "purple",
 };
 
-const gifOptions = { delay: 18 };
+const gifOptions = { frameDuration: 20, step: 1 };
 
 const dir = path.resolve(__dirname, "__snapshots__");
 
