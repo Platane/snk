@@ -1,5 +1,5 @@
 import { Color, Grid } from "@snk/compute/grid";
-import { drawWorld } from "@snk/draw/drawWorld";
+import { drawLerpWorld, drawWorld } from "@snk/draw/drawWorld";
 import { Snake } from "@snk/compute/snake";
 
 export const drawOptions = {
@@ -44,5 +44,16 @@ export const createCanvas = ({
     drawWorld(ctx, grid, snake, stack, drawOptions);
   };
 
-  return { draw, canvas, ctx };
+  const drawLerp = (
+    grid: Grid,
+    snake0: Snake,
+    snake1: Snake,
+    stack: Color[],
+    k: number
+  ) => {
+    ctx.clearRect(0, 0, 9999, 9999);
+    drawLerpWorld(ctx, grid, snake0, snake1, stack, k, drawOptions);
+  };
+
+  return { draw, drawLerp, canvas, ctx };
 };
