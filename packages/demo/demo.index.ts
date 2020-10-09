@@ -1,8 +1,4 @@
 import * as grid from "@snk/compute/__fixtures__/grid";
-// import { greet } from "@snk/compute-rust";
-
-// @ts-ignore
-import("./index").catch((e) => console.error("Error importing `index.js`:", e));
 
 const container = document.createElement("div");
 container.style.fontFamily = "helvetica";
