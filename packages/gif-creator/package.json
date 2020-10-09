@@ -10,6 +10,10 @@
   },
   "devDependencies": {
     "@types/execa": "2.0.0",
-    "@types/tmp": "0.2.0"
+    "@types/tmp": "0.2.0",
+    "@zeit/ncc": "0.22.3"
+  },
+  "scripts": {
+    "benchmark": "ncc run __tests__/benchmark.ts --quiet"
   }
 }
