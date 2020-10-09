@@ -24,6 +24,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - run: sudo apt-get install gifsicle graphicsmagick
       - uses: actions/checkout@v1
       - uses: actions/setup-node@v1.4.2
         with:
