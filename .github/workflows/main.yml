@@ -53,6 +53,11 @@ jobs:
           ls -l ${{ steps.snake-gif.outputs.gif_out_path }}
           test -f ${{ steps.snake-gif.outputs.gif_out_path }}
 
+      - uses: actions/upload-artifact@v2
+        with:
+          name: output
+          path: ${{ steps.snake-gif.outputs.gif_out_path }}
+
       - uses: crazy-max/ghaction-github-pages@v2.1.1
         with:
           target_branch: output
