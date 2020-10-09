@@ -8,23 +8,33 @@ import { step } from "@snk/compute/step";
 import * as tmp from "tmp";
 import * as execa from "execa";
 
+const withTmpDir = async <T>(
+  handler: (dir: string) => Promise<T>
+): Promise<T> => {
+  const { name: dir, removeCallback: cleanUp } = tmp.dirSync({
+    unsafeCleanup: true,
+  });
+
+  try {
+    return await handler(dir);
+  } finally {
+    cleanUp();
+  }
+};
+
 export const createGif = async (
   grid0: Grid,
   chain: Snake[],
   drawOptions: Options,
   gifOptions: { frameDuration: number; step: number }
-) => {
-  const width = drawOptions.sizeCell * (grid0.width + 2);
-  const height = drawOptions.sizeCell * (grid0.height + 4) + 100;
+) =>
+  withTmpDir(async (dir) => {
+    const width = drawOptions.sizeCell * (grid0.width + 2);
+    const height = drawOptions.sizeCell * (grid0.height + 4) + 100;
 
-  const { name: dir, removeCallback: cleanUp } = tmp.dirSync({
-    unsafeCleanup: true,
-  });
+    const canvas = createCanvas(width, height);
+    const ctx = canvas.getContext("2d")!;
 
-  const canvas = createCanvas(width, height);
-  const ctx = canvas.getContext("2d")!;
-
-  try {
     const grid = copyGrid(grid0);
     const stack: Color[] = [];
 
@@ -91,7 +101,4 @@ export const createGif = async (
     );
 
     return fs.readFileSync(optimizedFileName);
-  } finally {
-    cleanUp();
-  }
-};
+  });
