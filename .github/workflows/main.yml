@@ -66,6 +66,8 @@ jobs:
         with:
           node-version: 14
 
+      - uses: bahmutov/npm-install@v1.4.1
+
       - run: yarn build:demo
         env:
           BASE_PATHNAME: "snk"

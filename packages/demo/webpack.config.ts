@@ -25,12 +25,14 @@ const config: Configuration = {
     rules: [
       {
         exclude: /node_modules/,
-        test: /\.(js|ts)$/,
+        test: /\.ts$/,
         loader: "ts-loader",
         options: {
           compilerOptions: {
-            lib: ["dom", "ES2020"],
-            target: "ES2020",
+            lib: ["dom", "es2020"],
+            target: "es2020",
+            module: "es2020",
+            moduleResolution: "node",
           },
         },
       },

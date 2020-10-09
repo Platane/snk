@@ -7,16 +7,17 @@
   },
   "devDependencies": {
     "@types/dat.gui": "0.7.5",
+    "@types/webpack": "4.41.22",
     "dat.gui": "0.7.7",
     "html-webpack-plugin": "4.5.0",
     "ts-loader": "8.0.4",
+    "ts-node": "9.0.0",
     "webpack": "4.44.2",
     "webpack-cli": "3.3.12",
     "webpack-dev-server": "3.11.0"
   },
   "scripts": {
-    "prepare": "tsc webpack.config.ts",
-    "build": "yarn prepare ; webpack",
-    "dev": "yarn prepare ; webpack-dev-server --port ${PORT-3000}"
+    "build": "webpack",
+    "dev": "webpack-dev-server --port ${PORT-3000}"
   }
 }
