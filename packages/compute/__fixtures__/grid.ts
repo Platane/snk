@@ -29,6 +29,13 @@ setColor(enclave, 4, 3, 2 as Color);
 setColor(enclave, 3, 3, 1 as Color);
 setColor(enclave, 5, 5, 1 as Color);
 
+// enclaved color
+export const enclaveBorder = createEmptyGrid(7, 7);
+setColor(enclaveBorder, 1, 0, 3 as Color);
+setColor(enclaveBorder, 2, 1, 3 as Color);
+setColor(enclaveBorder, 3, 0, 3 as Color);
+setColor(enclaveBorder, 2, 0, 1 as Color);
+
 const create = (width: number, height: number, emptyP: number) => {
   const grid = createEmptyGrid(width, height);
   const random = new ParkMiller(10);

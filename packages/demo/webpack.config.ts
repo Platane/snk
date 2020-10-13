@@ -8,13 +8,13 @@ const basePathname = (process.env.BASE_PATHNAME || "")
   .split("/")
   .filter(Boolean);
 
+const demos: string[] = require("./demo.json");
+
 const config: Configuration = {
   mode: "development",
-  entry: {
-    "demo.getAvailableRoutes": "./demo.getAvailableRoutes",
-    "demo.getBestRoute": "./demo.getBestRoute",
-    "demo.index": "./demo.index",
-  },
+  entry: Object.fromEntries(
+    demos.map((demo: string) => [demo, `./demo.${demo}`])
+  ),
   resolve: { extensions: [".ts", ".js"] },
   output: {
     path: path.join(__dirname, "dist"),
@@ -39,18 +39,13 @@ const config: Configuration = {
     ],
   },
   plugins: [
-    new HtmlWebpackPlugin({
-      filename: "index.html",
-      chunks: ["demo.index"],
-    }),
-    new HtmlWebpackPlugin({
-      filename: "demo-getAvailableRoutes.html",
-      chunks: ["demo.getAvailableRoutes"],
-    }),
-    new HtmlWebpackPlugin({
-      filename: "demo-getBestRoute.html",
-      chunks: ["demo.getBestRoute"],
-    }),
+    ...demos.map(
+      (demo) =>
+        new HtmlWebpackPlugin({
+          filename: `${demo}.html`,
+          chunks: [demo],
+        })
+    ),
   ],
 
   devtool: false,
