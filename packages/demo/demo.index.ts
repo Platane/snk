@@ -4,7 +4,7 @@ const container = document.createElement("div");
 container.style.fontFamily = "helvetica";
 document.body.appendChild(container);
 
-for (const demo of ["getAvailableRoutes", "getBestRoute"]) {
+for (const demo of require("./demo.json").filter((x: any) => x !== "index")) {
   const title = document.createElement("h1");
   title.innerText = demo;
 
@@ -14,7 +14,7 @@ for (const demo of ["getAvailableRoutes", "getBestRoute"]) {
     const a = document.createElement("a");
     a.style.display = "block";
     a.innerText = `${demo} - ${g}`;
-    a.href = `./demo-${demo}.html?grid=${g}`;
+    a.href = `./${demo}.html?grid=${g}`;
 
     container.appendChild(a);
   }
