@@ -30,7 +30,7 @@ export const createGif = async (
 ) =>
   withTmpDir(async (dir) => {
     const width = drawOptions.sizeCell * (grid0.width + 2);
-    const height = drawOptions.sizeCell * (grid0.height + 4) + 100;
+    const height = drawOptions.sizeCell * (grid0.height + 4) + 30;
 
     const canvas = createCanvas(width, height);
     const ctx = canvas.getContext("2d")!;
