@@ -1,10 +1,10 @@
 import * as fs from "fs";
 import * as path from "path";
 import { createGif } from "..";
-import { getBestRoute } from "@snk/compute/getBestRoute";
 import * as grids from "@snk/compute/__fixtures__/grid";
 import { snake3 as snake } from "@snk/compute/__fixtures__/snake";
 import { createSnake, nextSnake } from "@snk/compute/snake";
+import { getBestRoute } from "@snk/compute/getBestRoute";
 
 jest.setTimeout(20 * 1000);
 
@@ -18,7 +18,7 @@ const drawOptions = {
   colorSnake: "purple",
 };
 
-const gifOptions = { frameDuration: 20, step: 1 };
+const gifOptions = { frameDuration: 200, step: 1 };
 
 const dir = path.resolve(__dirname, "__snapshots__");
 

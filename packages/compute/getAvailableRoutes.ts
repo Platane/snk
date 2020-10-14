@@ -11,6 +11,9 @@ import { sortPush } from "./utils/sortPush";
 import type { Snake } from "./snake";
 import type { Grid, Color } from "./grid";
 
+/**
+ * get routes leading to non-empty cells until onSolution returns true
+ */
 export const getAvailableRoutes = (
   grid: Grid,
   snake0: Snake,

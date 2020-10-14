@@ -79,7 +79,7 @@ export const createGif = async (
       [
         "convert",
         ["-loop", "0"],
-        ["-delay", gifOptions.frameDuration.toString()],
+        ["-delay", (gifOptions.frameDuration / 10).toString()],
         ["-dispose", "2"],
         // ["-layers", "OptimizeFrame"],
         ["-compress", "LZW"],

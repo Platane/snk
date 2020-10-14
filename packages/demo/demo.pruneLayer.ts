@@ -1,7 +1,7 @@
 import { createCanvas } from "./canvas";
 import { Color, copyGrid } from "../compute/grid";
 import { grid, snake } from "./sample";
-import { pruneLayer } from "@snk/compute/getBestRoute-layer";
+import { pruneLayer } from "@snk/compute/pruneLayer";
 
 const colors = [1, 2, 3] as Color[];
 
