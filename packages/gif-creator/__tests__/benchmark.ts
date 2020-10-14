@@ -26,7 +26,7 @@ const drawOptions = {
   colorSnake: "purple",
 };
 
-const gifOptions = { frameDuration: 20, step: 1 };
+const gifOptions = { frameDuration: 200, step: 1 };
 
 (async () => {
   const m = 3;

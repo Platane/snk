@@ -1,33 +1,29 @@
-import { getAvailableInterestingRoutes } from "../getAvailableRoutes";
-import { small as grid } from "../__fixtures__/grid";
+import { realistic as grid } from "../__fixtures__/grid";
 import { snake3 } from "../__fixtures__/snake";
 import { performance } from "perf_hooks";
-import { getAvailableRoutes } from "../getAvailableRoutes2";
+import { getAvailableRoutes } from "../getAvailableRoutes";
+import { getBestRoute } from "../getBestRoute";
 
-const m = 1000;
 {
+  const m = 100;
   const s = performance.now();
   for (let k = m; k--; ) {
     const solutions = [];
 
-    getAvailableInterestingRoutes(
-      grid,
-      snake3,
-      (snakes) => {
-        solutions.push(snakes);
-        return false;
-      },
-      2
-    );
+    getAvailableRoutes(grid, snake3, (snakes) => {
+      solutions.push(snakes);
+      return false;
+    });
   }
-  console.log((performance.now() - s) / m, "ms");
+  console.log("getAvailableRoutes", (performance.now() - s) / m, "ms");
 }
 
 {
+  const m = 10;
   const s = performance.now();
   for (let k = m; k--; ) {
-    getAvailableRoutes(grid, snake3, 2);
+    getBestRoute(grid, snake3);
   }
 
-  console.log((performance.now() - s) / m, "ms");
+  console.log("getBestRoute", (performance.now() - s) / m, "ms");
 }
