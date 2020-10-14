@@ -27,7 +27,7 @@ export const generateContributionSnake = async (userName: string) => {
     colorSnake: "purple",
   };
 
-  const gifOptions = { frameDuration: 100, step: 2 };
+  const gifOptions = { frameDuration: 100, step: 1 };
 
   const chain = getBestRoute(grid0, snake0)!;
 
