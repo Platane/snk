@@ -1,20 +1,15 @@
-import {
-  Grid,
-  isInsideLarge,
-  getColor,
-  isInside,
-  Color,
-  isEmpty,
-} from "./grid";
+import { isInsideLarge, getColor, isInside, isEmpty } from "./grid";
 import { around4 } from "./point";
 import {
   getHeadX,
   getHeadY,
   nextSnake,
-  Snake,
   snakeEquals,
   snakeWillSelfCollide,
 } from "./snake";
+import { sortPush } from "./utils/sortPush";
+import type { Snake } from "./snake";
+import type { Grid, Color } from "./grid";
 
 export const getAvailableRoutes = (
   grid: Grid,
@@ -27,8 +22,6 @@ export const getAvailableRoutes = (
   while (openList.length) {
     const c = openList.shift()!;
     const [snake] = c;
-
-    closeList.push(snake);
 
     const cx = getHeadX(snake);
     const cy = getHeadY(snake);
@@ -48,42 +41,14 @@ export const getAvailableRoutes = (
         if (!closeList.some((s) => snakeEquals(nsnake, s))) {
           const color = isInside(grid, nx, ny) && getColor(grid, nx, ny);
 
-          if (color && !isEmpty(color)) {
-            if (onSolution([nsnake, ...c.slice(0, -1)], color)) return;
+          if (!color || isEmpty(color)) {
+            sortPush(openList, [nsnake, ...c], (a, b) => a.length - b.length);
+            closeList.push(nsnake);
           } else {
-            if (!openList.some(([s]) => snakeEquals(nsnake, s))) {
-              const chain = [nsnake, ...c];
-              openList.push(chain);
-              openList.sort((a, b) => a.length - b.length);
-            }
+            if (onSolution([nsnake, ...c.slice(0, -1)], color)) return;
           }
         }
       }
     }
   }
-};
-
-export const getAvailableInterestingRoutes = (
-  grid: Grid,
-  snake0: Snake,
-  onSolution: (snakes: Snake[], color: Color) => boolean,
-  n = snake0.length
-) => {
-  const solutions: Snake[] = [];
-
-  getAvailableRoutes(grid, snake0, (snakes, color) => {
-    const [snake] = snakes;
-
-    for (let j = solutions.length; j--; ) {
-      let same = true;
-      for (let i = 0; i < n * 2; i++)
-        same = same && solutions[j][i] === snake[i];
-
-      if (same) return false;
-    }
-
-    solutions.push(snake);
-
-    return onSolution(snakes, color);
-  });
 };

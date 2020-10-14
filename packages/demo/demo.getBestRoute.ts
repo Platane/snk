@@ -1,5 +1,5 @@
 import { createCanvas } from "./canvas";
-import { getBestRoute } from "../compute/getBestRoute";
+import { getBestRoute } from "@snk/compute/getBestRoute";
 import { Color, copyGrid } from "../compute/grid";
 import { grid, snake } from "./sample";
 import { step } from "@snk/compute/step";
