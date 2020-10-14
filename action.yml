@@ -8,7 +8,7 @@ outputs:
 
 runs:
   using: "docker"
-  image: "platane/snk:latest"
+  image: "docker://platane/snk:latest"
 
 inputs:
   github_user_name:
