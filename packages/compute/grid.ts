@@ -40,11 +40,47 @@ export const setColorEmpty = (grid: Grid, x: number, y: number) => {
   setColor(grid, x, y, 0 as Empty);
 };
 
+/**
+ * return true if the grid is empty
+ */
 export const isGridEmpty = (grid: Grid) => grid.data.every((x) => x === 0);
 
+/**
+ * extract colors
+ * return a list of the colors found in the grid
+ */
+export const extractColors = (grid: Grid): Color[] => {
+  const colors = new Set<Color>();
+  grid.data.forEach((c: any) => {
+    if (!isEmpty(c)) colors.add(c);
+  });
+  return Array.from(colors.keys()).sort();
+};
+
+/**
+ * extract colors count
+ * return a list of the colors and their occurrences found in the grid
+ */
+export const extractColorCount = (grid: Grid) => {
+  const colors = new Map<Color, number>();
+  grid.data.forEach((c: any) => {
+    if (!isEmpty(c)) colors.set(c, 1 + (colors.get(c) || 0));
+  });
+  return Array.from(colors.entries()).map(([color, count]) => ({
+    color,
+    count,
+  }));
+};
+
+/**
+ *  return true if the both are equals
+ */
 export const gridEquals = (a: Grid, b: Grid) =>
   a.data.every((_, i) => a.data[i] === b.data[i]);
 
+/**
+ * return a unique string for the grid
+ */
 export const getGridKey = ({ data }: Grid) => {
   let key = "";
   const n = 5;
