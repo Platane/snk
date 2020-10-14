@@ -5,6 +5,7 @@ import { getBestRoute } from "@snk/compute/getBestRoute";
 import { userContributionToGrid } from "./userContributionToGrid";
 
 export const generateContributionSnake = async (userName: string) => {
+  console.log("🎣 fetching github user contribution");
   const { cells, colorScheme } = await getGithubUserContribution(userName);
 
   const grid0 = userContributionToGrid(cells);
@@ -29,8 +30,10 @@ export const generateContributionSnake = async (userName: string) => {
 
   const gifOptions = { frameDuration: 100, step: 1 };
 
+  console.log("📡 computing best route");
   const chain = getBestRoute(grid0, snake0)!;
 
+  console.log("📹 creating gif");
   const buffer = await createGif(grid0, chain, drawOptions, gifOptions);
 
   return buffer;

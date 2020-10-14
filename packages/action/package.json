@@ -11,6 +11,6 @@
   },
   "scripts": {
     "build": "ncc build --external canvas --out dist ./index.ts ",
-    "dev": "ncc run __tests__/dev.ts --quiet | tail -n +2 > out.gif "
+    "dev": "ncc run __tests__/dev.ts --quiet"
   }
 }
