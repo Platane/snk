@@ -108,6 +108,6 @@ jobs:
           push: ${{ github.ref == 'refs/heads/master' }}
           tags: |
             platane/snk:latest
-            platane/snk:${{ GITHUB_SHA }}
+            platane/snk:${{ github.sha }}
           file: packages/action/Dockerfile
           context: packages/action
