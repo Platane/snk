@@ -18,10 +18,11 @@ export const generateContributionSnake = async (userName: string) => {
     { x: 0, y: -1 },
   ]);
 
+  const upscale = 1.6;
   const drawOptions = {
-    sizeBorderRadius: 2,
-    sizeCell: 16,
-    sizeDot: 12,
+    sizeBorderRadius: 2 * upscale,
+    sizeCell: 16 * upscale,
+    sizeDot: 12 * upscale,
     colorBorder: "#1b1f230a",
     colorDots: colorScheme,
     colorEmpty: colorScheme[0],
