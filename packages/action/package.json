@@ -11,6 +11,6 @@
   },
   "scripts": {
     "build": "ncc build --external canvas --out dist ./index.ts ",
-    "dev": "ncc run __tests__/dev.ts --quiet"
+    "dev": "rm -f __tests__/__snapshots__/out.gif ; ncc run __tests__/dev.ts --quiet"
   }
 }
