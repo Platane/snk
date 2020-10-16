@@ -3,7 +3,11 @@ import * as path from "path";
 import { createCanvas } from "canvas";
 import { Grid, copyGrid, Color } from "@snk/compute/grid";
 import { Snake } from "@snk/compute/snake";
-import { Options, drawLerpWorld } from "@snk/draw/drawWorld";
+import {
+  Options,
+  drawLerpWorld,
+  getCanvasWorldSize,
+} from "@snk/draw/drawWorld";
 import { step } from "@snk/compute/step";
 import * as tmp from "tmp";
 import * as execa from "execa";
@@ -29,8 +33,7 @@ export const createGif = async (
   gifOptions: { frameDuration: number; step: number }
 ) =>
   withTmpDir(async (dir) => {
-    const width = drawOptions.sizeCell * (grid0.width + 2);
-    const height = drawOptions.sizeCell * (grid0.height + 4) + 30;
+    const { width, height } = getCanvasWorldSize(grid0, drawOptions);
 
     const canvas = createCanvas(width, height);
     const ctx = canvas.getContext("2d")!;
@@ -44,9 +47,9 @@ export const createGif = async (
       step(grid, stack, snake0);
 
       for (let k = 0; k < gifOptions.step; k++) {
-        ctx.clearRect(0, 0, 99999, 99999);
+        ctx.clearRect(0, 0, width, height);
         ctx.fillStyle = "#fff";
-        ctx.fillRect(0, 0, 99999, 99999);
+        ctx.fillRect(0, 0, width, height);
         drawLerpWorld(
           ctx,
           grid,
@@ -80,10 +83,10 @@ export const createGif = async (
         "convert",
         ["-loop", "0"],
         ["-delay", (gifOptions.frameDuration / 10).toString()],
-        ["-dispose", "2"],
+        // ["-dispose", "2"], // for transparent gif
         // ["-layers", "OptimizeFrame"],
-        ["-compress", "LZW"],
-        ["-strip"],
+        // ["-compress", "LZW"],
+        // ["-strip"],
 
         path.join(dir, "*.png"),
         outFileName,
@@ -95,6 +98,8 @@ export const createGif = async (
       [
         //
         "--optimize=3",
+        "--color-method=diversity",
+        "--colors=18",
         outFileName,
         ["--output", optimizedFileName],
       ].flat()

@@ -85,3 +85,10 @@ export const drawLerpWorld = (
 
   ctx.restore();
 };
+
+export const getCanvasWorldSize = (grid: Grid, o: { sizeCell: number }) => {
+  const width = o.sizeCell * (grid.width + 2);
+  const height = o.sizeCell * (grid.height + 4) + 30;
+
+  return { width, height };
+};

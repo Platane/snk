@@ -6,8 +6,8 @@ RUN    apt-get update \
 
 WORKDIR /github/snk
 
-RUN     npm install canvas@2.6.1
+RUN    npm install canvas@2.6.1 --no-save --no-package-lock
 
-COPY    dist /github/snk/
+COPY   dist /github/snk/
 
 CMD    ["node", "/github/snk/index.js"]

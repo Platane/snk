@@ -18,7 +18,8 @@ export const generateContributionSnake = async (userName: string) => {
     { x: 0, y: -1 },
   ]);
 
-  const upscale = 1.6;
+  // const upscale = 815 / (grid0.width + 2) / 16;
+  const upscale = 2;
   const drawOptions = {
     sizeBorderRadius: 2 * upscale,
     sizeCell: 16 * upscale,

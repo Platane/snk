@@ -44,7 +44,7 @@ export const drawSnakeLerp = (
   const m = 0.8;
   const n = snake0.length / 2;
   for (let i = 0; i < n; i++) {
-    const u = (i + 1) * 0.6;
+    const u = (i + 1) * 0.6 * (o.sizeCell / 16);
 
     const a = (1 - m) * (i / Math.max(n - 1, 1));
     const ki = clamp((k - a) / m, 0, 1);

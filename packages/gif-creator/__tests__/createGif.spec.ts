@@ -8,10 +8,11 @@ import { getBestRoute } from "@snk/compute/getBestRoute";
 
 jest.setTimeout(20 * 1000);
 
+const upscale = 1;
 const drawOptions = {
-  sizeBorderRadius: 2,
-  sizeCell: 16,
-  sizeDot: 12,
+  sizeBorderRadius: 2 * upscale,
+  sizeCell: 16 * upscale,
+  sizeDot: 12 * upscale,
   colorBorder: "#1b1f230a",
   colorDots: { 1: "#9be9a8", 2: "#40c463", 3: "#30a14e", 4: "#216e39" },
   colorEmpty: "#ebedf0",

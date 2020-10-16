@@ -7,10 +7,11 @@
     "@snk/github-user-contribution": "1.0.0"
   },
   "devDependencies": {
+    "ts-node": "9.0.0",
     "@zeit/ncc": "0.22.3"
   },
   "scripts": {
     "build": "ncc build --external canvas --out dist ./index.ts ",
-    "dev": "rm -f __tests__/__snapshots__/out.gif ; ncc run __tests__/dev.ts --quiet"
+    "dev": "ts-node __tests__/dev.ts"
   }
 }
