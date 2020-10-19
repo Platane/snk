@@ -1,7 +1,8 @@
-import { Grid, Color } from "@snk/compute/grid";
 import { drawGrid } from "./drawGrid";
-import { Snake } from "@snk/compute/snake";
 import { drawSnake, drawSnakeLerp } from "./drawSnake";
+import type { Grid, Color } from "@snk/compute/grid";
+import type { Point } from "@snk/compute/point";
+import type { Snake } from "@snk/compute/snake";
 
 export type Options = {
   colorDots: Record<Color, string>;
@@ -11,6 +12,7 @@ export type Options = {
   sizeCell: number;
   sizeDot: number;
   sizeBorderRadius: number;
+  cells?: Point[];
 };
 
 export const drawStack = (

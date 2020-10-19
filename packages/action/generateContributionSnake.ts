@@ -28,6 +28,7 @@ export const generateContributionSnake = async (userName: string) => {
     colorDots: colorScheme,
     colorEmpty: colorScheme[0],
     colorSnake: "purple",
+    cells,
   };
 
   const gifOptions = { frameDuration: 100, step: 1 };
