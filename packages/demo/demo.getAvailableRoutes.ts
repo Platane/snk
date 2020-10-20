@@ -1,10 +1,10 @@
 import { createCanvas } from "./canvas";
-import { snakeToCells } from "@snk/compute/snake";
+import { snakeToCells } from "@snk/types/snake";
 import { GUI } from "dat.gui";
 import { grid, snake } from "./sample";
 import { getAvailableRoutes } from "@snk/compute/getAvailableRoutes";
-import type { Point } from "@snk/compute/point";
-import type { Snake } from "@snk/compute/snake";
+import type { Point } from "@snk/types/point";
+import type { Snake } from "@snk/types/snake";
 
 //
 // compute

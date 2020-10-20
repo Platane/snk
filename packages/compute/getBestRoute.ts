@@ -1,8 +1,8 @@
-import { copyGrid, extractColors } from "./grid";
-import type { Snake } from "./snake";
-import type { Grid } from "./grid";
+import { copyGrid, isEmpty } from "@snk/types/grid";
 import { pruneLayer } from "./pruneLayer";
 import { cleanLayer } from "./cleanLayer";
+import type { Snake } from "@snk/types/snake";
+import type { Color, Grid } from "@snk/types/grid";
 
 export const getBestRoute = (grid0: Grid, snake0: Snake) => {
   const grid = copyGrid(grid0);
@@ -19,4 +19,12 @@ export const getBestRoute = (grid0: Grid, snake0: Snake) => {
   }
 
   return chain.reverse().slice(1);
+};
+
+const extractColors = (grid: Grid): Color[] => {
+  const colors = new Set<Color>();
+  grid.data.forEach((c: any) => {
+    if (!isEmpty(c)) colors.add(c);
+  });
+  return Array.from(colors.keys()).sort();
 };

@@ -1,5 +1,6 @@
 import { pathRoundedRect } from "./pathRoundedRect";
-import { Snake, snakeToCells } from "@snk/compute/snake";
+import { snakeToCells } from "@snk/types/snake";
+import type { Snake } from "@snk/types/snake";
 
 type Options = {
   colorSnake: string;

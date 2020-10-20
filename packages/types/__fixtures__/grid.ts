@@ -1,7 +1,7 @@
 // @ts-ignore
 import * as ParkMiller from "park-miller";
-import { Color, createEmptyGrid, setColor } from "@snk/compute/grid";
-import { fillRandomGrid } from "../generateGrid";
+import { Color, createEmptyGrid, setColor } from "../grid";
+import { randomlyFillGrid } from "../randomlyFillGrid";
 
 const colors = [1, 2, 3] as Color[];
 
@@ -39,8 +39,11 @@ setColor(enclaveBorder, 2, 0, 1 as Color);
 const create = (width: number, height: number, emptyP: number) => {
   const grid = createEmptyGrid(width, height);
   const random = new ParkMiller(10);
-  const rand = (a: number, b: number) => random.integerInRange(a, b - 1);
-  fillRandomGrid(grid, { colors, emptyP }, rand);
+  randomlyFillGrid(
+    grid,
+    { colors, emptyP },
+    random.integerInRange.bind(random)
+  );
   return grid;
 };
 

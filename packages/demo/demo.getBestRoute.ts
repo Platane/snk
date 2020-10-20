@@ -1,6 +1,6 @@
 import { createCanvas } from "./canvas";
 import { getBestRoute } from "@snk/compute/getBestRoute";
-import { Color, copyGrid } from "../compute/grid";
+import { Color, copyGrid } from "@snk/types/grid";
 import { grid, snake } from "./sample";
 import { step } from "@snk/compute/step";
 import { isStableAndBound, stepSpring } from "./springUtils";

@@ -1,8 +1,8 @@
-import { getColor, isEmpty, isInside, setColorEmpty } from "./grid";
-import { around4 } from "./point";
+import { getColor, isEmpty, isInside, setColorEmpty } from "@snk/types/grid";
+import { around4 } from "@snk/types/point";
 import { sortPush } from "./utils/sortPush";
-import type { Color, Grid } from "./grid";
-import type { Point } from "./point";
+import type { Color, Grid } from "@snk/types/grid";
+import type { Point } from "@snk/types/point";
 
 type M = Point & { parent: M | null; h: number };
 

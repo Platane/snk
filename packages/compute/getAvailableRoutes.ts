@@ -1,15 +1,15 @@
-import { isInsideLarge, getColor, isInside, isEmpty } from "./grid";
-import { around4 } from "./point";
+import { isInsideLarge, getColor, isInside, isEmpty } from "@snk/types/grid";
+import { around4 } from "@snk/types/point";
 import {
   getHeadX,
   getHeadY,
   nextSnake,
   snakeEquals,
   snakeWillSelfCollide,
-} from "./snake";
+} from "@snk/types/snake";
 import { sortPush } from "./utils/sortPush";
-import type { Snake } from "./snake";
-import type { Grid, Color } from "./grid";
+import type { Snake } from "@snk/types/snake";
+import type { Grid, Color } from "@snk/types/grid";
 
 /**
  * get routes leading to non-empty cells until onSolution returns true

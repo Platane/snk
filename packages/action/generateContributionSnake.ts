@@ -1,7 +1,7 @@
 import { getGithubUserContribution } from "@snk/github-user-contribution";
 import { createGif } from "@snk/gif-creator";
-import { createSnake } from "@snk/compute/snake";
 import { getBestRoute } from "@snk/compute/getBestRoute";
+import { createSnakeFromCells } from "@snk/types/snake";
 import { userContributionToGrid } from "./userContributionToGrid";
 
 export const generateContributionSnake = async (userName: string) => {
@@ -10,7 +10,7 @@ export const generateContributionSnake = async (userName: string) => {
 
   const grid0 = userContributionToGrid(cells);
 
-  const snake0 = createSnake([
+  const snake0 = createSnakeFromCells([
     { x: 4, y: -1 },
     { x: 3, y: -1 },
     { x: 2, y: -1 },
@@ -25,7 +25,7 @@ export const generateContributionSnake = async (userName: string) => {
     sizeCell: 16 * upscale,
     sizeDot: 12 * upscale,
     colorBorder: "#1b1f230a",
-    colorDots: colorScheme,
+    colorDots: colorScheme as any,
     colorEmpty: colorScheme[0],
     colorSnake: "purple",
     cells,

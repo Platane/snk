@@ -1,6 +1,6 @@
 import { getBestRoute } from "../getBestRoute";
-import { Color, createEmptyGrid, setColor } from "../grid";
-import { createSnake, snakeToCells } from "../snake";
+import { Color, createEmptyGrid, setColor } from "@snk/types/grid";
+import { createSnakeFromCells, snakeToCells } from "@snk/types/snake";
 
 it("should find best route", () => {
   const snk0 = [
@@ -11,7 +11,7 @@ it("should find best route", () => {
   const grid = createEmptyGrid(5, 5);
   setColor(grid, 3, 3, 1 as Color);
 
-  const chain = getBestRoute(grid, createSnake(snk0))!;
+  const chain = getBestRoute(grid, createSnakeFromCells(snk0))!;
 
   expect(snakeToCells(chain[0])[1]).toEqual({ x: 0, y: 0 });
 

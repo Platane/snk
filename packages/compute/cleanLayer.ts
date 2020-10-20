@@ -1,11 +1,11 @@
-import { copyGrid, isEmpty, setColorEmpty } from "./grid";
-import { getHeadX, getHeadY, snakeEquals } from "./snake";
+import { copyGrid, isEmpty, setColorEmpty } from "@snk/types/grid";
+import { getHeadX, getHeadY, snakeEquals } from "@snk/types/snake";
 import { sortPush } from "./utils/sortPush";
 import { arrayEquals } from "./utils/array";
 import { getAvailableRoutes } from "./getAvailableRoutes";
-import type { Snake } from "./snake";
-import type { Grid } from "./grid";
-import type { Point } from "./point";
+import type { Snake } from "@snk/types/snake";
+import type { Grid } from "@snk/types/grid";
+import type { Point } from "@snk/types/point";
 
 type M = {
   snake: Snake;

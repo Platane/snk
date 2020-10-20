@@ -1,6 +1,6 @@
-import { Color } from "@snk/compute/grid";
 import { pathRoundedRect } from "./pathRoundedRect";
-import { Point } from "@snk/compute/point";
+import type { Color } from "@snk/types/grid";
+import type { Point } from "@snk/types/point";
 
 type Options = {
   colorDots: Record<Color, string>;

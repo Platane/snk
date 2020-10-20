@@ -1,4 +1,4 @@
-import * as grid from "@snk/compute/__fixtures__/grid";
+import * as grid from "@snk/types/__fixtures__/grid";
 
 const container = document.createElement("div");
 container.style.fontFamily = "helvetica";

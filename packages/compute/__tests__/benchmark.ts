@@ -1,5 +1,5 @@
-import { realistic as grid } from "../__fixtures__/grid";
-import { snake3 } from "../__fixtures__/snake";
+import { realistic as grid } from "@snk/types/__fixtures__/grid";
+import { snake3 } from "@snk/types/__fixtures__/snake";
 import { performance } from "perf_hooks";
 import { getAvailableRoutes } from "../getAvailableRoutes";
 import { getBestRoute } from "../getBestRoute";

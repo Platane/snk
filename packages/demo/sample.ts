@@ -1,7 +1,7 @@
-import { Grid } from "@snk/compute/grid";
-import { Snake } from "@snk/compute/snake";
-import * as grids from "@snk/compute/__fixtures__/grid";
-import * as snakes from "@snk/compute/__fixtures__/snake";
+import * as grids from "@snk/types/__fixtures__/grid";
+import * as snakes from "@snk/types/__fixtures__/snake";
+import type { Snake } from "@snk/types/snake";
+import type { Grid } from "@snk/types/grid";
 
 const sp = new URLSearchParams(window.location.search);
 

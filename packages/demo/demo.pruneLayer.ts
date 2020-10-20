@@ -1,5 +1,5 @@
 import { createCanvas } from "./canvas";
-import { Color, copyGrid } from "../compute/grid";
+import { Color, copyGrid } from "@snk/types/grid";
 import { grid, snake } from "./sample";
 import { pruneLayer } from "@snk/compute/pruneLayer";
 

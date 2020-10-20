@@ -1,8 +1,7 @@
-// @ts-ignore
-import { createSnake } from "../snake";
+import { createSnakeFromCells } from "../snake";
 
 const create = (length: number) =>
-  createSnake(Array.from({ length }, (_, i) => ({ x: i, y: -1 })));
+  createSnakeFromCells(Array.from({ length }, (_, i) => ({ x: i, y: -1 })));
 
 export const snake1 = create(1);
 export const snake3 = create(3);

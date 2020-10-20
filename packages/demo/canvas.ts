@@ -1,6 +1,6 @@
-import { Color, Grid } from "@snk/compute/grid";
+import { Color, Grid } from "@snk/types/grid";
 import { drawLerpWorld, drawWorld } from "@snk/draw/drawWorld";
-import { Snake } from "@snk/compute/snake";
+import { Snake } from "@snk/types/snake";
 
 export const drawOptions = {
   sizeBorderRadius: 2,

@@ -1,9 +1,11 @@
 import { performance } from "perf_hooks";
-import { createSnake, nextSnake } from "@snk/compute/snake";
-import { realistic as grid } from "@snk/compute/__fixtures__/grid";
+import { createSnakeFromCells, nextSnake } from "@snk/types/snake";
+import { realistic as grid } from "@snk/types/__fixtures__/grid";
 import { createGif } from "..";
 
-let snake = createSnake(Array.from({ length: 6 }, (_, i) => ({ x: i, y: -1 })));
+let snake = createSnakeFromCells(
+  Array.from({ length: 6 }, (_, i) => ({ x: i, y: -1 }))
+);
 
 const chain = [snake];
 for (let y = -1; y < grid.height; y++) {

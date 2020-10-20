@@ -1,5 +1,5 @@
 import {
-  createSnake,
+  createSnakeFromCells,
   nextSnake,
   snakeToCells,
   snakeWillSelfCollide,
@@ -12,7 +12,7 @@ it("should convert to point", () => {
     { x: 0, y: 0 },
   ];
 
-  expect(snakeToCells(createSnake(snk0))).toEqual(snk0);
+  expect(snakeToCells(createSnakeFromCells(snk0))).toEqual(snk0);
 });
 
 it("should return next snake", () => {
@@ -28,7 +28,9 @@ it("should return next snake", () => {
     { x: 1, y: 0 },
   ];
 
-  expect(snakeToCells(nextSnake(createSnake(snk0), 1, 0))).toEqual(snk1);
+  expect(snakeToCells(nextSnake(createSnakeFromCells(snk0), 1, 0))).toEqual(
+    snk1
+  );
 });
 
 it("should test snake collision", () => {
@@ -38,6 +40,6 @@ it("should test snake collision", () => {
     { x: 0, y: 0 },
   ];
 
-  expect(snakeWillSelfCollide(createSnake(snk0), 1, 0)).toBe(false);
-  expect(snakeWillSelfCollide(createSnake(snk0), 0, -1)).toBe(true);
+  expect(snakeWillSelfCollide(createSnakeFromCells(snk0), 1, 0)).toBe(false);
+  expect(snakeWillSelfCollide(createSnakeFromCells(snk0), 0, -1)).toBe(true);
 });

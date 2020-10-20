@@ -28,11 +28,10 @@ const config: Configuration = {
         test: /\.ts$/,
         loader: "ts-loader",
         options: {
+          transpileOnly: true,
           compilerOptions: {
             lib: ["dom", "es2020"],
-            target: "es2020",
-            module: "es2020",
-            moduleResolution: "node",
+            target: "es5",
           },
         },
       },

@@ -1,8 +1,8 @@
 import * as fs from "fs";
 import * as path from "path";
 import { createCanvas } from "canvas";
-import { Grid, copyGrid, Color } from "@snk/compute/grid";
-import { Snake } from "@snk/compute/snake";
+import { Grid, copyGrid, Color } from "@snk/types/grid";
+import { Snake } from "@snk/types/snake";
 import {
   Options,
   drawLerpWorld,
