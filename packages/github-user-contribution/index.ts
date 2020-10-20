@@ -12,9 +12,7 @@ export const getGithubUserContribution = async (userName: string) => {
     dom.window.document.querySelectorAll(".legend > li")
   ).map(
     (element) =>
-      (element.getAttribute("style") || "").match(
-        /background\-color: +(#\w+)/
-      )?.[1]!
+      element.getAttribute("style")!.match(/background\-color: +(#\w+)/)![1]!
   );
 
   const cells = Array.from(
