@@ -12,7 +12,9 @@ export const getGithubUserContribution = async (userName: string) => {
     dom.window.document.querySelectorAll(".legend > li")
   ).map(
     (element) =>
-      element.getAttribute("style")?.match(/background\-color: +(#\w+)/)?.[1]!
+      (element.getAttribute("style") || "").match(
+        /background\-color: +(#\w+)/
+      )?.[1]!
   );
 
   const cells = Array.from(
@@ -35,6 +37,6 @@ export const getGithubUserContribution = async (userName: string) => {
 
 type ThenArg<T> = T extends PromiseLike<infer U> ? U : T;
 
-export type Cell = ThenArg<
-  ReturnType<typeof getGithubUserContribution>
->["cells"][number];
+export type Res = ThenArg<ReturnType<typeof getGithubUserContribution>>;
+
+export type Cell = Res["cells"][number];
