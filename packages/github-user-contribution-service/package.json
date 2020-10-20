@@ -1,0 +1,7 @@
+{
+  "name": "@snk/github-user-contribution-service",
+  "version": "1.0.0",
+  "dependencies": {
+    "@vercel/node": "1.8.4"
+  }
+}
