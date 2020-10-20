@@ -7,6 +7,6 @@
     "@vercel/node": "1.8.4"
   },
   "scripts": {
-    "vercel-build": "( cd ../demo ; yarn build ) && mv ../demo/dist public"
+    "vercel-build": "( cd ../demo && yarn build ) && mv ../demo/dist public"
   }
 }
