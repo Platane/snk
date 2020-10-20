@@ -1,4 +1,75 @@
-import { JSDOM } from "jsdom";
+import fetch from "node-fetch";
+import * as parser from "fast-xml-parser";
+
+// const traverse = (
+//   o: any,
+//   callback: (elements: { name: string; "#text": string; attrs: any }[]) => void,
+//   path: { name: string; "#text": string; attrs: any }[] = []
+// ) => {
+//   if (o && typeof o === "object")
+//     Object.entries(o)
+//       .filter(([o]) => o !== "attr" && o !== "#text")
+//       .forEach(([name, v]) => {
+//         const el = { name, attrs: v.attrs, "#text": v["#text"] };
+//         const p = [el, ...path];
+//         callback(p);
+
+//         traverse(v, callback, p);
+//       });
+// };
+
+const findNode = (o: any, condition: (x: any) => boolean): any => {
+  if (o && typeof o === "object") {
+    if (condition(o)) return o;
+
+    for (const c of Object.values(o)) {
+      const res = findNode(c, condition);
+      if (res) return res;
+    }
+  }
+};
+
+const parseUserPage = (content: string) => {
+  const o = parser.parse(content, {
+    attrNodeName: "attr",
+    attributeNamePrefix: "",
+    ignoreAttributes: false,
+  });
+
+  //
+  // parse colorScheme
+  const legend = findNode(
+    o,
+    (x) => x.attr && x.attr.class && x.attr.class.trim() === "legend"
+  );
+  const colorScheme = legend.li.map(
+    (x: any) => x.attr.style.match(/background\-color: +(#\w+)/)![1]!
+  );
+
+  //
+  // parse cells
+  const svg = findNode(
+    o,
+    (x) =>
+      x.attr && x.attr.class && x.attr.class.trim() === "js-calendar-graph-svg"
+  );
+
+  const cells = svg.g.g
+    .map((g: any, x: number) =>
+      g.rect.map(({ attr }: any, y: number) => {
+        const color = attr.fill;
+        const count = +attr["data-count"];
+        const date = attr["data-date"];
+
+        const k = colorScheme.indexOf(color);
+
+        return { x, y, color, count, date, k };
+      })
+    )
+    .flat();
+
+  return { cells, colorScheme };
+};
 
 /**
  * get the contribution grid from a github user page
@@ -6,31 +77,10 @@ import { JSDOM } from "jsdom";
  * @param userName
  */
 export const getGithubUserContribution = async (userName: string) => {
-  const dom = await JSDOM.fromURL(`https://github.com/${userName}`);
+  const res = await fetch(`https://github.com/${userName}`);
+  const resText = await res.text();
 
-  const colorScheme = Array.from(
-    dom.window.document.querySelectorAll(".legend > li")
-  ).map(
-    (element) =>
-      element.getAttribute("style")!.match(/background\-color: +(#\w+)/)![1]!
-  );
-
-  const cells = Array.from(
-    dom.window.document.querySelectorAll(".js-calendar-graph-svg > g > g")
-  )
-    .map((column, x) =>
-      Array.from(column.querySelectorAll("rect")).map((element, y) => {
-        const count = +element.getAttribute("data-count")!;
-        const date = element.getAttribute("data-date")!;
-        const color = element.getAttribute("fill")!;
-        const k = colorScheme.indexOf(color);
-
-        return { x, y, count, date, color, k };
-      })
-    )
-    .flat();
-
-  return { colorScheme, cells };
+  return parseUserPage(resText);
 };
 
 type ThenArg<T> = T extends PromiseLike<infer U> ? U : T;

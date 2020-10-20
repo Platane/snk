@@ -2,9 +2,11 @@
   "name": "@snk/github-user-contribution",
   "version": "1.0.0",
   "dependencies": {
-    "jsdom": "16.4.0"
+    "node-fetch": "2.6.1",
+    "fast-xml-parser": "3.17.4"
   },
   "devDependencies": {
+    "@types/node-fetch": "2.5.7",
     "@types/jsdom": "16.2.4"
   }
 }
