@@ -2,6 +2,11 @@
   "name": "@snk/github-user-contribution-service",
   "version": "1.0.0",
   "dependencies": {
+    "@snk/github-user-contribution": "1.0.0",
+    "@snk/demo": "1.0.0",
     "@vercel/node": "1.8.4"
+  },
+  "scripts": {
+    "vercel-build": "( cd ../demo ; yarn build ) && mv ../demo/dist public"
   }
 }
