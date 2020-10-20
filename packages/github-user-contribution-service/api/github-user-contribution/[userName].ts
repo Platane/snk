@@ -5,6 +5,8 @@ export default async (req: NowRequest, res: NowResponse) => {
   const { userName } = req.query;
 
   try {
+    res.setHeader("Access-Control-Allow-Origin", "https://platane.github.io");
+    res.statusCode = 200;
     res.json(await getGithubUserContribution(userName as string));
   } catch (err) {
     console.error(err);

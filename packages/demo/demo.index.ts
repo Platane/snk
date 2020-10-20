@@ -5,19 +5,27 @@ container.style.fontFamily = "helvetica";
 document.body.appendChild(container);
 
 for (const demo of require("./demo.json").filter(
-  (x: any) => !["index", "interactive"].includes(x)
+  (x: any) => !["index"].includes(x)
 )) {
   const title = document.createElement("h1");
   title.innerText = demo;
 
   container.appendChild(title);
 
-  for (const g of Object.keys(grid)) {
+  if (["interactive"].includes(demo)) {
     const a = document.createElement("a");
     a.style.display = "block";
-    a.innerText = `${demo} - ${g}`;
-    a.href = `./${demo}.html?grid=${g}`;
+    a.innerText = demo;
+    a.href = `./${demo}.html`;
 
     container.appendChild(a);
-  }
+  } else
+    for (const g of Object.keys(grid)) {
+      const a = document.createElement("a");
+      a.style.display = "block";
+      a.innerText = `${demo} - ${g}`;
+      a.href = `./${demo}.html?grid=${g}`;
+
+      container.appendChild(a);
+    }
 }
