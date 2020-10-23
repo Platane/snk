@@ -1,5 +1,5 @@
-import * as fs from "fs";
-import * as path from "path";
+import fs from "fs";
+import path from "path";
 import { createCanvas } from "canvas";
 import { Grid, copyGrid, Color } from "@snk/types/grid";
 import { Snake } from "@snk/types/snake";
@@ -9,8 +9,8 @@ import {
   getCanvasWorldSize,
 } from "@snk/draw/drawWorld";
 import { step } from "@snk/compute/step";
-import * as tmp from "tmp";
-import * as execa from "execa";
+import tmp from "tmp";
+import execa from "execa";
 
 const withTmpDir = async <T>(
   handler: (dir: string) => Promise<T>

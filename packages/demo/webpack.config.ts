@@ -1,6 +1,5 @@
-import * as path from "path";
-// @ts-ignore
-import * as HtmlWebpackPlugin from "html-webpack-plugin";
+import path from "path";
+import HtmlWebpackPlugin from "html-webpack-plugin";
 
 import type { Configuration } from "webpack";
 
