@@ -16,6 +16,7 @@ export const getBestRoute = (grid0: Grid, snake0: Snake) => {
     const chunk = pruneLayer(grid, color, snakeN);
     const c = cleanLayer(gridN, chain[0], chunk);
     if (c) chain.unshift(...c);
+    else throw new Error("some cells are unreachable");
   }
 
   return chain.reverse().slice(1);

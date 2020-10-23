@@ -12,7 +12,11 @@ import {
 import { userContributionToGrid } from "../action/userContributionToGrid";
 import { snake3 } from "@snk/types/__fixtures__/snake";
 
-const createForm = ({ onSubmit }: { onSubmit: (s: string) => void }) => {
+const createForm = ({
+  onSubmit,
+}: {
+  onSubmit: (s: string) => Promise<void>;
+}) => {
   const form = document.createElement("form");
   form.style.position = "relative";
   form.style.display = "flex";
@@ -26,7 +30,6 @@ const createForm = ({ onSubmit }: { onSubmit: (s: string) => void }) => {
   submit.innerText = "ok";
 
   const label = document.createElement("label");
-  label.innerText = "loading ...";
   label.style.position = "absolute";
   label.style.textAlign = "center";
   label.style.top = "60px";
@@ -61,11 +64,15 @@ const createForm = ({ onSubmit }: { onSubmit: (s: string) => void }) => {
   const u = new URLSearchParams(window.location.search).get("userName");
   if (u) {
     input.value = u;
-    onSubmit(u);
+    onSubmit(u).catch((err) => {
+      label.innerText = "error :(";
+      throw err;
+    });
 
     input.disabled = true;
     submit.disabled = true;
     form.appendChild(label);
+    label.innerText = "loading ...";
   }
 
   return { dispose };
