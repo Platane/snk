@@ -7,10 +7,10 @@
   },
   "devDependencies": {
     "@types/dat.gui": "0.7.5",
-    "@types/webpack": "4.41.22",
+    "@types/webpack": "4.41.23",
     "dat.gui": "0.7.7",
     "html-webpack-plugin": "4.5.0",
-    "ts-loader": "8.0.4",
+    "ts-loader": "8.0.6",
     "ts-node": "9.0.0",
     "webpack": "4.44.2",
     "webpack-cli": "3.3.12",
