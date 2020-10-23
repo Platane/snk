@@ -36,7 +36,7 @@ export const getAvailableRoutes = (
       const ny = cy + dy;
 
       if (
-        isInsideLarge(grid, 1, nx, ny) &&
+        isInsideLarge(grid, 2, nx, ny) &&
         !snakeWillSelfCollide(snake, dx, dy)
       ) {
         const nsnake = nextSnake(snake, dx, dy);

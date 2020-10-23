@@ -1,62 +1,85 @@
 import { createCanvas } from "./canvas";
-import { snakeToCells } from "@snk/types/snake";
-import { GUI } from "dat.gui";
+import { getHeadX, getHeadY, snakeToCells } from "@snk/types/snake";
 import { grid, snake } from "./sample";
+import { getColor } from "@snk/types/grid";
 import { getAvailableRoutes } from "@snk/compute/getAvailableRoutes";
-import type { Point } from "@snk/types/point";
 import type { Snake } from "@snk/types/snake";
+import type { Color, Empty } from "@snk/types/grid";
 
 //
 // compute
 
-const routes: Snake[][] = [];
+const solutions: {
+  x: number;
+  y: number;
+  chain: Snake[];
+  color: Color | Empty;
+}[] = [];
 getAvailableRoutes(grid, snake, (chain) => {
-  routes.push(chain);
-  return routes.length > 10;
+  const x = getHeadX(chain[0]);
+  const y = getHeadY(chain[0]);
+
+  if (!solutions.some((s) => x === s.x && y === s.y))
+    solutions.push({
+      x,
+      y,
+      chain: [snake, ...chain.slice().reverse()],
+      color: getColor(grid, x, y),
+    });
+
+  return false;
 });
-
-const config = { routeN: 0, routeK: 0 };
-
-//
-// draw
+solutions.sort((a, b) => a.color - b.color);
 
 const { canvas, ctx, draw } = createCanvas(grid);
 document.body.appendChild(canvas);
 
-draw(grid, snake, []);
-
-let cancel: number;
-
-const mod = (x: number, m: number) => ((x % m) + m) % m;
+let k = 0;
+let i = solutions[k].chain.length - 1;
 
 const onChange = () => {
-  const t = Math.floor(Date.now() / 300);
+  const { chain } = solutions[k];
 
-  cancelAnimationFrame(cancel);
-  cancel = requestAnimationFrame(onChange);
+  ctx.clearRect(0, 0, 9999, 9999);
 
-  const chain = routes[config.routeN] || [snake];
-
-  draw(grid, chain[mod(-t, chain.length)], []);
-
-  const cells: Point[] = [];
-  chain.forEach((s) => cells.push(...snakeToCells(s)));
+  draw(grid, chain[i], []);
 
   ctx.fillStyle = "orange";
-  ctx.fillRect(0, 0, 1, 1);
-
-  cells
-    .filter((x, i, arr) => i === arr.indexOf(x))
-    .forEach((c) => {
+  chain
+    .map(snakeToCells)
+    .flat()
+    .forEach(({ x, y }) => {
       ctx.beginPath();
-      ctx.fillRect((1 + c.x + 0.5) * 16 - 2, (2 + c.y + 0.5) * 16 - 2, 4, 4);
+      ctx.fillRect((1 + x + 0.5) * 16 - 2, (2 + y + 0.5) * 16 - 2, 4, 4);
     });
 };
 
-//
-// ui
-
-const gui = new GUI();
-gui.add(config, "routeN", 0, routes.length - 1, 1).onChange(onChange);
-
 onChange();
+
+const inputK = document.createElement("input") as any;
+inputK.type = "range";
+inputK.value = 0;
+inputK.step = 1;
+inputK.min = 0;
+inputK.max = solutions.length - 1;
+inputK.style.width = "90%";
+inputK.style.padding = "20px 0";
+inputK.addEventListener("input", () => {
+  k = +inputK.value;
+  i = inputI.value = inputI.max = solutions[k].chain.length - 1;
+  onChange();
+});
+document.body.append(inputK);
+
+const inputI = document.createElement("input") as any;
+inputI.type = "range";
+inputI.value = inputI.max = solutions[k].chain.length - 1;
+inputI.step = 1;
+inputI.min = 0;
+inputI.style.width = "90%";
+inputI.style.padding = "20px 0";
+inputI.addEventListener("input", () => {
+  i = +inputI.value;
+  onChange();
+});
+document.body.append(inputI);

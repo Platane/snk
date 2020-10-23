@@ -4,19 +4,25 @@ import { sortPush } from "./utils/sortPush";
 import type { Color, Grid } from "@snk/types/grid";
 import type { Point } from "@snk/types/point";
 
-type M = Point & { parent: M | null; h: number };
+type M = Point & { parent: M | null; h: number; w: number };
 
 const unwrap = (grid: Grid, m: M | null): Point[] =>
   m ? [...unwrap(grid, m.parent), m] : [];
+
+const contains = (arr: Point[], x: number, y: number, limit: number) => {
+  for (let i = Math.max(0, arr.length - limit); i--; )
+    if (arr[i].x === x && arr[i].y === y) return true;
+  return false;
+};
 
 const getEscapePath = (
   grid: Grid,
   x: number,
   y: number,
   color: Color,
-  forbidden: Point[] = []
+  previousSnake: Point[] = []
 ) => {
-  const openList: M[] = [{ x, y, h: 0, parent: null }];
+  const openList: M[] = [{ x, y, h: 0, w: 0, parent: null }];
   const closeList: Point[] = [];
 
   while (openList.length) {
@@ -28,7 +34,7 @@ const getEscapePath = (
       const x = c.x + a.x;
       const y = c.y + a.y;
 
-      if (!forbidden.some((cl) => cl.x === x && cl.y === y)) {
+      if (!contains(previousSnake, x, y, c.w)) {
         if (!isInside(grid, x, y))
           return unwrap(grid, { x, y, parent: c } as any);
 
@@ -39,7 +45,7 @@ const getEscapePath = (
           !closeList.some((cl) => cl.x === x && cl.y === y)
         ) {
           const h = Math.abs(grid.height / 2 - y);
-          const o = { x, y, parent: c, h };
+          const o = { x, y, parent: c, h, w: c.w + 1 };
 
           sortPush(openList, o, (a, b) => a.h - b.h);
           closeList.push(o);

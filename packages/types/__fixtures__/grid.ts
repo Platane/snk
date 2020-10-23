@@ -19,7 +19,6 @@ setColor(corner, 4, 0, 1 as Color);
 setColor(corner, 4, 4, 1 as Color);
 setColor(corner, 0, 0, 1 as Color);
 
-// enclaved color
 export const enclave = createEmptyGrid(7, 7);
 setColor(enclave, 3, 4, 2 as Color);
 setColor(enclave, 2, 3, 2 as Color);
@@ -29,12 +28,41 @@ setColor(enclave, 4, 3, 2 as Color);
 setColor(enclave, 3, 3, 1 as Color);
 setColor(enclave, 5, 5, 1 as Color);
 
-// enclaved color
 export const enclaveBorder = createEmptyGrid(7, 7);
 setColor(enclaveBorder, 1, 0, 3 as Color);
 setColor(enclaveBorder, 2, 1, 3 as Color);
 setColor(enclaveBorder, 3, 0, 3 as Color);
 setColor(enclaveBorder, 2, 0, 1 as Color);
+
+export const enclaveM = createEmptyGrid(7, 7);
+setColor(enclaveM, 1, 0, 3 as Color);
+setColor(enclaveM, 2, 0, 3 as Color);
+setColor(enclaveM, 3, 0, 3 as Color);
+setColor(enclaveM, 1, 4, 3 as Color);
+setColor(enclaveM, 3, 4, 3 as Color);
+setColor(enclaveM, 4, 1, 3 as Color);
+setColor(enclaveM, 4, 2, 3 as Color);
+setColor(enclaveM, 4, 3, 3 as Color);
+setColor(enclaveM, 0, 1, 3 as Color);
+setColor(enclaveM, 0, 2, 3 as Color);
+setColor(enclaveM, 0, 3, 3 as Color);
+setColor(enclaveM, 2, 2, 1 as Color);
+
+export const enclaveK = createEmptyGrid(7, 7);
+setColor(enclaveK, 1, 1, 3 as Color);
+setColor(enclaveK, 2, 1, 3 as Color);
+setColor(enclaveK, 3, 1, 3 as Color);
+setColor(enclaveK, 0, 1, 3 as Color);
+setColor(enclaveK, 0, 2, 3 as Color);
+setColor(enclaveK, 0, 3, 3 as Color);
+setColor(enclaveK, 3, 1, 3 as Color);
+setColor(enclaveK, 3, 2, 3 as Color);
+setColor(enclaveK, 3, 3, 3 as Color);
+setColor(enclaveK, 1, 4, 3 as Color);
+setColor(enclaveK, 3, 4, 3 as Color);
+setColor(enclaveK, 3, 5, 3 as Color);
+setColor(enclaveK, 1, 5, 3 as Color);
+setColor(enclaveK, 2, 2, 1 as Color);
 
 const create = (width: number, height: number, emptyP: number) => {
   const grid = createEmptyGrid(width, height);
