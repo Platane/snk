@@ -52,6 +52,9 @@ const getEscapePath = (grid: Grid, x: number, y: number, color: Color) => {
   return null;
 };
 
+/**
+ * returns true if the snake can reach outside from it's location
+ */
 const snakeCanEscape = (grid: Grid, snake: Snake, color: Color) => {
   const openList: Snake[] = [snake];
   const closeList: Snake[] = [];
@@ -63,16 +66,18 @@ const snakeCanEscape = (grid: Grid, snake: Snake, color: Color) => {
       const x = getHeadX(s) + a.x;
       const y = getHeadY(s) + a.y;
 
-      if (!isInside(grid, x, y)) return true;
+      if (!snakeWillSelfCollide(s, a.x, a.y)) {
+        if (!isInside(grid, x, y)) return true;
 
-      const u = getColor(grid, x, y);
+        const u = getColor(grid, x, y);
 
-      if ((isEmpty(u) || u <= color) && !snakeWillSelfCollide(s, a.x, a.y)) {
-        const sn = nextSnake(s, a.x, a.y);
+        if (isEmpty(u) || u <= color) {
+          const sn = nextSnake(s, a.x, a.y);
 
-        if (!closeList.some((s0) => snakeEquals(s0, sn))) {
-          openList.push(sn);
-          closeList.push(sn);
+          if (!closeList.some((s0) => snakeEquals(s0, sn))) {
+            openList.push(sn);
+            closeList.push(sn);
+          }
         }
       }
     }
@@ -82,7 +87,7 @@ const snakeCanEscape = (grid: Grid, snake: Snake, color: Color) => {
 };
 
 /**
- * returns true if the cell can be reached by the snake from anywhere, and the snake can go back to anywhere
+ * returns true if the cell can be reached by the snake from outside, and the snake can go back outside
  */
 const isFree = (
   grid: Grid,
