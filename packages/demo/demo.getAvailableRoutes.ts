@@ -49,8 +49,6 @@ const onChange = () => {
     .map(snakeToCells)
     .flat()
     .forEach(({ x, y }) => highlightCell(x, y));
-
-  highlightCell(2, 4);
 };
 
 onChange();
