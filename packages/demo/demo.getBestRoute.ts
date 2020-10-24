@@ -1,3 +1,4 @@
+import "./menu";
 import { createCanvas } from "./canvas";
 import { getBestRoute } from "@snk/compute/getBestRoute";
 import { Color, copyGrid } from "@snk/types/grid";
@@ -14,7 +15,7 @@ const spring = { x: 0, v: 0, target: 0 };
 const springParams = { tension: 120, friction: 20, maxVelocity: 50 };
 let animationFrame: number;
 
-const { canvas, drawLerp } = createCanvas(grid);
+const { canvas, highlightCell, drawLerp } = createCanvas(grid);
 document.body.appendChild(canvas);
 
 const clamp = (x: number, a: number, b: number) => Math.max(a, Math.min(b, x));
@@ -54,4 +55,7 @@ input.addEventListener("input", () => {
   animationFrame = requestAnimationFrame(loop);
 });
 document.body.append(input);
-document.body.addEventListener("click", () => input.focus());
+window.addEventListener("click", (e) => {
+  if (e.target === document.body || e.target === document.body.parentElement)
+    input.focus();
+});

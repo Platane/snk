@@ -1,3 +1,4 @@
+import "./menu";
 import { createCanvas } from "./canvas";
 import { getHeadX, getHeadY, snakeToCells } from "@snk/types/snake";
 import { grid, snake } from "./sample";
@@ -31,7 +32,7 @@ getAvailableRoutes(grid, snake, (chain) => {
 });
 solutions.sort((a, b) => a.color - b.color);
 
-const { canvas, ctx, draw } = createCanvas(grid);
+const { canvas, ctx, draw, highlightCell } = createCanvas(grid);
 document.body.appendChild(canvas);
 
 let k = 0;
@@ -44,14 +45,12 @@ const onChange = () => {
 
   draw(grid, chain[i], []);
 
-  ctx.fillStyle = "orange";
   chain
     .map(snakeToCells)
     .flat()
-    .forEach(({ x, y }) => {
-      ctx.beginPath();
-      ctx.fillRect((1 + x + 0.5) * 16 - 2, (2 + y + 0.5) * 16 - 2, 4, 4);
-    });
+    .forEach(({ x, y }) => highlightCell(x, y));
+
+  highlightCell(2, 4);
 };
 
 onChange();
@@ -83,3 +82,8 @@ inputI.addEventListener("input", () => {
   onChange();
 });
 document.body.append(inputI);
+
+window.addEventListener("click", (e) => {
+  if (e.target === document.body || e.target === document.body.parentElement)
+    inputK.focus();
+});

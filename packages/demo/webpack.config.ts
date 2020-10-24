@@ -3,10 +3,6 @@ import HtmlWebpackPlugin from "html-webpack-plugin";
 
 import type { Configuration } from "webpack";
 
-const basePathname = (process.env.BASE_PATHNAME || "")
-  .split("/")
-  .filter(Boolean);
-
 const demos: string[] = require("./demo.json");
 
 const config: Configuration = {
@@ -18,7 +14,6 @@ const config: Configuration = {
   output: {
     path: path.join(__dirname, "dist"),
     filename: "[contenthash].js",
-    publicPath: "/" + basePathname.map((x) => x + "/").join(""),
   },
   module: {
     rules: [
@@ -40,6 +35,7 @@ const config: Configuration = {
     ...demos.map(
       (demo) =>
         new HtmlWebpackPlugin({
+          title: "snk - " + demo,
           filename: `${demo}.html`,
           chunks: [demo],
         })

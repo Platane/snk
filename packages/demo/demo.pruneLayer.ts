@@ -1,3 +1,4 @@
+import "./menu";
 import { createCanvas } from "./canvas";
 import { Color, copyGrid } from "@snk/types/grid";
 import { grid, snake } from "./sample";
@@ -14,7 +15,7 @@ for (const color of colors) {
   layers.push({ chunk, grid: copyGrid(grid0) });
 }
 
-const { canvas, ctx, draw } = createCanvas(grid);
+const { canvas, ctx, highlightCell, draw } = createCanvas(grid);
 document.body.appendChild(canvas);
 
 let k = 0;
@@ -25,10 +26,7 @@ const loop = () => {
   draw(grid, snake, []);
 
   ctx.fillStyle = "orange";
-  chunk.forEach(({ x, y }) => {
-    ctx.beginPath();
-    ctx.fillRect((1 + x + 0.5) * 16 - 2, (2 + y + 0.5) * 16 - 2, 4, 4);
-  });
+  chunk.forEach(({ x, y }) => highlightCell(x, y));
 };
 
 loop();
@@ -45,4 +43,8 @@ input.addEventListener("input", () => {
   loop();
 });
 document.body.append(input);
-document.body.addEventListener("click", () => input.focus());
+
+window.addEventListener("click", (e) => {
+  if (e.target === document.body || e.target === document.body.parentElement)
+    input.focus();
+});

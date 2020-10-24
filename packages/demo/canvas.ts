@@ -55,5 +55,11 @@ export const createCanvas = ({
     drawLerpWorld(ctx, grid, snake0, snake1, stack, k, drawOptions);
   };
 
-  return { draw, drawLerp, canvas, ctx };
+  const highlightCell = (x: number, y: number, color = "orange") => {
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.fillRect((1 + x + 0.5) * 16 - 2, (2 + y + 0.5) * 16 - 2, 4, 4);
+  };
+
+  return { draw, drawLerp, highlightCell, canvas, ctx };
 };

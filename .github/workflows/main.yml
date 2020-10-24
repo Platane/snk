@@ -71,8 +71,6 @@ jobs:
       - uses: bahmutov/npm-install@v1.4.3
 
       - run: yarn build:demo
-        env:
-          BASE_PATHNAME: "snk"
 
       - uses: crazy-max/ghaction-github-pages@v2.1.3
         if: success() && github.ref == 'refs/heads/master'
