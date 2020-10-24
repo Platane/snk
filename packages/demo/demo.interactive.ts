@@ -14,14 +14,17 @@ import { snake3 } from "@snk/types/__fixtures__/snake";
 
 const createForm = ({
   onSubmit,
+  onChangeUserName,
 }: {
   onSubmit: (s: string) => Promise<void>;
+  onChangeUserName: (s: string) => void;
 }) => {
   const form = document.createElement("form");
   form.style.position = "relative";
   form.style.display = "flex";
   form.style.flexDirection = "row";
   const input = document.createElement("input");
+  input.addEventListener("input", (e) => onChangeUserName(input.value));
   input.style.padding = "16px";
   input.placeholder = "github user";
   const submit = document.createElement("button");
@@ -42,29 +45,7 @@ const createForm = ({
 
   form.addEventListener("submit", (event) => {
     event.preventDefault();
-    onSubmit(input.value);
-
-    input.disabled = true;
-    submit.disabled = true;
-    form.appendChild(label);
-
-    const sp = new URLSearchParams(window.location.search);
-    sp.set("userName", input.value);
-    window.location.replace(window.location.pathname + "?" + sp.toString());
-  });
-
-  //
-  // dispose
-  const dispose = () => {
-    document.body.removeChild(form);
-  };
-
-  //
-  // bypass when userName in url
-  const u = new URLSearchParams(window.location.search).get("userName");
-  if (u) {
-    input.value = u;
-    onSubmit(u).catch((err) => {
+    onSubmit(input.value).catch((err) => {
       label.innerText = "error :(";
       throw err;
     });
@@ -73,12 +54,53 @@ const createForm = ({
     submit.disabled = true;
     form.appendChild(label);
     label.innerText = "loading ...";
-  }
+  });
+
+  //
+  // dispose
+  const dispose = () => {
+    document.body.removeChild(form);
+  };
 
   return { dispose };
 };
 
 const clamp = (x: number, a: number, b: number) => Math.max(a, Math.min(b, x));
+
+const createGithubProfile = () => {
+  const container = document.createElement("div");
+  container.style.padding = "20px";
+  container.style.opacity = "0";
+  container.style.display = "flex";
+  container.style.flexDirection = "column";
+  container.style.alignItems = "flex-start";
+  const image = document.createElement("img");
+  image.style.width = "100px";
+  image.style.height = "100px";
+  image.style.borderRadius = "50px";
+  const name = document.createElement("a");
+  name.style.padding = "4px 0 0 0";
+
+  document.body.appendChild(container);
+  container.appendChild(image);
+  container.appendChild(name);
+
+  image.addEventListener("load", () => {
+    container.style.opacity = "1";
+  });
+  const onChangeUser = (userName: string) => {
+    container.style.opacity = "0";
+    name.innerText = userName;
+    name.href = `https://github.com/${userName}`;
+    image.src = `https://github.com/${userName}.png`;
+  };
+
+  const dispose = () => {
+    document.body.removeChild(container);
+  };
+
+  return { dispose, onChangeUser };
+};
 
 const createViewer = ({
   grid0,
@@ -145,12 +167,17 @@ const createViewer = ({
     cancelAnimationFrame(animationFrame);
     animationFrame = requestAnimationFrame(loop);
   });
-  document.body.addEventListener("click", () => input.focus());
+  const onClickBackground = (e: MouseEvent) => {
+    if (e.target === document.body || e.target === document.body.parentElement)
+      input.focus();
+  };
+  window.addEventListener("click", onClickBackground);
   document.body.append(input);
 
   //
   // dispose
   const dispose = () => {
+    window.removeEventListener("click", onClickBackground);
     cancelAnimationFrame(animationFrame);
     document.body.removeChild(canvas);
     document.body.removeChild(input);
@@ -183,7 +210,12 @@ const onSubmit = async (userName: string) => {
 
   createViewer({ grid0: grid, chain, drawOptions });
 };
-const { dispose } = createForm({ onSubmit });
+
+const profile = createGithubProfile();
+const { dispose } = createForm({
+  onSubmit,
+  onChangeUserName: profile.onChangeUser,
+});
 
 document.body.style.margin = "0";
 document.body.style.display = "flex";
