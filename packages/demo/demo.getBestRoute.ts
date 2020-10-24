@@ -15,7 +15,7 @@ const spring = { x: 0, v: 0, target: 0 };
 const springParams = { tension: 120, friction: 20, maxVelocity: 50 };
 let animationFrame: number;
 
-const { canvas, highlightCell, drawLerp } = createCanvas(grid);
+const { canvas, drawLerp } = createCanvas(grid);
 document.body.appendChild(canvas);
 
 const clamp = (x: number, a: number, b: number) => Math.max(a, Math.min(b, x));
