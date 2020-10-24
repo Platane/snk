@@ -30,28 +30,6 @@ const createGetHeuristic = (grid: Grid, chunk0: Point[]) => {
   return (chunk: any[]) => chunk.length * k;
 };
 
-export const getAvailableWhiteListedRoutes = (
-  grid: Grid,
-  snake: Snake,
-  whiteList: Point[]
-) => {
-  let solution: Snake[] | null;
-
-  getAvailableRoutes(grid, snake, (chain) => {
-    const hx = getHeadX(chain[0]);
-    const hy = getHeadY(chain[0]);
-
-    if (!whiteList.some(({ x, y }) => hx === x && hy === y)) return false;
-
-    solution = chain;
-
-    return true;
-  });
-
-  // @ts-ignore
-  return solution;
-};
-
 export const cleanLayer = (grid0: Grid, snake0: Snake, chunk0: Point[]) => {
   const getH = createGetHeuristic(grid0, chunk0);
 
@@ -74,9 +52,9 @@ export const cleanLayer = (grid0: Grid, snake0: Snake, chunk0: Point[]) => {
 
     if (o.chunk.length === 0) return unwrap(o).slice(0, -1);
 
-    const chain = getAvailableWhiteListedRoutes(o.grid, o.snake, o.chunk);
+    const chains = getAvailableWhiteListedRoutes(o.grid, o.snake, o.chunk);
 
-    if (chain) {
+    for (const chain of chains) {
       const snake = chain[0];
       const x = getHeadX(snake);
       const y = getHeadY(snake);
@@ -101,32 +79,34 @@ export const cleanLayer = (grid0: Grid, snake0: Snake, chunk0: Point[]) => {
       }
     }
   }
+
+  throw new Error("some cells are unreachable");
 };
 
-// export const getAvailableWhiteListedRoutes = (
-//   grid: Grid,
-//   snake: Snake,
-//   whiteList0: Point[],
-//   n = 3
-// ) => {
-//   const whiteList = whiteList0.slice();
-//   const solutions: Snake[][] = [];
+export const getAvailableWhiteListedRoutes = (
+  grid: Grid,
+  snake: Snake,
+  whiteList0: Point[],
+  n = 3
+) => {
+  const whiteList = whiteList0.slice();
+  const solutions: Snake[][] = [];
 
-//   getAvailableRoutes(grid, snake, (chain) => {
-//     const hx = getHeadX(chain[0]);
-//     const hy = getHeadY(chain[0]);
+  getAvailableRoutes(grid, snake, (chain) => {
+    const hx = getHeadX(chain[0]);
+    const hy = getHeadY(chain[0]);
 
-//     const i = whiteList.findIndex(({ x, y }) => hx === x && hy === y);
+    const i = whiteList.findIndex(({ x, y }) => hx === x && hy === y);
 
-//     if (i >= 0) {
-//       whiteList.splice(i, 1);
-//       solutions.push(chain);
+    if (i >= 0) {
+      whiteList.splice(i, 1);
+      solutions.push(chain);
 
-//       if (solutions.length >= n || whiteList.length === 0) return true;
-//     }
+      if (solutions.length >= n || whiteList.length === 0) return true;
+    }
 
-//     return false;
-//   });
+    return false;
+  });
 
-//   return solutions;
-// };
+  return solutions;
+};

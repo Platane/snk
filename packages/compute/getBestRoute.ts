@@ -1,6 +1,6 @@
 import { copyGrid, isEmpty } from "@snk/types/grid";
 import { pruneLayer } from "./pruneLayer";
-import { cleanLayer } from "./cleanLayer";
+import { cleanLayer } from "./cleanLayer-monobranch";
 import type { Snake } from "@snk/types/snake";
 import type { Color, Grid } from "@snk/types/grid";
 
@@ -15,8 +15,7 @@ export const getBestRoute = (grid0: Grid, snake0: Snake) => {
     const gridN = copyGrid(grid);
     const chunk = pruneLayer(grid, color, snakeN);
     const c = cleanLayer(gridN, chain[0], chunk);
-    if (c) chain.unshift(...c);
-    else throw new Error("some cells are unreachable");
+    chain.unshift(...c);
   }
 
   return chain.reverse().slice(1);
