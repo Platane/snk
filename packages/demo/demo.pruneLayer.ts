@@ -3,10 +3,11 @@ import { createCanvas } from "./canvas";
 import { Color, copyGrid } from "@snk/types/grid";
 import { grid, snake } from "./sample";
 import { pruneLayer } from "@snk/compute/pruneLayer";
+import { getSnakeLength } from "@snk/types/snake";
 
 const colors = [1, 2, 3] as Color[];
 
-const snakeN = snake.length / 2;
+const snakeN = getSnakeLength(snake);
 
 const layers = [{ grid, chunk: [] as { x: number; y: number }[] }];
 let grid0 = copyGrid(grid);

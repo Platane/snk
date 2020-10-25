@@ -15,8 +15,7 @@ import {
 
 type M = Point & { parent: M | null; h: number };
 
-const unwrap = (grid: Grid, m: M | null): Point[] =>
-  m ? [...unwrap(grid, m.parent), m] : [];
+const unwrap = (m: M | null): Point[] => (m ? [...unwrap(m.parent), m] : []);
 
 const getEscapePath = (grid: Grid, x: number, y: number, color: Color) => {
   const openList: M[] = [{ x, y, h: 0, parent: null }];
@@ -25,14 +24,13 @@ const getEscapePath = (grid: Grid, x: number, y: number, color: Color) => {
   while (openList.length) {
     const c = openList.shift()!;
 
-    if (c.y === -1 || c.y === grid.height) return unwrap(grid, c);
+    if (c.y === -1 || c.y === grid.height) return unwrap(c);
 
     for (const a of around4) {
       const x = c.x + a.x;
       const y = c.y + a.y;
 
-      if (!isInside(grid, x, y))
-        return unwrap(grid, { x, y, parent: c } as any);
+      if (!isInside(grid, x, y)) return unwrap({ x, y, parent: c } as any);
 
       const u = getColor(grid, x, y);
 
@@ -63,10 +61,10 @@ const snakeCanEscape = (grid: Grid, snake: Snake, color: Color) => {
     const s = openList.shift()!;
 
     for (const a of around4) {
-      const x = getHeadX(s) + a.x;
-      const y = getHeadY(s) + a.y;
-
       if (!snakeWillSelfCollide(s, a.x, a.y)) {
+        const x = getHeadX(s) + a.x;
+        const y = getHeadY(s) + a.y;
+
         if (!isInside(grid, x, y)) return true;
 
         const u = getColor(grid, x, y);

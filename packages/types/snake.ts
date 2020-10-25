@@ -5,6 +5,8 @@ export type Snake = Uint8Array & { _tag: "__Snake__" };
 export const getHeadX = (snake: Snake) => snake[0] - 2;
 export const getHeadY = (snake: Snake) => snake[1] - 2;
 
+export const getSnakeLength = (snake: Snake) => snake.length / 2;
+
 export const copySnake = (snake: Snake) => snake.slice() as Snake;
 
 export const snakeEquals = (a: Snake, b: Snake) => {

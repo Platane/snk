@@ -84,6 +84,41 @@ setColor(enclaveU, 1, 3, 1 as Color);
 setColor(enclaveU, 2, 4, 1 as Color);
 setColor(enclaveU, 16, 8, 1 as Color);
 
+export const closed = createEmptyGrid(16, 16);
+setColor(closed, 1 + 5, 1 + 5, 3 as Color);
+setColor(closed, 2 + 5, 4 + 5, 3 as Color);
+setColor(closed, 2 + 5, 1 + 5, 3 as Color);
+setColor(closed, 0 + 5, 2 + 5, 3 as Color);
+setColor(closed, 0 + 5, 3 + 5, 3 as Color);
+setColor(closed, 1 + 5, 4 + 5, 3 as Color);
+setColor(closed, 3 + 5, 1 + 5, 3 as Color);
+setColor(closed, 3 + 5, 2 + 5, 3 as Color);
+setColor(closed, 3 + 5, 3 + 5, 3 as Color);
+setColor(closed, 1 + 5, 2 + 5, 3 as Color);
+setColor(closed, 1 + 5, 3 + 5, 3 as Color);
+setColor(closed, 2 + 5, 2 + 5, 1 as Color);
+
+export const closedU = createEmptyGrid(20, 20);
+setColor(closedU, 1 + 10, 1 + 10, 3 as Color);
+setColor(closedU, 2 + 10, 1 + 10, 3 as Color);
+setColor(closedU, 3 + 10, 1 + 10, 3 as Color);
+setColor(closedU, 0 + 10, 1 + 10, 3 as Color);
+setColor(closedU, 0 + 10, 2 + 10, 3 as Color);
+setColor(closedU, 0 + 10, 3 + 10, 3 as Color);
+setColor(closedU, 3 + 10, 1 + 10, 3 as Color);
+setColor(closedU, 3 + 10, 2 + 10, 3 as Color);
+setColor(closedU, 3 + 10, 3 + 10, 3 as Color);
+setColor(closedU, 1 + 10, 4 + 10, 3 as Color);
+setColor(closedU, 3 + 10, 4 + 10, 3 as Color);
+setColor(closedU, 3 + 10, 5 + 10, 3 as Color);
+setColor(closedU, 1 + 10, 5 + 10, 3 as Color);
+setColor(closedU, 2 + 10, 5 + 10, 3 as Color);
+setColor(closedU, 2 + 10, 2 + 10, 1 as Color);
+setColor(closedU, 1 + 10, 2 + 10, 1 as Color);
+setColor(closedU, 2 + 10, 3 + 10, 1 as Color);
+setColor(closedU, 1 + 10, 3 + 10, 1 as Color);
+setColor(closedU, 2 + 10, 4 + 10, 1 as Color);
+
 const create = (width: number, height: number, emptyP: number) => {
   const grid = createEmptyGrid(width, height);
   const pm = new ParkMiller(10);

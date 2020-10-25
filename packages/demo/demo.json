@@ -1,1 +1,8 @@
-["getAvailableRoutes", "pruneLayer", "getBestRoute", "interactive"]
+[
+  "getAvailableRoutes",
+  "pruneLayer",
+  "getBestRoute",
+  "getBestRoundTrip",
+  "getPathTo",
+  "interactive"
+]
