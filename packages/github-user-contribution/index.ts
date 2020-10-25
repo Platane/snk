@@ -1,23 +1,6 @@
 import fetch from "node-fetch";
 import * as parser from "fast-xml-parser";
 
-// const traverse = (
-//   o: any,
-//   callback: (elements: { name: string; "#text": string; attrs: any }[]) => void,
-//   path: { name: string; "#text": string; attrs: any }[] = []
-// ) => {
-//   if (o && typeof o === "object")
-//     Object.entries(o)
-//       .filter(([o]) => o !== "attr" && o !== "#text")
-//       .forEach(([name, v]) => {
-//         const el = { name, attrs: v.attrs, "#text": v["#text"] };
-//         const p = [el, ...path];
-//         callback(p);
-
-//         traverse(v, callback, p);
-//       });
-// };
-
 const findNode = (o: any, condition: (x: any) => boolean): any => {
   if (o && typeof o === "object") {
     if (condition(o)) return o;
@@ -28,6 +11,8 @@ const findNode = (o: any, condition: (x: any) => boolean): any => {
     }
   }
 };
+
+const ensureArray = (x: any) => (Array.isArray(x) ? x : [x]);
 
 const parseUserPage = (content: string) => {
   const o = parser.parse(content, {
@@ -56,7 +41,7 @@ const parseUserPage = (content: string) => {
 
   const cells = svg.g.g
     .map((g: any, x: number) =>
-      g.rect.map(({ attr }: any, y: number) => {
+      ensureArray(g.rect).map(({ attr }: any, y: number) => {
         const color = attr.fill;
         const count = +attr["data-count"];
         const date = attr["data-date"];
