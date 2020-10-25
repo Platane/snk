@@ -33,6 +33,7 @@ export const createCanvas = ({
   canvas.height = h * upscale;
   canvas.style.width = w + "px";
   canvas.style.height = h + "px";
+  canvas.style.display = "block";
 
   document.body.appendChild(canvas);
 
