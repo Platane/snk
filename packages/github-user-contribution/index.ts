@@ -27,8 +27,9 @@ const parseUserPage = (content: string) => {
     o,
     (x) => x.attr && x.attr.class && x.attr.class.trim() === "legend"
   );
+
   const colorScheme = legend.li.map(
-    (x: any) => x.attr.style.match(/background\-color: +(#\w+)/)![1]!
+    (x: any) => x.attr.style.match(/background\-color: +(.+)/)![1]!
   );
 
   //
@@ -53,7 +54,12 @@ const parseUserPage = (content: string) => {
     )
     .flat();
 
-  return { cells, colorScheme };
+  return {
+    cells,
+    colorScheme: colorScheme.every((c: string) => c.startsWith("#"))
+      ? colorScheme
+      : ["#ebedf0", "#9be9a8", "#40c463", "#30a14e", "#216e39"],
+  };
 };
 
 /**
