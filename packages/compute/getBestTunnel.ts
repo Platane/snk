@@ -28,9 +28,6 @@ type M = {
   f: number;
 };
 
-const unwrap = (m: M | null): Snake[] =>
-  m ? [m.snake, ...unwrap(m.parent)] : [];
-
 /**
  * returns the path to reach the outside which contains the least color cell
  */
@@ -56,8 +53,8 @@ const getSnakeEscapePath = (grid0: Grid, snake0: Snake, color: Color) => {
           let e: M["parent"] = o;
           while (e) {
             points.unshift({
-              y: getHeadY(e.snake),
               x: getHeadX(e.snake),
+              y: getHeadY(e.snake),
             });
             e = e.parent;
           }
@@ -97,6 +94,8 @@ const getSnakeEscapePath = (grid0: Grid, snake0: Snake, color: Color) => {
 
 /**
  * compute the best tunnel to get to the cell and back to the outside ( best = less usage of <color> )
+ *
+ * notice that it's one of the best tunnels, more with the same score could exist
  */
 export const getBestTunnel = (
   grid: Grid,
@@ -120,18 +119,18 @@ export const getBestTunnel = (
 
   // remove from the grid the colors that one eat
   const gridI = copyGrid(grid);
-  for (const { x, y } of one) setColorEmpty(gridI, x, y);
+  for (const { x, y } of one)
+    if (isInside(grid, x, y)) setColorEmpty(gridI, x, y);
 
   const two = getSnakeEscapePath(gridI, snakeI, color);
 
   if (!two) return null;
 
+  one.shift();
   one.reverse();
-  one.pop();
-
-  trimTunnelStart(grid, one);
-  trimTunnelEnd(grid, two);
   one.push(...two);
+  trimTunnelStart(grid, one);
+  trimTunnelEnd(grid, one);
 
   return one;
 };
@@ -152,8 +151,14 @@ export const trimTunnelStart = (grid: Grid, tunnel: Point[]) => {
  */
 export const trimTunnelEnd = (grid: Grid, tunnel: Point[]) => {
   while (tunnel.length) {
-    const { x, y } = tunnel[tunnel.length - 1];
-    if (!isInside(grid, x, y) || isEmpty(getColor(grid, x, y))) tunnel.pop();
+    const i = tunnel.length - 1;
+    const { x, y } = tunnel[i];
+    if (
+      !isInside(grid, x, y) ||
+      isEmpty(getColor(grid, x, y)) ||
+      tunnel.findIndex((p) => p.x === x && p.y === y) < i
+    )
+      tunnel.pop();
     else break;
   }
 };

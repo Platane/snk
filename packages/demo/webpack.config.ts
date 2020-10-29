@@ -40,6 +40,11 @@ const config: Configuration = {
           chunks: [demo],
         })
     ),
+    new HtmlWebpackPlugin({
+      title: "snk - " + demos[0],
+      filename: `index.html`,
+      chunks: [demos[0]],
+    }),
   ],
 
   devtool: false,

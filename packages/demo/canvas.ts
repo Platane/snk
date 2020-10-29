@@ -34,6 +34,7 @@ export const createCanvas = ({
   canvas.style.width = w + "px";
   canvas.style.height = h + "px";
   canvas.style.display = "block";
+  canvas.style.pointerEvents = "none";
 
   document.body.appendChild(canvas);
 

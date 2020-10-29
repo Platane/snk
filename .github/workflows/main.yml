@@ -31,7 +31,6 @@ jobs:
 
       - uses: bahmutov/npm-install@v1.4.3
 
-      - run: ( cd packages/compute ; yarn benchmark )
       - run: ( cd packages/gif-creator ; yarn benchmark )
 
   test-action:

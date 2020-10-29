@@ -119,7 +119,7 @@ setColor(closedU, 2 + 10, 3 + 10, 1 as Color);
 setColor(closedU, 1 + 10, 3 + 10, 1 as Color);
 setColor(closedU, 2 + 10, 4 + 10, 1 as Color);
 
-const create = (width: number, height: number, emptyP: number) => {
+const createRandom = (width: number, height: number, emptyP: number) => {
   const grid = createEmptyGrid(width, height);
   const pm = new ParkMiller(10);
   const random = pm.integerInRange.bind(pm);
@@ -128,10 +128,10 @@ const create = (width: number, height: number, emptyP: number) => {
 };
 
 // small realistic
-export const small = create(10, 7, 3);
-export const smallPacked = create(10, 7, 1);
-export const smallFull = create(10, 7, 0);
+export const small = createRandom(10, 7, 3);
+export const smallPacked = createRandom(10, 7, 1);
+export const smallFull = createRandom(10, 7, 0);
 
 // small realistic
-export const realistic = create(52, 7, 3);
-export const realisticFull = create(52, 7, 0);
+export const realistic = createRandom(52, 7, 3);
+export const realisticFull = createRandom(52, 7, 0);

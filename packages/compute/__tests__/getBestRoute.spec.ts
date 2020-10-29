@@ -15,7 +15,7 @@ it("should find best route", () => {
 
   const chain = getBestRoute(grid, createSnakeFromCells(snk0))!;
 
-  expect(snakeToCells(chain[0])[1]).toEqual({ x: 0, y: 0 });
+  expect(snakeToCells(chain[1])[1]).toEqual({ x: 0, y: 0 });
 
   expect(snakeToCells(chain[chain.length - 1])[0]).toEqual({ x: 3, y: 3 });
 });

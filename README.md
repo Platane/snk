@@ -7,6 +7,6 @@
 
 Generates a snake game from a github user contributions grid and output a screen capture as gif
 
-- [demo](https://platane.github.io/snk/interactive.html)
+- [demo](https://platane.github.io/snk)
 
 - [github action](https://github.com/marketplace/actions/generate-snake-game-from-github-contribution-grid)

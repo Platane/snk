@@ -122,6 +122,7 @@ const createViewer = ({
   const h = (height / width) * w;
   canvas.style.width = w + "px";
   canvas.style.height = h + "px";
+  canvas.style.pointerEvents = "none";
 
   document.body.appendChild(canvas);
 
@@ -205,7 +206,7 @@ const onSubmit = async (userName: string) => {
 
   const snake = snake3;
   const grid = userContributionToGrid(cells);
-  const chain = [snake, ...getBestRoute(grid, snake)!];
+  const chain = getBestRoute(grid, snake)!;
   dispose();
 
   createViewer({ grid0: grid, chain, drawOptions });
