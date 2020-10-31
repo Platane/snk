@@ -10,7 +10,7 @@ import {
   Options,
 } from "@snk/draw/drawWorld";
 import { userContributionToGrid } from "../action/userContributionToGrid";
-import { snake3 } from "@snk/types/__fixtures__/snake";
+import { snake4 as snake } from "@snk/types/__fixtures__/snake";
 
 const createForm = ({
   onSubmit,
@@ -204,7 +204,6 @@ const onSubmit = async (userName: string) => {
     cells,
   };
 
-  const snake = snake3;
   const grid = userContributionToGrid(cells);
   const chain = getBestRoute(grid, snake)!;
   dispose();

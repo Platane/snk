@@ -33,7 +33,6 @@ for (const key of [
   "corner",
   "small",
   "smallPacked",
-  "enclave",
 ] as const)
   it(`should generate ${key} gif`, async () => {
     const grid = grids[key];

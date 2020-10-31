@@ -25,7 +25,7 @@ const config: Configuration = {
           transpileOnly: true,
           compilerOptions: {
             lib: ["dom", "es2020"],
-            target: "es5",
+            target: "es2019",
           },
         },
       },

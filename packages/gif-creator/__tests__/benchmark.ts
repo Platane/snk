@@ -4,7 +4,7 @@ import { realistic as grid } from "@snk/types/__fixtures__/grid";
 import { createGif } from "..";
 
 let snake = createSnakeFromCells(
-  Array.from({ length: 6 }, (_, i) => ({ x: i, y: -1 }))
+  Array.from({ length: 4 }, (_, i) => ({ x: i, y: -1 }))
 );
 
 const chain = [snake];

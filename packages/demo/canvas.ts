@@ -18,6 +18,18 @@ export const drawOptions = {
   colorSnake: "purple",
 };
 
+const getPointedCell = (canvas: HTMLCanvasElement) => ({
+  pageX,
+  pageY,
+}: MouseEvent) => {
+  const { left, top } = canvas.getBoundingClientRect();
+
+  const x = Math.floor((pageX - left) / drawOptions.sizeCell) - 1;
+  const y = Math.floor((pageY - top) / drawOptions.sizeCell) - 2;
+
+  return { x, y };
+};
+
 export const createCanvas = ({
   width,
   height,
@@ -34,9 +46,19 @@ export const createCanvas = ({
   canvas.style.width = w + "px";
   canvas.style.height = h + "px";
   canvas.style.display = "block";
-  canvas.style.pointerEvents = "none";
+  // canvas.style.pointerEvents = "none";
 
+  const cellInfo = document.createElement("div");
+  cellInfo.style.height = "20px";
+
+  document.body.appendChild(cellInfo);
   document.body.appendChild(canvas);
+  canvas.addEventListener("mousemove", (e) => {
+    const { x, y } = getPointedCell(canvas)(e);
+    cellInfo.innerText = [x, y]
+      .map((u) => u.toString().padStart(2, " "))
+      .join(" / ");
+  });
 
   const ctx = canvas.getContext("2d")!;
   ctx.scale(upscale, upscale);
@@ -63,5 +85,12 @@ export const createCanvas = ({
     ctx.fillRect((1 + x + 0.5) * 16 - 2, (2 + y + 0.5) * 16 - 2, 4, 4);
   };
 
-  return { draw, drawLerp, highlightCell, canvas, ctx };
+  return {
+    draw,
+    drawLerp,
+    highlightCell,
+    canvas,
+    getPointedCell: getPointedCell(canvas),
+    ctx,
+  };
 };

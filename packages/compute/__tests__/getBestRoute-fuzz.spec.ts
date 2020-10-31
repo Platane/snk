@@ -1,33 +1,39 @@
 import { getBestRoute } from "../getBestRoute";
-import { snake3 } from "@snk/types/__fixtures__/snake";
+import { snake3, snake4 } from "@snk/types/__fixtures__/snake";
 import {
   getHeadX,
   getHeadY,
+  getSnakeLength,
   Snake,
   snakeWillSelfCollide,
 } from "@snk/types/snake";
 import { createFromSeed } from "@snk/types/__fixtures__/createFromSeed";
 
 const n = 1000;
-const width = 5;
-const height = 5;
-it(`should find solution for ${n} ${width}x${height} generated grids`, () => {
-  const results = Array.from({ length: n }, (_, seed) => {
-    const grid = createFromSeed(seed, width, height);
 
-    try {
-      const chain = getBestRoute(grid, snake3);
+for (const { width, height, snake } of [
+  { width: 5, height: 5, snake: snake3 },
+  { width: 5, height: 5, snake: snake4 },
+])
+  it(`should find solution for ${n} ${width}x${height} generated grids for ${getSnakeLength(
+    snake
+  )} length snake`, () => {
+    const results = Array.from({ length: n }, (_, seed) => {
+      const grid = createFromSeed(seed, width, height);
 
-      assertValidPath(chain);
+      try {
+        const chain = getBestRoute(grid, snake);
 
-      return { seed };
-    } catch (error) {
-      return { seed, error };
-    }
+        assertValidPath(chain);
+
+        return { seed };
+      } catch (error) {
+        return { seed, error };
+      }
+    });
+
+    expect(results.filter((x) => x.error)).toEqual([]);
   });
-
-  expect(results.filter((x) => x.error)).toEqual([]);
-});
 
 const assertValidPath = (chain: Snake[]) => {
   for (let i = 0; i < chain.length - 1; i++) {

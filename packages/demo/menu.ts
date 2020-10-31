@@ -15,8 +15,8 @@ const config = {
   demo: demos[0],
 };
 {
-  const d = window.location.pathname.match(/(\w+)\.html/)?.[1];
-  if (d && demos.includes(d)) config.demo = d;
+  const d = window.location.pathname.match(/(\w+)\.html/);
+  if (d && demos.includes(d[1])) config.demo = d[1];
 }
 
 const onChange = () => {
