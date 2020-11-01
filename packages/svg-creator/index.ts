@@ -5,15 +5,14 @@ import {
   isInside,
   setColorEmpty,
 } from "@snk/types/grid";
-import {
-  getHeadX,
-  getHeadY,
-  getSnakeLength,
-  snakeToCells,
-} from "@snk/types/snake";
+import { getHeadX, getHeadY } from "@snk/types/snake";
 import type { Snake } from "@snk/types/snake";
 import type { Grid, Color, Empty } from "@snk/types/grid";
 import type { Point } from "@snk/types/point";
+import { createSnake } from "./snake";
+import { createGrid } from "./grid";
+import { createStack } from "./stack";
+import { toAttribute } from "./utils";
 
 export type Options = {
   colorDots: Record<Color, string>;
@@ -25,8 +24,6 @@ export type Options = {
   sizeBorderRadius: number;
   cells?: Point[];
 };
-
-const percent = (x: number) => (x * 100).toFixed(2);
 
 const createCells = ({ width, height }: Grid) =>
   Array.from({ length: width }, (_, x) =>
@@ -67,23 +64,17 @@ export const createSvg = (
     }
   }
 
-  const { svgElements: snakeSvgElements, styles: snakeStyles } = createSnake(
-    chain,
-    drawOptions,
-    duration
-  );
-  const { svgElements: gridSvgElements, styles: gridStyles } = createGrid(
-    cells,
-    drawOptions,
-    duration
-  );
-  const { svgElements: stackSvgElements, styles: stackStyles } = createStack(
-    cells,
-    drawOptions,
-    grid0.width * drawOptions.sizeCell,
-    (grid0.height + 2) * drawOptions.sizeCell,
-    duration
-  );
+  const elements = [
+    createGrid(cells, drawOptions, duration),
+    createStack(
+      cells,
+      drawOptions,
+      grid0.width * drawOptions.sizeCell,
+      (grid0.height + 2) * drawOptions.sizeCell,
+      duration
+    ),
+    createSnake(chain, drawOptions, duration),
+  ];
 
   const viewBox = [
     -drawOptions.sizeCell,
@@ -103,197 +94,10 @@ export const createSvg = (
     >`,
 
     "<style>",
-    ...snakeStyles,
-    ...gridStyles,
-    ...stackStyles,
+    ...elements.map((e) => e.styles).flat(),
     "</style>",
-
-    ...gridSvgElements,
-    ...snakeSvgElements,
-    ...stackSvgElements,
+    ...elements.map((e) => e.svgElements).flat(),
 
     "</svg>",
   ].join("\n");
-};
-
-const h = (element: string, attributes: any) =>
-  `<${element} ${toAttribute(attributes)}/>`;
-
-const toAttribute = (o: any) =>
-  Object.entries(o)
-    .filter(([, value]) => value !== null)
-    .map(([name, value]) => `${name}="${value}"`)
-    .join(" ");
-
-const createSnake = (
-  chain: Snake[],
-  { sizeCell, colorSnake, sizeDot }: Options,
-  duration: number
-) => {
-  const snakeN = chain[0] ? getSnakeLength(chain[0]) : 0;
-
-  const snakeParts: Point[][] = Array.from({ length: snakeN }, () => []);
-
-  for (const snake of chain) {
-    const cells = snakeToCells(snake);
-    for (let i = cells.length; i--; ) snakeParts[i].push(cells[i]);
-  }
-
-  const svgElements = snakeParts.map((_, i) => {
-    const s = sizeCell;
-    const u = Math.min((i - 1) * 1.6 * (s / 16), s * 0.2);
-    const d = sizeDot - u;
-    const m = (s - d) / 2;
-
-    return h("rect", {
-      class: "s",
-      id: `s${i}`,
-      x: m,
-      y: m,
-      width: d,
-      height: d,
-    });
-  });
-
-  const transform = ({ x, y }: Point) =>
-    `transform:translate(${x * sizeCell}px,${y * sizeCell}px)`;
-
-  const styles = [
-    `rect.s{ 
-      shape-rendering: geometricPrecision;
-      rx: 4;
-      ry: 4;
-      fill:${colorSnake};
-    }`,
-
-    ...snakeParts.map((positions, i) => {
-      const id = `s${i}`;
-      const animationName = "a" + id;
-
-      return [
-        `@keyframes ${animationName} {` +
-          removeInterpolatedPositions(
-            positions.map((tr, i, { length }) => ({ ...tr, t: i / length }))
-          )
-            .map((p) => `${percent(p.t)}%{${transform(p)}}`)
-            .join("") +
-          "}",
-
-        `#${id}{` +
-          `${transform(positions[0])};` +
-          `animation: ${animationName} linear ${duration}ms infinite` +
-          "}",
-      ];
-    }),
-  ].flat();
-
-  return { svgElements, styles };
-};
-
-const removeInterpolatedPositions = <T extends Point>(arr: T[]) =>
-  arr.filter((u, i, arr) => {
-    if (i - 1 < 0 || i + 1 >= arr.length) return true;
-
-    const a = arr[i - 1];
-    const b = arr[i + 1];
-
-    const ex = (a.x + b.x) / 2;
-    const ey = (a.y + b.y) / 2;
-
-    // return true;
-    return !(Math.abs(ex - u.x) < 0.01 && Math.abs(ey - u.y) < 0.01);
-  });
-
-const createGrid = (
-  cells: (Point & { t: number | null; color: Color | Empty })[],
-  { colorEmpty, colorBorder, colorDots, sizeDot, sizeCell }: Options,
-  duration: number
-) => {
-  const svgElements: string[] = [];
-  const styles = [
-    `rect.c{
-      shape-rendering: geometricPrecision;
-      outline: 1px solid ${colorBorder};
-      outline-offset: -1px;
-      rx: 2;
-      ry: 2;
-      fill:${colorEmpty}
-    }`,
-  ];
-
-  let i = 0;
-  for (const { x, y, color, t } of cells) {
-    const id = t && "c" + (i++).toString(36);
-    const s = sizeCell;
-    const d = sizeDot;
-    const m = (s - d) / 2;
-
-    if (t !== null) {
-      const animationName = "a" + id;
-      // @ts-ignore
-      const fill = colorDots[color];
-
-      styles.push(
-        `@keyframes ${animationName} {` +
-          `${percent(t - 0.0001)}%{fill:${fill}}` +
-          `${percent(t + 0.0001)}%,100%{fill:${colorEmpty}}` +
-          "}",
-
-        `#${id}{fill:${fill};animation: ${animationName} linear ${duration}ms infinite}`
-      );
-    }
-
-    svgElements.push(
-      h("rect", {
-        id,
-        class: "c",
-        x: x * s + m,
-        y: y * s + m,
-        width: d,
-        height: d,
-      })
-    );
-  }
-
-  return { svgElements, styles };
-};
-
-const createStack = (
-  cells: { t: number | null; color: Color | Empty }[],
-  { colorDots, sizeDot }: Options,
-  width: number,
-  y: number,
-  duration: number
-) => {
-  const svgElements: string[] = [];
-  const styles = [];
-
-  const stack = cells
-    .slice()
-    .filter((a) => a.t !== null)
-    .sort((a, b) => a.t! - b.t!) as any[];
-
-  const m = width / stack.length;
-  let i = 0;
-  for (const { color, t } of stack) {
-    const x = ((i * width) / stack.length).toFixed(2);
-    const id = "t" + (i++).toString(36);
-    const animationName = "a" + id;
-    // @ts-ignore
-    const fill = colorDots[color];
-
-    svgElements.push(
-      h("rect", { id, height: sizeDot, width: (m + 0.6).toFixed(2), x, y })
-    );
-    styles.push(
-      `@keyframes ${animationName} {` +
-        `${percent(t - 0.0001)}%{fill:transparent}` +
-        `${percent(t + 0.0001)}%,100%{fill:${fill}}` +
-        "}",
-
-      `#${id}{fill:transparent;animation: ${animationName} linear ${duration}ms infinite}`
-    );
-  }
-
-  return { svgElements, styles };
 };
