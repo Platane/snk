@@ -1,13 +1,20 @@
 import {
   getHeadX,
   getHeadY,
+  getSnakeLength,
   nextSnake,
   snakeEquals,
   snakeToCells,
   snakeWillSelfCollide,
 } from "@snk/types/snake";
 import type { Snake } from "@snk/types/snake";
-import { getColor, Grid, isEmpty, isInside } from "@snk/types/grid";
+import {
+  getColor,
+  Grid,
+  isEmpty,
+  isInside,
+  isInsideLarge,
+} from "@snk/types/grid";
 import { getTunnelPath } from "./tunnel";
 import { around4 } from "@snk/types/point";
 import { sortPush } from "./utils/sortPush";
@@ -18,6 +25,18 @@ const isEmptySafe = (grid: Grid, x: number, y: number) =>
 type M = { snake: Snake; parent: M | null; w: number; f: number };
 export const getPathToPose = (snake0: Snake, target: Snake, grid?: Grid) => {
   const targetCells = snakeToCells(target).reverse();
+
+  const snakeN = getSnakeLength(snake0);
+  const box = {
+    min: {
+      x: Math.min(getHeadX(snake0), getHeadX(target)) - snakeN - 1,
+      y: Math.min(getHeadY(snake0), getHeadY(target)) - snakeN - 1,
+    },
+    max: {
+      x: Math.max(getHeadX(snake0), getHeadX(target)) + snakeN + 1,
+      y: Math.max(getHeadY(snake0), getHeadY(target)) + snakeN + 1,
+    },
+  };
 
   const [t0] = targetCells;
 
@@ -51,7 +70,13 @@ export const getPathToPose = (snake0: Snake, target: Snake, grid?: Grid) => {
 
       if (
         !snakeWillSelfCollide(o.snake, dx, dy) &&
-        (!grid || isEmptySafe(grid, nx, ny))
+        (!grid || isEmptySafe(grid, nx, ny)) &&
+        (grid
+          ? isInsideLarge(grid, 2, nx, ny)
+          : box.min.x <= nx &&
+            nx <= box.max.x &&
+            box.min.y <= ny &&
+            ny <= box.max.y)
       ) {
         const snake = nextSnake(o.snake, dx, dy);
 
