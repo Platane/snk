@@ -172,9 +172,10 @@ const createSnake = (
 
       return [
         `@keyframes ${animationName} {` +
-          positions
-            .map(transform)
-            .map((tr, i, { length }) => `${percent(i / length)}%{${tr}}`)
+          removeInterpolatedPositions(
+            positions.map((tr, i, { length }) => ({ ...tr, t: i / length }))
+          )
+            .map((p) => `${percent(p.t)}%{${transform(p)}}`)
             .join("") +
           "}",
 
@@ -188,6 +189,20 @@ const createSnake = (
 
   return { svgElements, styles };
 };
+
+const removeInterpolatedPositions = <T extends Point>(arr: T[]) =>
+  arr.filter((u, i, arr) => {
+    if (i - 1 < 0 || i + 1 >= arr.length) return true;
+
+    const a = arr[i - 1];
+    const b = arr[i + 1];
+
+    const ex = (a.x + b.x) / 2;
+    const ey = (a.y + b.y) / 2;
+
+    // return true;
+    return !(Math.abs(ex - u.x) < 0.01 && Math.abs(ey - u.y) < 0.01);
+  });
 
 const createGrid = (
   cells: (Point & { t: number | null; color: Color | Empty })[],
@@ -220,8 +235,8 @@ const createGrid = (
 
       styles.push(
         `@keyframes ${animationName} {` +
-          `${percent(t - 0.001)}%{fill:${fill}}` +
-          `${percent(t + 0.001)}%,100%{fill:${colorEmpty}}` +
+          `${percent(t - 0.0001)}%{fill:${fill}}` +
+          `${percent(t + 0.0001)}%,100%{fill:${colorEmpty}}` +
           "}",
 
         `#${id}{fill:${fill};animation: ${animationName} linear ${duration}ms infinite}`
@@ -272,8 +287,8 @@ const createStack = (
     );
     styles.push(
       `@keyframes ${animationName} {` +
-        `${percent(t - 0.001)}%{fill:transparent}` +
-        `${percent(t + 0.001)}%,100%{fill:${fill}}` +
+        `${percent(t - 0.0001)}%{fill:transparent}` +
+        `${percent(t + 0.0001)}%,100%{fill:${fill}}` +
         "}",
 
       `#${id}{fill:transparent;animation: ${animationName} linear ${duration}ms infinite}`
