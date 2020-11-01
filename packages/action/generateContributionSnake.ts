@@ -1,28 +1,24 @@
 import { getGithubUserContribution } from "@snk/github-user-contribution";
-import { createGif } from "@snk/gif-creator";
-import { getBestRoute } from "@snk/compute/getBestRoute";
-import { createSnakeFromCells } from "@snk/types/snake";
 import { userContributionToGrid } from "./userContributionToGrid";
+import { getBestRoute } from "@snk/compute/getBestRoute";
+import { createGif } from "@snk/gif-creator";
+import { createSvg } from "../svg-creator";
+import { snake4 } from "@snk/types/__fixtures__/snake";
 
-export const generateContributionSnake = async (userName: string) => {
+export const generateContributionSnake = async (
+  userName: string,
+  format: { svg?: boolean; gif?: boolean }
+) => {
   console.log("🎣 fetching github user contribution");
   const { cells, colorScheme } = await getGithubUserContribution(userName);
 
-  const grid0 = userContributionToGrid(cells);
+  const grid = userContributionToGrid(cells);
+  const snake = snake4;
 
-  const snake0 = createSnakeFromCells([
-    { x: 3, y: -1 },
-    { x: 2, y: -1 },
-    { x: 1, y: -1 },
-    { x: 0, y: -1 },
-  ]);
-
-  // const upscale = 815 / (grid0.width + 2) / 16;
-  const upscale = 2;
   const drawOptions = {
-    sizeBorderRadius: 2 * upscale,
-    sizeCell: 16 * upscale,
-    sizeDot: 12 * upscale,
+    sizeBorderRadius: 2,
+    sizeCell: 16,
+    sizeDot: 12,
     colorBorder: "#1b1f230a",
     colorDots: colorScheme as any,
     colorEmpty: colorScheme[0],
@@ -33,10 +29,19 @@ export const generateContributionSnake = async (userName: string) => {
   const gifOptions = { frameDuration: 100, step: 1 };
 
   console.log("📡 computing best route");
-  const chain = getBestRoute(grid0, snake0)!;
+  const chain = getBestRoute(grid, snake)!;
 
-  console.log("📹 creating gif");
-  const buffer = await createGif(grid0, chain, drawOptions, gifOptions);
+  const output: Record<string, Buffer | string> = {};
 
-  return buffer;
+  if (format.gif) {
+    console.log("📹 creating gif");
+    output.gif = await createGif(grid, chain, drawOptions, gifOptions);
+  }
+
+  if (format.svg) {
+    console.log("🖌 creating svg");
+    output.svg = createSvg(grid, chain, drawOptions, gifOptions);
+  }
+
+  return output;
 };

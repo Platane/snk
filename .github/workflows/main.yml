@@ -46,6 +46,7 @@ jobs:
         with:
           github_user_name: platane
           gif_out_path: dist/github-contribution-grid-snake.gif
+          svg_out_path: dist/github-contribution-grid-snake.svg
 
       - name: ensure the generated file exists
         run: |

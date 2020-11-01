@@ -5,6 +5,8 @@ author: "platane"
 outputs:
   gif_out_path:
     description: "path of the generated gif"
+  svg_out_path:
+    description: "path of the generated svg"
 
 runs:
   using: "docker"
@@ -17,4 +19,8 @@ inputs:
   gif_out_path:
     description: "path of the generated gif"
     required: false
-    default: "./github-contribution-grid-snake.gif"
+    default: null
+  svg_out_path:
+    description: "path of the generated svg"
+    required: false
+    default: null

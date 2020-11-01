@@ -5,13 +5,24 @@ import { generateContributionSnake } from "./generateContributionSnake";
 (async () => {
   try {
     const userName = core.getInput("github_user_name");
-    const gifOutPath = core.getInput("gif_out_path");
+    const format = {
+      svg: core.getInput("svg_out_path"),
+      gif: core.getInput("gif_out_path"),
+    };
 
-    const buffer = await generateContributionSnake(userName);
+    const { svg, gif } = await generateContributionSnake(
+      userName,
+      format as any
+    );
 
-    fs.writeFileSync(gifOutPath, buffer);
-
-    console.log(`::set-output name=gif_out_path::${gifOutPath}`);
+    if (svg) {
+      fs.writeFileSync(format.svg, svg);
+      console.log(`::set-output name=svg_out_path::${format.svg}`);
+    }
+    if (gif) {
+      fs.writeFileSync(format.gif, gif);
+      console.log(`::set-output name=gif_out_path::${format.gif}`);
+    }
   } catch (e) {
     core.setFailed(`Action failed with "${e.message}"`);
   }
