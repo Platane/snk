@@ -2,6 +2,8 @@ import * as fs from "fs";
 import * as path from "path";
 import { generateContributionSnake } from "../generateContributionSnake";
 
+jest.setTimeout(2 * 60 * 1000);
+
 it("should generate contribution snake", async () => {
   const outputSvg = path.join(__dirname, "__snapshots__/out.svg");
   const outputGif = path.join(__dirname, "__snapshots__/out.gif");
