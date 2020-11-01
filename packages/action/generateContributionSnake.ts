@@ -4,6 +4,7 @@ import { getBestRoute } from "@snk/compute/getBestRoute";
 import { createGif } from "@snk/gif-creator";
 import { createSvg } from "../svg-creator";
 import { snake4 } from "@snk/types/__fixtures__/snake";
+import { getPathToPose } from "@snk/compute/getPathToPose";
 
 export const generateContributionSnake = async (
   userName: string,
@@ -30,6 +31,7 @@ export const generateContributionSnake = async (
 
   console.log("📡 computing best route");
   const chain = getBestRoute(grid, snake)!;
+  chain.push(...getPathToPose(chain.slice(-1)[0], snake)!);
 
   const output: Record<string, Buffer | string> = {};
 

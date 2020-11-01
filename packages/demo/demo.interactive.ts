@@ -11,6 +11,7 @@ import {
 } from "@snk/draw/drawWorld";
 import { userContributionToGrid } from "../action/userContributionToGrid";
 import { snake4 as snake } from "@snk/types/__fixtures__/snake";
+import { getPathToPose } from "@snk/compute/getPathToPose";
 
 const createForm = ({
   onSubmit,
@@ -206,6 +207,7 @@ const onSubmit = async (userName: string) => {
 
   const grid = userContributionToGrid(cells);
   const chain = getBestRoute(grid, snake)!;
+  chain.push(...getPathToPose(chain.slice(-1)[0], snake)!);
   dispose();
 
   createViewer({ grid0: grid, chain, drawOptions });
