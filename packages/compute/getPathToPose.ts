@@ -24,6 +24,8 @@ const isEmptySafe = (grid: Grid, x: number, y: number) =>
 
 type M = { snake: Snake; parent: M | null; w: number; f: number };
 export const getPathToPose = (snake0: Snake, target: Snake, grid?: Grid) => {
+  if (snakeEquals(snake0, target)) return [];
+
   const targetCells = snakeToCells(target).reverse();
 
   const snakeN = getSnakeLength(snake0);
@@ -38,7 +40,9 @@ export const getPathToPose = (snake0: Snake, target: Snake, grid?: Grid) => {
     },
   };
 
-  const [t0] = targetCells;
+  const [t0, ...forbidden] = targetCells;
+
+  forbidden.slice(0, 3);
 
   const openList: M[] = [{ snake: snake0, w: 0 } as any];
   const closeList: Snake[] = [];
@@ -76,7 +80,8 @@ export const getPathToPose = (snake0: Snake, target: Snake, grid?: Grid) => {
           : box.min.x <= nx &&
             nx <= box.max.x &&
             box.min.y <= ny &&
-            ny <= box.max.y)
+            ny <= box.max.y) &&
+        !forbidden.some((p) => p.x === nx && p.y === ny)
       ) {
         const snake = nextSnake(o.snake, dx, dy);
 

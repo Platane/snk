@@ -1,1 +1,9 @@
-["interactive", "getBestTunnel", "getBestRoute", "outside", "getPathTo", "svg"]
+[
+  "interactive",
+  "getBestTunnel",
+  "getBestRoute",
+  "outside",
+  "getPathToPose",
+  "getPathTo",
+  "svg"
+]
