@@ -3,9 +3,7 @@ import * as grids from "@snk/types/__fixtures__/grid";
 import * as snakes from "@snk/types/__fixtures__/snake";
 import { grid, snake } from "./sample";
 
-const demos: string[] = require("./demo.json").filter(
-  (x: any) => x !== "interactive"
-);
+const demos: string[] = require("./demo.json");
 
 export const gui = new GUI();
 

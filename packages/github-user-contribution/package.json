@@ -6,7 +6,6 @@
     "fast-xml-parser": "3.17.4"
   },
   "devDependencies": {
-    "@types/node-fetch": "2.5.7",
-    "@types/jsdom": "16.2.4"
+    "@types/node-fetch": "2.5.7"
   }
 }

@@ -1,15 +1,22 @@
 import path from "path";
 import HtmlWebpackPlugin from "html-webpack-plugin";
 
-import type { Configuration } from "webpack";
+import type { Configuration as WebpackConfiguration } from "webpack";
+import type { Configuration as WebpackDevServerConfiguration } from "webpack-dev-server";
 
 const demos: string[] = require("./demo.json");
 
-const config: Configuration = {
+const webpackDevServerConfiguration: WebpackDevServerConfiguration = {
+  open: true,
+  openPage: demos[1] + ".html",
+};
+
+const webpackConfiguration: WebpackConfiguration = {
   mode: "development",
   entry: Object.fromEntries(
     demos.map((demo: string) => [demo, `./demo.${demo}`])
   ),
+  target: ["web", "es2019"],
   resolve: { extensions: [".ts", ".js"] },
   output: {
     path: path.join(__dirname, "dist"),
@@ -48,7 +55,9 @@ const config: Configuration = {
   ],
 
   devtool: false,
-  stats: "errors-only",
 };
 
-export default config;
+export default {
+  ...webpackConfiguration,
+  devServer: webpackDevServerConfiguration,
+};
