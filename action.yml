@@ -1,12 +1,12 @@
 name: "generate-snake-game-from-github-contribution-grid"
-description: "Generates a snake game from a github user contributions grid and output a screen capture as gif"
+description: "Generates a snake game from a github user contributions grid. Output the animation as gif or svg"
 author: "platane"
 
 outputs:
   gif_out_path:
-    description: "path of the generated gif"
+    description: "path of the generated gif. If left empty, will not generate a gif file"
   svg_out_path:
-    description: "path of the generated svg"
+    description: "path of the generated svg. If left empty, will not generate a svg file"
 
 runs:
   using: "docker"
