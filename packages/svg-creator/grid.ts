@@ -27,13 +27,14 @@ export const createGrid = (
 ) => {
   const svgElements: string[] = [];
   const styles = [
-    `rect.c{
+    `.c{
       shape-rendering: geometricPrecision;
-      outline: 1px solid ${colorBorder};
-      outline-offset: -1px;
       rx: ${sizeBorderRadius};
       ry: ${sizeBorderRadius};
-      fill:${colorEmpty}
+      fill:${colorEmpty};
+      stroke-width: 1px;
+      stroke: ${colorBorder};
+      animation: none  ${duration}ms linear infinite;
     }`,
   ];
 
@@ -55,14 +56,13 @@ export const createGrid = (
           `${percent(t + 0.0001)}%,100%{fill:${colorEmpty}}` +
           "}",
 
-        `#${id}{fill:${fill};animation: ${animationName} linear ${duration}ms infinite}`
+        `.c.${id}{fill:${fill};animation-name: ${animationName}}`
       );
     }
 
     svgElements.push(
       h("rect", {
-        id,
-        class: "c",
+        class: ["c", id].filter(Boolean).join(" "),
         x: x * s + m,
         y: y * s + m,
         width: d,

@@ -24,7 +24,7 @@ try {
 } catch (err) {}
 
 for (const [key, grid] of Object.entries(grids))
-  it(`should generate ${key} gif`, () => {
+  it(`should generate ${key} svg`, () => {
     const chain = [snake, ...getBestRoute(grid, snake)!];
 
     const gif = createSvg(grid, chain, drawOptions, gifOptions);

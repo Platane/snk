@@ -16,7 +16,12 @@ export const createStack = (
   duration: number
 ) => {
   const svgElements: string[] = [];
-  const styles = [];
+  const styles = [
+    `.u{ 
+      animation: none linear ${duration}ms infinite;
+      fill:transparent;
+    }`,
+  ];
 
   const stack = cells
     .slice()
@@ -26,14 +31,20 @@ export const createStack = (
   const m = width / stack.length;
   let i = 0;
   for (const { color, t } of stack) {
-    const x = ((i * width) / stack.length).toFixed(2);
-    const id = "t" + (i++).toString(36);
+    const x = (i * width) / stack.length;
+    const id = "u" + (i++).toString(36);
     const animationName = "a" + id;
     // @ts-ignore
     const fill = colorDots[color];
 
     svgElements.push(
-      h("rect", { id, height: sizeDot, width: (m + 0.6).toFixed(2), x, y })
+      h("rect", {
+        class: `u ${id}`,
+        height: sizeDot,
+        width: (m + 0.6).toFixed(1),
+        x: x.toFixed(1),
+        y,
+      })
     );
     styles.push(
       `@keyframes ${animationName} {` +
@@ -41,7 +52,7 @@ export const createStack = (
         `${percent(t + 0.0001)}%,100%{fill:${fill}}` +
         "}",
 
-      `#${id}{fill:transparent;animation: ${animationName} linear ${duration}ms infinite}`
+      `.u.${id}{animation-name:${animationName}}`
     );
   }
 

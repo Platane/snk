@@ -25,26 +25,20 @@ export type Options = {
   cells?: Point[];
 };
 
-const createCells = ({ width, height }: Grid) =>
+const getCellsFromGrid = ({ width, height }: Grid) =>
   Array.from({ length: width }, (_, x) =>
     Array.from({ length: height }, (_, y) => ({ x, y }))
   ).flat();
 
-export const createSvg = (
+const createLivingCells = (
   grid0: Grid,
   chain: Snake[],
-  drawOptions: Options,
-  gifOptions: { frameDuration: number }
+  drawOptions: Options
 ) => {
-  const width = (grid0.width + 2) * drawOptions.sizeCell;
-  const height = (grid0.height + 5) * drawOptions.sizeCell;
-
-  const duration = gifOptions.frameDuration * chain.length;
-
   const cells: (Point & {
     t: number | null;
     color: Color | Empty;
-  })[] = (drawOptions.cells ?? createCells(grid0)).map(({ x, y }) => ({
+  })[] = (drawOptions.cells ?? getCellsFromGrid(grid0)).map(({ x, y }) => ({
     x,
     y,
     t: null,
@@ -64,13 +58,29 @@ export const createSvg = (
     }
   }
 
+  return cells;
+};
+
+export const createSvg = (
+  grid: Grid,
+  chain: Snake[],
+  drawOptions: Options,
+  gifOptions: { frameDuration: number }
+) => {
+  const width = (grid.width + 2) * drawOptions.sizeCell;
+  const height = (grid.height + 5) * drawOptions.sizeCell;
+
+  const duration = gifOptions.frameDuration * chain.length;
+
+  const cells = createLivingCells(grid, chain, drawOptions);
+
   const elements = [
     createGrid(cells, drawOptions, duration),
     createStack(
       cells,
       drawOptions,
-      grid0.width * drawOptions.sizeCell,
-      (grid0.height + 2) * drawOptions.sizeCell,
+      grid.width * drawOptions.sizeCell,
+      (grid.height + 2) * drawOptions.sizeCell,
       duration
     ),
     createSnake(chain, drawOptions, duration),
@@ -83,21 +93,32 @@ export const createSvg = (
     height,
   ].join(" ");
 
-  return [
+  const style = elements
+    .map((e) => e.styles)
+    .flat()
+    .join("");
+
+  const svg = [
     `<svg 
-      ${toAttribute({
-        viewBox,
-        width,
-        height,
-        xmlns: "http://www.w3.org/2000/svg",
-      })}
-    >`,
+        ${toAttribute({
+          viewBox,
+          width,
+          height,
+          xmlns: "http://www.w3.org/2000/svg",
+        })}
+      >`,
 
     "<style>",
-    ...elements.map((e) => e.styles).flat(),
+    optimizeCss(style),
     "</style>",
+
     ...elements.map((e) => e.svgElements).flat(),
 
     "</svg>",
-  ].join("\n");
+  ].join("");
+
+  return optimizeSvg(svg);
 };
+
+const optimizeCss = (css: string) => css;
+const optimizeSvg = (svg: string) => svg;

@@ -42,17 +42,16 @@ export const createSnake = (
 
     const m = (sizeCell - s) / 2;
 
-    const r = Math.min(4.5, (4 * s) / sizeDot).toFixed(2);
+    const r = Math.min(4.5, (4 * s) / sizeDot);
 
     return h("rect", {
-      class: "s",
-      id: `s${i}`,
-      x: m,
-      y: m,
-      width: s,
-      height: s,
-      rx: r,
-      ry: r,
+      class: `s s${i}`,
+      x: m.toFixed(1),
+      y: m.toFixed(1),
+      width: s.toFixed(1),
+      height: s.toFixed(1),
+      rx: r.toFixed(1),
+      ry: r.toFixed(1),
     });
   });
 
@@ -60,9 +59,10 @@ export const createSnake = (
     `transform:translate(${x * sizeCell}px,${y * sizeCell}px)`;
 
   const styles = [
-    `rect.s{ 
-      shape-rendering: geometricPrecision;
+    `.s{ 
+      shape-rendering:geometricPrecision;
       fill:${colorSnake};
+      animation: none linear ${duration}ms infinite
     }`,
 
     ...snakeParts.map((positions, i) => {
@@ -78,10 +78,7 @@ export const createSnake = (
             .join("") +
           "}",
 
-        `#${id}{` +
-          `${transform(positions[0])};` +
-          `animation: ${animationName} linear ${duration}ms infinite` +
-          "}",
+        `.s.${id}{${transform(positions[0])};animation-name: ${animationName}}`,
       ];
     }),
   ].flat();
