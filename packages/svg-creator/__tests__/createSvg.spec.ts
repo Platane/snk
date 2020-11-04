@@ -24,12 +24,12 @@ try {
 } catch (err) {}
 
 for (const [key, grid] of Object.entries(grids))
-  it(`should generate ${key} svg`, () => {
+  it(`should generate ${key} svg`, async () => {
     const chain = [snake, ...getBestRoute(grid, snake)!];
 
-    const gif = createSvg(grid, chain, drawOptions, gifOptions);
+    const svg = await createSvg(grid, chain, drawOptions, gifOptions);
 
-    expect(gif).toBeDefined();
+    expect(svg).toBeDefined();
 
-    fs.writeFileSync(path.resolve(dir, key + ".svg"), gif);
+    fs.writeFileSync(path.resolve(dir, key + ".svg"), svg);
   });

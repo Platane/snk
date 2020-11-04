@@ -12,7 +12,8 @@ import type { Point } from "@snk/types/point";
 import { createSnake } from "./snake";
 import { createGrid } from "./grid";
 import { createStack } from "./stack";
-import { toAttribute } from "./utils";
+import { h } from "./utils";
+import csso from "csso";
 
 export type Options = {
   colorDots: Record<Color, string>;
@@ -99,14 +100,12 @@ export const createSvg = (
     .join("");
 
   const svg = [
-    `<svg 
-        ${toAttribute({
-          viewBox,
-          width,
-          height,
-          xmlns: "http://www.w3.org/2000/svg",
-        })}
-      >`,
+    h("svg", {
+      viewBox,
+      width,
+      height,
+      xmlns: "http://www.w3.org/2000/svg",
+    }).replace("/>", ">"),
 
     "<style>",
     optimizeCss(style),
@@ -120,5 +119,5 @@ export const createSvg = (
   return optimizeSvg(svg);
 };
 
-const optimizeCss = (css: string) => css;
+const optimizeCss = (css: string) => csso.minify(css).css;
 const optimizeSvg = (svg: string) => svg;

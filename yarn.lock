@@ -596,6 +596,18 @@
   dependencies:
     "@types/node" "*"
 
+"@types/css-tree@*":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@types/css-tree/-/css-tree-1.0.3.tgz#69112ebce09f582c9e0f32a46de2598930847cd7"
+  integrity sha512-ScS4V2j9vL6aMzCIPxJLGKqyslg8zEj+XkzUXCDMHbFftakwEl9WL6RBj3VBTH4O+EVwUM3umZTwu0ZedXyuaA==
+
+"@types/csso@3.5.1":
+  version "3.5.1"
+  resolved "https://registry.yarnpkg.com/@types/csso/-/csso-3.5.1.tgz#f923bc919bfc89c1b5d149cff80d7bfb5e8e1e8d"
+  integrity sha512-NnALC1ZR5H4kg/9wUOa8/U2HOAwN4O71Av90HClgCteuwj6UHBEr37I0Cl10EY2gHd5p/JtsbY2r0WbOhYN+gw==
+  dependencies:
+    "@types/css-tree" "*"
+
 "@types/dat.gui@0.7.5":
   version "0.7.5"
   resolved "https://registry.yarnpkg.com/@types/dat.gui/-/dat.gui-0.7.5.tgz#8f4f87300ae553a57b246a7bf1b9fe5e13ca8b79"
@@ -1902,10 +1914,25 @@ css-select@^1.1.0:
     domutils "1.5.1"
     nth-check "~1.0.1"
 
+css-tree@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/css-tree/-/css-tree-1.0.0.tgz#21993fa270d742642a90409a2c0cb3ac0298adf6"
+  integrity sha512-CdVYz/Yuqw0VdKhXPBIgi8DO3NicJVYZNWeX9XcIuSp9ZoFT5IcleVRW07O5rMjdcx1mb+MEJPknTTEW7DdsYw==
+  dependencies:
+    mdn-data "2.0.12"
+    source-map "^0.6.1"
+
 css-what@2.1:
   version "2.1.3"
   resolved "https://registry.yarnpkg.com/css-what/-/css-what-2.1.3.tgz#a6d7604573365fe74686c3f311c56513d88285f2"
   integrity sha512-a+EPoD+uZiNfh+5fxw2nO9QwFa6nJe2Or35fGY6Ipw1R3R4AGz1d1TEZrCegvw2YTmZ0jXirGYlzxxpYSHwpEg==
+
+csso@4.1.0:
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/csso/-/csso-4.1.0.tgz#1d31193efa99b87aa6bad6c0cef155e543d09e8b"
+  integrity sha512-h+6w/W1WqXaJA4tb1dk7r5tVbOm97MsKxzwnvOR04UQ6GILroryjMWu3pmCCtL2mLaEStQ0fZgeGiy99mo7iyg==
+  dependencies:
+    css-tree "^1.0.0"
 
 cssom@^0.4.4:
   version "0.4.4"
@@ -4186,6 +4213,11 @@ map-visit@^1.0.0:
   integrity sha1-7Nyo8TFE5mDxtb1B8S80edmN+48=
   dependencies:
     object-visit "^1.0.0"
+
+mdn-data@2.0.12:
+  version "2.0.12"
+  resolved "https://registry.yarnpkg.com/mdn-data/-/mdn-data-2.0.12.tgz#bbb658d08b38f574bbb88f7b83703defdcc46844"
+  integrity sha512-ULbAlgzVb8IqZ0Hsxm6hHSlQl3Jckst2YEQS7fODu9ilNWy2LvcoSY7TRFIktABP2mdppBioc66va90T+NUs8Q==
 
 media-typer@0.3.0:
   version "0.3.0"
