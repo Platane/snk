@@ -67,7 +67,7 @@ export const createSnake = (
 
     ...snakeParts.map((positions, i) => {
       const id = `s${i}`;
-      const animationName = "a" + id;
+      const animationName = id;
 
       return [
         `@keyframes ${animationName} {` +

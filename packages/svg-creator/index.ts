@@ -97,7 +97,7 @@ export const createSvg = (
   const style = elements
     .map((e) => e.styles)
     .flat()
-    .join("");
+    .join("\n");
 
   const svg = [
     h("svg", {

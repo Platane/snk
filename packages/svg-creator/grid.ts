@@ -46,7 +46,7 @@ export const createGrid = (
     const m = (s - d) / 2;
 
     if (t !== null) {
-      const animationName = "a" + id;
+      const animationName = id;
       // @ts-ignore
       const fill = colorDots[color];
 
@@ -56,7 +56,7 @@ export const createGrid = (
           `${percent(t + 0.0001)}%,100%{fill:${colorEmpty}}` +
           "}",
 
-        `.c.${id}{fill:${fill};animation-name: ${animationName}}`
+        `.c.${id}{fill: ${fill};animation-name: ${animationName}}`
       );
     }
 
