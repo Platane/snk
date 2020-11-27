@@ -45,7 +45,7 @@ const parseUserPage = (content: string) => {
       const color = bgColor.replace(/\s/g, "");
       colorSchemeMap[color] = i;
 
-      if (color.startsWith("var(--)")) colorScheme[i] = color;
+      if (!color.startsWith("var(--")) colorScheme[i] = color;
     }
   });
 
@@ -73,12 +73,7 @@ const parseUserPage = (content: string) => {
     )
     .flat();
 
-  return {
-    cells,
-    colorScheme: colorScheme.every((c: string) => c.startsWith("#"))
-      ? colorScheme
-      : ["#ebedf0", "#9be9a8", "#40c463", "#30a14e", "#216e39"],
-  };
+  return { cells, colorScheme };
 };
 
 /**
