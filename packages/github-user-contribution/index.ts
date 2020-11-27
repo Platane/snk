@@ -14,6 +14,14 @@ const findNode = (o: any, condition: (x: any) => boolean): any => {
 
 const ensureArray = (x: any) => (Array.isArray(x) ? x : [x]);
 
+const defaultColorScheme = [
+  "#ebedf0",
+  "#9be9a8",
+  "#40c463",
+  "#30a14e",
+  "#216e39",
+];
+
 const parseUserPage = (content: string) => {
   const o = parser.parse(content, {
     attrNodeName: "attr",
@@ -23,14 +31,23 @@ const parseUserPage = (content: string) => {
 
   //
   // parse colorScheme
+  const colorScheme = [...defaultColorScheme];
+  const colorSchemeMap: Record<string, number> = Object.fromEntries(
+    defaultColorScheme.map((color, i) => [color, i])
+  );
   const legend = findNode(
     o,
     (x) => x.attr && x.attr.class && x.attr.class.trim() === "legend"
   );
+  legend.li.forEach((x: any, i: number) => {
+    const bgColor = x.attr.style.match(/background\-color: +(.+)/)![1]!;
+    if (bgColor) {
+      const color = bgColor.replace(/\s/g, "");
+      colorSchemeMap[color] = i;
 
-  const colorScheme = legend.li.map(
-    (x: any) => x.attr.style.match(/background\-color: +(.+)/)![1]!
-  );
+      if (color.startsWith("var(--)")) colorScheme[i] = color;
+    }
+  });
 
   //
   // parse cells
@@ -43,11 +60,13 @@ const parseUserPage = (content: string) => {
   const cells = svg.g.g
     .map((g: any, x: number) =>
       ensureArray(g.rect).map(({ attr }: any, y: number) => {
-        const color = attr.fill;
+        const color = attr.fill.trim();
         const count = +attr["data-count"];
         const date = attr["data-date"];
 
-        const k = colorScheme.indexOf(color);
+        const k = colorSchemeMap[color];
+
+        if (k === -1) throw new Error("could not map the cell color");
 
         return { x, y, color, count, date, k };
       })
