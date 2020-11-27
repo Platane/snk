@@ -4,21 +4,35 @@ import { generateContributionSnake } from "../generateContributionSnake";
 
 jest.setTimeout(2 * 60 * 1000);
 
-it("should generate contribution snake", async () => {
-  const outputSvg = path.join(__dirname, "__snapshots__/out.svg");
-  const outputGif = path.join(__dirname, "__snapshots__/out.gif");
+const silent = (handler: () => void | Promise<void>) => async () => {
+  const originalConsoleLog = console.log;
+  console.log = () => undefined;
+  try {
+    return await handler();
+  } finally {
+    console.log = originalConsoleLog;
+  }
+};
 
-  const buffer = await generateContributionSnake("platane", {
-    svg: true,
-    gif: true,
-  });
+it(
+  "should generate contribution snake",
+  silent(async () => {
+    const outputSvg = path.join(__dirname, "__snapshots__/out.svg");
+    const outputGif = path.join(__dirname, "__snapshots__/out.gif");
 
-  expect(buffer.svg).toBeDefined();
-  expect(buffer.gif).toBeDefined();
+    console.log = () => undefined;
+    const buffer = await generateContributionSnake("platane", {
+      svg: true,
+      gif: true,
+    });
 
-  console.log("💾 writing to", outputSvg);
-  fs.writeFileSync(outputSvg, buffer.svg);
+    expect(buffer.svg).toBeDefined();
+    expect(buffer.gif).toBeDefined();
 
-  console.log("💾 writing to", outputGif);
-  fs.writeFileSync(outputGif, buffer.gif);
-});
+    console.log("💾 writing to", outputSvg);
+    fs.writeFileSync(outputSvg, buffer.svg);
+
+    console.log("💾 writing to", outputGif);
+    fs.writeFileSync(outputGif, buffer.gif);
+  })
+);
