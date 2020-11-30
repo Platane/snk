@@ -22,8 +22,8 @@ describe("getGithubUserContribution", () => {
   it("should get around 365 cells", async () => {
     const { cells } = await promise;
 
-    expect(cells.length).toBeGreaterThan(340);
-    expect(cells.length).toBeLessThanOrEqual(367);
+    expect(cells.length).toBeGreaterThan(365);
+    expect(cells.length).toBeLessThanOrEqual(365 + 7);
   });
 
   it("cells should have x / y coords representing to a 7 x (365/7) (minus unfilled last row)", async () => {
@@ -38,7 +38,7 @@ describe("getGithubUserContribution", () => {
       "#216e39",
     ]);
 
-    const undefinedDays = Array.from({ length: Math.floor(365 / 7) - 1 })
+    const undefinedDays = Array.from({ length: Math.floor(365 / 7) })
       .map((x) => Array.from({ length: 7 }).map((y) => ({ x, y })))
       .flat()
       .filter(({ x, y }) => cells.some((c) => c.x === x && c.y === y));
