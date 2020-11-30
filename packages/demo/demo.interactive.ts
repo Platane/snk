@@ -12,6 +12,7 @@ import {
 import { userContributionToGrid } from "../action/userContributionToGrid";
 import { snake4 as snake } from "@snk/types/__fixtures__/snake";
 import { getPathToPose } from "@snk/compute/getPathToPose";
+import { createSvg } from "../svg-creator";
 
 const createForm = ({
   onSubmit,
@@ -177,12 +178,32 @@ const createViewer = ({
   document.body.append(input);
 
   //
+  // svg
+  const svgLink = document.createElement("a");
+  const svgString = createSvg(grid0, chain, drawOptions, {
+    frameDuration: 100,
+  });
+  svgLink.href = `data:image/*;charset=utf-8;base64,${btoa(svgString)}`;
+  svgLink.innerText = "github-user-contribution.svg";
+  svgLink.download = "github-user-contribution.svg";
+  svgLink.addEventListener("click", (e) => {
+    const w = window.open("")!;
+    w.document.write(svgString);
+    e.preventDefault();
+  });
+  svgLink.style.padding = "20px";
+  svgLink.style.paddingTop = "60px";
+  svgLink.style.alignSelf = "flex-start";
+  document.body.append(svgLink);
+
+  //
   // dispose
   const dispose = () => {
     window.removeEventListener("click", onClickBackground);
     cancelAnimationFrame(animationFrame);
     document.body.removeChild(canvas);
     document.body.removeChild(input);
+    document.body.removeChild(svgLink);
   };
 
   return { dispose };
