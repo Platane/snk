@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "dependencies": {
     "@snk/compute": "1.0.0",
-    "csso": "4.1.0"
+    "csso": "4.2.0"
   },
   "devDependencies": {
     "@types/csso": "3.5.1"
