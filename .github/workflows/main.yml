@@ -69,6 +69,8 @@ jobs:
       - uses: bahmutov/npm-install@v1.4.3
 
       - run: yarn build:demo
+        env:
+          GITHUB_USER_CONTRIBUTION_API_ENDPOINT: https://snk-one.vercel.app/api/github-user-contribution/
 
       - uses: crazy-max/ghaction-github-pages@v2.1.3
         if: success() && github.ref == 'refs/heads/master'

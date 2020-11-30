@@ -190,7 +190,7 @@ const createViewer = ({
 
 const onSubmit = async (userName: string) => {
   const res = await fetch(
-    `https://snk-one.vercel.app/api/github-user-contribution/${userName}`
+    process.env.GITHUB_USER_CONTRIBUTION_API_ENDPOINT + userName
   );
   const { cells, colorScheme } = (await res.json()) as Res;
 

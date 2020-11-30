@@ -3,12 +3,20 @@ import HtmlWebpackPlugin from "html-webpack-plugin";
 
 import type { Configuration as WebpackConfiguration } from "webpack";
 import type { Configuration as WebpackDevServerConfiguration } from "webpack-dev-server";
+import webpack from "webpack";
+import { getGithubUserContribution } from "@snk/github-user-contribution";
 
 const demos: string[] = require("./demo.json");
 
 const webpackDevServerConfiguration: WebpackDevServerConfiguration = {
   open: true,
   openPage: demos[1] + ".html",
+  after: (app) => {
+    app.get("/api/github-user-contribution/:userName", async (req, res) => {
+      const userName: string = req.params.userName;
+      res.send(await getGithubUserContribution(userName));
+    });
+  },
 };
 
 const webpackConfiguration: WebpackConfiguration = {
@@ -51,6 +59,11 @@ const webpackConfiguration: WebpackConfiguration = {
       title: "snk - " + demos[0],
       filename: `index.html`,
       chunks: [demos[0]],
+    }),
+    new webpack.EnvironmentPlugin({
+      GITHUB_USER_CONTRIBUTION_API_ENDPOINT:
+        process.env.GITHUB_USER_CONTRIBUTION_API_ENDPOINT ??
+        "/api/github-user-contribution/",
     }),
   ],
 
