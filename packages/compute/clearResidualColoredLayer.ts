@@ -27,7 +27,7 @@ export const clearResidualColoredLayer = (
   const tunnels = getTunnellablePoints(grid, outside, snakeN, color);
 
   // sort
-  tunnels.sort((a, b) => a.priority - b.priority);
+  tunnels.sort((a, b) => b.priority - a.priority);
 
   const chain: Snake[] = [snake0];
 
@@ -63,7 +63,7 @@ export const clearResidualColoredLayer = (
       }
 
     // re-sort
-    tunnels.sort((a, b) => a.priority - b.priority);
+    tunnels.sort((a, b) => b.priority - a.priority);
   }
 
   chain.pop();
@@ -79,7 +79,7 @@ const getNextTunnel = (ts: T[], snake: Snake) => {
 
   const priority = ts[0].priority;
 
-  for (let i = 0; ts[i] && ts[i].priority <= priority; i++) {
+  for (let i = 0; ts[i] && ts[i].priority === priority; i++) {
     const t = ts[i].tunnel;
 
     const d = distanceSq(t[0].x, t[0].y, x, y);
