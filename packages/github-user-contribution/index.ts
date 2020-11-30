@@ -1,18 +1,33 @@
 import fetch from "node-fetch";
-import * as parser from "fast-xml-parser";
+import cheerio from "cheerio";
+import { formatParams, Options } from "./formatParams";
 
-const findNode = (o: any, condition: (x: any) => boolean): any => {
-  if (o && typeof o === "object") {
-    if (condition(o)) return o;
+/**
+ * get the contribution grid from a github user page
+ *
+ * @param userName github user name
+ * @param options set the time range: from / to or year
+ */
+export const getGithubUserContribution = async (
+  userName: string,
+  options: Options = {}
+) => {
+  // either use github.com/users/xxxx/contributions  for previous years
+  // or github.com/xxxx ( which gives the latest update to today result )
+  const url =
+    "year" in options || "from" in options || "to" in options
+      ? `https://github.com/users/${userName}/contributions?` +
+        formatParams(options)
+      : `https://github.com/${userName}`;
 
-    for (const c of Object.values(o)) {
-      const res = findNode(c, condition);
-      if (res) return res;
-    }
-  }
+  const res = await fetch(url);
+
+  if (!res.ok) throw new Error(res.statusText);
+
+  const resText = await res.text();
+
+  return parseUserPage(resText);
 };
-
-const ensureArray = (x: any) => (Array.isArray(x) ? x : [x]);
 
 const defaultColorScheme = [
   "#ebedf0",
@@ -23,11 +38,7 @@ const defaultColorScheme = [
 ];
 
 const parseUserPage = (content: string) => {
-  const o = parser.parse(content, {
-    attrNodeName: "attr",
-    attributeNamePrefix: "",
-    ignoreAttributes: false,
-  });
+  const $ = cheerio.load(content);
 
   //
   // parse colorScheme
@@ -35,57 +46,84 @@ const parseUserPage = (content: string) => {
   const colorSchemeMap: Record<string, number> = Object.fromEntries(
     defaultColorScheme.map((color, i) => [color, i])
   );
-  const legend = findNode(
-    o,
-    (x) => x.attr && x.attr.class && x.attr.class.trim() === "legend"
-  );
-  legend.li.forEach((x: any, i: number) => {
-    const bgColor = x.attr.style.match(/background\-color: +(.+)/)![1]!;
-    if (bgColor) {
-      const color = bgColor.replace(/\s/g, "");
-      colorSchemeMap[color] = i;
+  $("ul.legend > li")
+    .toArray()
+    .forEach((x, i) => {
+      const bgColor = x.attribs.style.match(/background\-color: +(.+)/)![1]!;
+      if (bgColor) {
+        const color = bgColor.replace(/\s/g, "");
+        colorSchemeMap[color] = i;
 
-      if (!color.startsWith("var(--")) colorScheme[i] = color;
-    }
-  });
+        if (!color.startsWith("var(--")) colorScheme[i] = color;
+      }
+    });
 
   //
   // parse cells
-  const svg = findNode(
-    o,
-    (x) =>
-      x.attr && x.attr.class && x.attr.class.trim() === "js-calendar-graph-svg"
-  );
+  const rawCells = $(".js-calendar-graph rect[data-count]")
+    .toArray()
+    .map((x) => {
+      const color = x.attribs.fill.trim();
+      const count = +x.attribs["data-count"];
+      const date = x.attribs["data-date"];
 
-  const cells = svg.g.g
-    .map((g: any, x: number) =>
-      ensureArray(g.rect).map(({ attr }: any, y: number) => {
-        const color = attr.fill.trim();
-        const count = +attr["data-count"];
-        const date = attr["data-date"];
+      const colorIndex = colorSchemeMap[color];
 
-        const k = colorSchemeMap[color];
+      if (colorIndex === -1) throw new Error("could not map the cell color");
 
-        if (k === -1) throw new Error("could not map the cell color");
+      return {
+        svgPosition: getSvgPosition(x),
+        color: colorScheme[colorIndex],
+        count,
+        date,
+      };
+    });
 
-        return { x, y, color, count, date, k };
-      })
-    )
-    .flat();
+  const xMap: Record<number, true> = {};
+  const yMap: Record<number, true> = {};
+  rawCells.forEach(({ svgPosition: { x, y } }) => {
+    xMap[x] = true;
+    yMap[y] = true;
+  });
+
+  const xRange = Object.keys(xMap)
+    .map((x) => +x)
+    .sort((a, b) => +a - +b);
+  const yRange = Object.keys(yMap)
+    .map((x) => +x)
+    .sort((a, b) => +a - +b);
+
+  const cells = rawCells.map(({ svgPosition, ...c }) => ({
+    ...c,
+    x: xRange.indexOf(svgPosition.x),
+    y: yRange.indexOf(svgPosition.y),
+  }));
 
   return { cells, colorScheme };
 };
 
-/**
- * get the contribution grid from a github user page
- *
- * @param userName
- */
-export const getGithubUserContribution = async (userName: string) => {
-  const res = await fetch(`https://github.com/${userName}`);
-  const resText = await res.text();
+// returns the position of the svg elements, accounting for it's transform and it's parent transform
+// ( only accounts for translate transform )
+const getSvgPosition = (e: cheerio.Element): { x: number; y: number } => {
+  if (!e || e.tagName === "svg") return { x: 0, y: 0 };
 
-  return parseUserPage(resText);
+  const p = getSvgPosition(e.parent);
+
+  if (e.attribs.x) p.x += +e.attribs.x;
+  if (e.attribs.y) p.y += +e.attribs.y;
+
+  if (e.attribs.transform) {
+    const m = e.attribs.transform.match(
+      /translate\( *([\.\d]+) *, *([\.\d]+) *\)/
+    );
+
+    if (m) {
+      p.x += +m[1];
+      p.y += +m[2];
+    }
+  }
+
+  return p;
 };
 
 type ThenArg<T> = T extends PromiseLike<infer U> ? U : T;

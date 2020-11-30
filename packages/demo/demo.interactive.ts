@@ -205,7 +205,7 @@ const onSubmit = async (userName: string) => {
     cells,
   };
 
-  const grid = userContributionToGrid(cells);
+  const grid = userContributionToGrid(cells, colorScheme);
   const chain = getBestRoute(grid, snake)!;
   chain.push(...getPathToPose(chain.slice(-1)[0], snake)!);
   dispose();

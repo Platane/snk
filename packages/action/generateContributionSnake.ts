@@ -13,7 +13,7 @@ export const generateContributionSnake = async (
   console.log("🎣 fetching github user contribution");
   const { cells, colorScheme } = await getGithubUserContribution(userName);
 
-  const grid = userContributionToGrid(cells);
+  const grid = userContributionToGrid(cells, colorScheme);
   const snake = snake4;
 
   const drawOptions = {
