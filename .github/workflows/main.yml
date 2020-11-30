@@ -38,8 +38,6 @@ jobs:
     needs: build-docker-image
 
     steps:
-      - run: mkdir dist
-
       - name: generate-snake-game-from-github-contribution-grid
         id: snake-gif
         uses: Platane/snk@master

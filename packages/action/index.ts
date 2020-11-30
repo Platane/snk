@@ -1,4 +1,5 @@
 import * as fs from "fs";
+import * as path from "path";
 import * as core from "@actions/core";
 import { generateContributionSnake } from "./generateContributionSnake";
 
@@ -16,10 +17,12 @@ import { generateContributionSnake } from "./generateContributionSnake";
     );
 
     if (svg) {
+      fs.mkdirSync(path.dirname(format.svg), { recursive: true });
       fs.writeFileSync(format.svg, svg);
       console.log(`::set-output name=svg_out_path::${format.svg}`);
     }
     if (gif) {
+      fs.mkdirSync(path.dirname(format.gif), { recursive: true });
       fs.writeFileSync(format.gif, gif);
       console.log(`::set-output name=gif_out_path::${format.gif}`);
     }
