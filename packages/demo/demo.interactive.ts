@@ -183,12 +183,17 @@ const createViewer = ({
   const svgString = createSvg(grid0, chain, drawOptions, {
     frameDuration: 100,
   });
-  svgLink.href = `data:image/*;charset=utf-8;base64,${btoa(svgString)}`;
+  const svgImageUri = `data:image/*;charset=utf-8;base64,${btoa(svgString)}`;
+  svgLink.href = svgImageUri;
   svgLink.innerText = "github-user-contribution.svg";
   svgLink.download = "github-user-contribution.svg";
   svgLink.addEventListener("click", (e) => {
     const w = window.open("")!;
-    w.document.write(svgString);
+    w.document.write(
+      `<a href="${svgImageUri}" download="github-user-contribution.svg">` +
+        svgString +
+        "<a/>"
+    );
     e.preventDefault();
   });
   svgLink.style.padding = "20px";
