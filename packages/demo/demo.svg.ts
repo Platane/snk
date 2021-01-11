@@ -1,9 +1,9 @@
 import "./menu";
-import { getBestRoute } from "@snk/compute/getBestRoute";
+import { getBestRoute } from "@snk/solver/getBestRoute";
 import { createSvg } from "../svg-creator";
 import { grid, snake } from "./sample";
 import { drawOptions } from "./canvas";
-import { getPathToPose } from "@snk/compute/getPathToPose";
+import { getPathToPose } from "@snk/solver/getPathToPose";
 
 const chain = getBestRoute(grid, snake);
 chain.push(...getPathToPose(chain.slice(-1)[0], snake)!);

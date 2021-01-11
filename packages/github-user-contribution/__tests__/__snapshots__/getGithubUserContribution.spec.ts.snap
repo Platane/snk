@@ -4,20 +4,6 @@ exports[`should match snapshot for year=2019 1`] = `
 Object {
   "cells": Array [
     Object {
-      "color": "#9be9a8",
-      "count": 4,
-      "date": "2018-12-30",
-      "x": 0,
-      "y": 0,
-    },
-    Object {
-      "color": "#9be9a8",
-      "count": 1,
-      "date": "2018-12-31",
-      "x": 0,
-      "y": 1,
-    },
-    Object {
       "color": "#ebedf0",
       "count": 0,
       "date": "2019-01-01",

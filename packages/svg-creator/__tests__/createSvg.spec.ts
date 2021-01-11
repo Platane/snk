@@ -3,7 +3,7 @@ import * as path from "path";
 import { createSvg } from "..";
 import * as grids from "@snk/types/__fixtures__/grid";
 import { snake3 as snake } from "@snk/types/__fixtures__/snake";
-import { getBestRoute } from "@snk/compute/getBestRoute";
+import { getBestRoute } from "@snk/solver/getBestRoute";
 
 const drawOptions = {
   sizeBorderRadius: 2,

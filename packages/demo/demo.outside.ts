@@ -2,7 +2,7 @@ import "./menu";
 import { createCanvas } from "./canvas";
 import { grid } from "./sample";
 import type { Color } from "@snk/types/grid";
-import { createOutside, isOutside } from "@snk/compute/outside";
+import { createOutside, isOutside } from "@snk/solver/outside";
 
 const { canvas, ctx, draw, highlightCell } = createCanvas(grid);
 document.body.appendChild(canvas);

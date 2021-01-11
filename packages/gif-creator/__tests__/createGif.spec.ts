@@ -4,7 +4,7 @@ import { createGif } from "..";
 import * as grids from "@snk/types/__fixtures__/grid";
 import { snake3 as snake } from "@snk/types/__fixtures__/snake";
 import { createSnakeFromCells, nextSnake } from "@snk/types/snake";
-import { getBestRoute } from "@snk/compute/getBestRoute";
+import { getBestRoute } from "@snk/solver/getBestRoute";
 
 jest.setTimeout(20 * 1000);
 

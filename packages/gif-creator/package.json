@@ -2,7 +2,7 @@
   "name": "@snk/gif-creator",
   "version": "1.0.0",
   "dependencies": {
-    "@snk/compute": "1.0.0",
+    "@snk/solver": "1.0.0",
     "@snk/draw": "1.0.0",
     "canvas": "2.6.1",
     "execa": "4.1.0",

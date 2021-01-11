@@ -1,6 +1,6 @@
-import { getBestRoute } from "@snk/compute/getBestRoute";
+import { getBestRoute } from "@snk/solver/getBestRoute";
 import { Color, copyGrid, Grid } from "@snk/types/grid";
-import { step } from "@snk/compute/step";
+import { step } from "@snk/solver/step";
 import { isStableAndBound, stepSpring } from "./springUtils";
 import { Res } from "@snk/github-user-contribution";
 import { Snake } from "@snk/types/snake";
@@ -11,7 +11,7 @@ import {
 } from "@snk/draw/drawWorld";
 import { userContributionToGrid } from "../action/userContributionToGrid";
 import { snake4 as snake } from "@snk/types/__fixtures__/snake";
-import { getPathToPose } from "@snk/compute/getPathToPose";
+import { getPathToPose } from "@snk/solver/getPathToPose";
 import { createSvg } from "../svg-creator";
 
 const createForm = ({

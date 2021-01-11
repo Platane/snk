@@ -8,7 +8,7 @@ import {
   drawLerpWorld,
   getCanvasWorldSize,
 } from "@snk/draw/drawWorld";
-import { step } from "@snk/compute/step";
+import { step } from "@snk/solver/step";
 import tmp from "tmp";
 import execa from "execa";
 

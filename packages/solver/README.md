@@ -1,4 +1,4 @@
-# @snk/compute
+# @snk/solver
 
 Contains the algorithm to compute the best route given a grid and a starting position for the snake.
 

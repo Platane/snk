@@ -1,10 +1,10 @@
 import { getGithubUserContribution } from "@snk/github-user-contribution";
 import { userContributionToGrid } from "./userContributionToGrid";
-import { getBestRoute } from "@snk/compute/getBestRoute";
+import { getBestRoute } from "@snk/solver/getBestRoute";
 import { createGif } from "@snk/gif-creator";
 import { createSvg } from "../svg-creator";
 import { snake4 } from "@snk/types/__fixtures__/snake";
-import { getPathToPose } from "@snk/compute/getPathToPose";
+import { getPathToPose } from "@snk/solver/getPathToPose";
 
 export const generateContributionSnake = async (
   userName: string,
