@@ -15,14 +15,7 @@ const percent = (x: number) => (x * 100).toFixed(2);
 
 export const createGrid = (
   cells: (Point & { t: number | null; color: Color | Empty })[],
-  {
-    colorEmpty,
-    colorBorder,
-    sizeBorderRadius,
-    colorDots,
-    sizeDot,
-    sizeCell,
-  }: Options,
+  { sizeBorderRadius, sizeDot, sizeCell }: Options,
   duration: number
 ) => {
   const svgElements: string[] = [];
@@ -31,10 +24,10 @@ export const createGrid = (
       shape-rendering: geometricPrecision;
       rx: ${sizeBorderRadius};
       ry: ${sizeBorderRadius};
-      fill:${colorEmpty};
+      fill: var(--ce);
       stroke-width: 1px;
-      stroke: ${colorBorder};
-      animation: none  ${duration}ms linear infinite;
+      stroke: var(--cb);
+      animation: none ${duration}ms linear infinite;
     }`,
   ];
 
@@ -47,16 +40,14 @@ export const createGrid = (
 
     if (t !== null) {
       const animationName = id;
-      // @ts-ignore
-      const fill = colorDots[color];
 
       styles.push(
         `@keyframes ${animationName} {` +
-          `${percent(t - 0.0001)}%{fill:${fill}}` +
-          `${percent(t + 0.0001)}%,100%{fill:${colorEmpty}}` +
+          `${percent(t - 0.0001)}%{fill:var(--c${color})}` +
+          `${percent(t + 0.0001)}%,100%{fill:var(--ce)}` +
           "}",
 
-        `.c.${id}{fill: ${fill};animation-name: ${animationName}}`
+        `.c.${id}{fill: var(--c${color}); animation-name: ${animationName}}`
       );
     }
 

@@ -20,7 +20,7 @@ const lerp = (k: number, a: number, b: number) => (1 - k) * a + k * b;
 
 export const createSnake = (
   chain: Snake[],
-  { sizeCell, colorSnake, sizeDot }: Options,
+  { sizeCell, sizeDot }: Options,
   duration: number
 ) => {
   const snakeN = chain[0] ? getSnakeLength(chain[0]) : 0;
@@ -61,7 +61,7 @@ export const createSnake = (
   const styles = [
     `.s{ 
       shape-rendering:geometricPrecision;
-      fill:${colorSnake};
+      fill:var(--cs);
       animation: none linear ${duration}ms infinite
     }`,
 

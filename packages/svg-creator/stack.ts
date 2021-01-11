@@ -2,7 +2,6 @@ import type { Color, Empty } from "@snk/types/grid";
 import { h } from "./utils";
 
 export type Options = {
-  colorDots: Record<Color, string>;
   sizeDot: number;
 };
 
@@ -10,7 +9,7 @@ const percent = (x: number) => (x * 100).toFixed(2);
 
 export const createStack = (
   cells: { t: number | null; color: Color | Empty }[],
-  { colorDots, sizeDot }: Options,
+  { sizeDot }: Options,
   width: number,
   y: number,
   duration: number
@@ -44,9 +43,6 @@ export const createStack = (
     const animationName = id;
     const x = (nx * m).toFixed(1);
 
-    // @ts-ignore
-    const fill = colorDots[color];
-
     nx += ts.length;
 
     svgElements.push(
@@ -76,7 +72,7 @@ export const createStack = (
           .join("\n") +
         "}",
 
-      `.u.${id}{fill:${fill};animation-name:${animationName};transform-origin:${x}px 0}`
+      `.u.${id}{fill:var(--c${color});animation-name:${animationName};transform-origin:${x}px 0}`
     );
   }
 

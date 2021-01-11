@@ -24,6 +24,12 @@ export type Options = {
   sizeDot: number;
   sizeBorderRadius: number;
   cells?: Point[];
+  dark?: {
+    colorDots: Record<Color, string>;
+    colorEmpty: string;
+    colorBorder?: string;
+    colorSnake?: string;
+  };
 };
 
 const getCellsFromGrid = ({ width, height }: Grid) =>
@@ -94,10 +100,12 @@ export const createSvg = (
     height,
   ].join(" ");
 
-  const style = elements
-    .map((e) => e.styles)
-    .flat()
-    .join("\n");
+  const style =
+    generateColorVar(drawOptions) +
+    elements
+      .map((e) => e.styles)
+      .flat()
+      .join("\n");
 
   const svg = [
     h("svg", {
@@ -121,3 +129,29 @@ export const createSvg = (
 
 const optimizeCss = (css: string) => csso.minify(css).css;
 const optimizeSvg = (svg: string) => svg;
+
+const generateColorVar = (drawOptions: Options) =>
+  `
+    :root {
+    --cb: ${drawOptions.colorBorder};
+    --cs: ${drawOptions.colorSnake};
+    --ce: ${drawOptions.colorEmpty};
+    ${Object.entries(drawOptions.colorDots)
+      .map(([i, color]) => `--c${i}:${color};`)
+      .join("")}
+    }
+    ` +
+  (drawOptions.dark
+    ? `
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --cb: ${drawOptions.dark.colorBorder || drawOptions.colorBorder};
+        --cs: ${drawOptions.dark.colorSnake || drawOptions.colorSnake};
+        --ce: ${drawOptions.dark.colorEmpty};
+        ${Object.entries(drawOptions.dark.colorDots)
+          .map(([i, color]) => `--c${i}:${color};`)
+          .join("")}
+      }
+    }
+`
+    : "");
