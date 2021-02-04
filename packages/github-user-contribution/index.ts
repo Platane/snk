@@ -41,39 +41,25 @@ const parseUserPage = (content: string) => {
   const $ = cheerio.load(content);
 
   //
-  // parse colorScheme
+  // "parse" colorScheme
   const colorScheme = [...defaultColorScheme];
-  const colorSchemeMap: Record<string, number> = Object.fromEntries(
-    defaultColorScheme.map((color, i) => [color, i])
-  );
-  $("ul.legend > li")
-    .toArray()
-    .forEach((x, i) => {
-      const bgColor = x.attribs.style.match(/background\-color: +(.+)/)![1]!;
-      if (bgColor) {
-        const color = bgColor.replace(/\s/g, "");
-        colorSchemeMap[color] = i;
-
-        if (!color.startsWith("var(--")) colorScheme[i] = color;
-      }
-    });
 
   //
   // parse cells
   const rawCells = $(".js-calendar-graph rect[data-count]")
     .toArray()
     .map((x) => {
-      const color = x.attribs.fill.trim();
+      const level = +x.attribs["data-level"];
       const count = +x.attribs["data-count"];
       const date = x.attribs["data-date"];
 
-      const colorIndex = colorSchemeMap[color];
+      const color = colorScheme[level];
 
-      if (colorIndex === -1) throw new Error("could not map the cell color");
+      if (!color) throw new Error("could not determine the color of the cell");
 
       return {
         svgPosition: getSvgPosition(x),
-        color: colorScheme[colorIndex],
+        color,
         count,
         date,
       };
