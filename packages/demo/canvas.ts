@@ -21,17 +21,16 @@ export const drawOptions = {
   },
 };
 
-const getPointedCell = (canvas: HTMLCanvasElement) => ({
-  pageX,
-  pageY,
-}: MouseEvent) => {
-  const { left, top } = canvas.getBoundingClientRect();
+const getPointedCell =
+  (canvas: HTMLCanvasElement) =>
+  ({ pageX, pageY }: MouseEvent) => {
+    const { left, top } = canvas.getBoundingClientRect();
 
-  const x = Math.floor((pageX - left) / drawOptions.sizeCell) - 1;
-  const y = Math.floor((pageY - top) / drawOptions.sizeCell) - 2;
+    const x = Math.floor((pageX - left) / drawOptions.sizeCell) - 1;
+    const y = Math.floor((pageY - top) / drawOptions.sizeCell) - 2;
 
-  return { x, y };
-};
+    return { x, y };
+  };
 
 export const createCanvas = ({
   width,
