@@ -11,7 +11,7 @@
     "dat.gui": "0.7.7",
     "html-webpack-plugin": "5.0.0",
     "ts-loader": "8.0.15",
-    "ts-node": "9.1.1",
+    "ts-node": "10.0.0",
     "webpack": "5.20.2",
     "webpack-cli": "4.5.0",
     "webpack-dev-server": "3.11.2"
