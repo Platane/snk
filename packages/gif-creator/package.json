@@ -4,8 +4,8 @@
   "dependencies": {
     "@snk/draw": "1.0.0",
     "@snk/solver": "1.0.0",
-    "canvas": "2.6.1",
-    "execa": "5.0.0",
+    "canvas": "2.8.0",
+    "execa": "5.1.1",
     "tmp": "0.2.1"
   },
   "devDependencies": {

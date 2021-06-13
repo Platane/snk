@@ -7,6 +7,6 @@
   },
   "devDependencies": {
     "@types/cheerio": "0.22.22",
-    "@types/node-fetch": "2.5.8"
+    "@types/node-fetch": "2.5.10"
   }
 }

@@ -22,7 +22,7 @@ describe("getGithubUserContribution", () => {
   it("should get around 365 cells", async () => {
     const { cells } = await promise;
 
-    expect(cells.length).toBeGreaterThan(365);
+    expect(cells.length).toBeGreaterThanOrEqual(365);
     expect(cells.length).toBeLessThanOrEqual(365 + 7);
   });
 
