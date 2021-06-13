@@ -1,6 +1,6 @@
 # @snk/github-user-contribution
 
-Get the github user contribution grid
+Get the github user contribution graph
 
 ## Usage
 

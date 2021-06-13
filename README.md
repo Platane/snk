@@ -3,11 +3,11 @@
 ![type definitions](https://img.shields.io/npm/types/typescript?style=flat-square)
 ![code style](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)
 
-Generates a snake game from a github user contributions grid
+Generates a snake game from a github user contributions graph
 
 ![](https://raw.githubusercontent.com/Platane/snk/output/github-contribution-grid-snake.gif)
 
-Pull a github user's contribution grid.
+Pull a github user's contribution graph.
 Make it a snake Game, generate a snake path where the cells get eaten in an orderly fashion.
 
 Generate a [gif](https://github.com/Platane/snk/raw/output/github-contribution-grid-snake.gif) or [svg](https://github.com/Platane/snk/raw/output/github-contribution-grid-snake.svg) image.
