@@ -5,14 +5,14 @@
 
 Generates a snake game from a github user contributions graph
 
-![](https://raw.githubusercontent.com/Platane/snk/output/github-contribution-grid-snake.gif)
+![](https://github.com/Platane/snk/raw/output/github-contribution-grid-snake.svg)
 
 Pull a github user's contribution graph.
 Make it a snake Game, generate a snake path where the cells get eaten in an orderly fashion.
 
 Generate a [gif](https://github.com/Platane/snk/raw/output/github-contribution-grid-snake.gif) or [svg](https://github.com/Platane/snk/raw/output/github-contribution-grid-snake.svg) image.
 
-Available as github action. Automatically generate a new image at the end of the day. Which make for great [github profile readme](https://docs.github.com/en/free-pro-team@latest/github/setting-up-and-managing-your-github-profile/managing-your-profile-readme)
+Available as github action. Automatically generate a new image at the end of the day. Which makes for great [github profile readme](https://docs.github.com/en/free-pro-team@latest/github/setting-up-and-managing-your-github-profile/managing-your-profile-readme)
 
 ## Usage
 
@@ -29,6 +29,10 @@ Available as github action. Automatically generate a new image at the end of the
 > [example with cron job](https://github.com/Platane/Platane/blob/master/.github/workflows/main.yml#L13-L18)
 
 **interactive demo**
+
+<a href="https://platane.github.io/snk">
+  <img height="300px" src="https://user-images.githubusercontent.com/1659820/121798244-7c86d700-cc25-11eb-8c1c-b8e65556ac0d.gif" ></img>
+</a>
 
 [platane.github.io/snk](https://platane.github.io/snk)
 
