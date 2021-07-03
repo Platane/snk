@@ -10,7 +10,7 @@
   },
   "devDependencies": {
     "@types/execa": "2.0.0",
-    "@types/tmp": "0.2.0",
+    "@types/tmp": "0.2.1",
     "@zeit/ncc": "0.22.3"
   },
   "scripts": {

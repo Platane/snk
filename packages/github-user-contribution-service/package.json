@@ -3,6 +3,6 @@
   "version": "1.0.0",
   "dependencies": {
     "@snk/github-user-contribution": "1.0.0",
-    "@vercel/node": "1.11.0"
+    "@vercel/node": "1.11.1"
   }
 }
