@@ -1,5 +1,6 @@
 # snk
 
+[![GitHub marketplace](https://img.shields.io/badge/marketplace-snake-blue?logo=github&style=flat-square)](https://github.com/marketplace/actions/generate-snake-game-from-github-contribution-grid)
 ![type definitions](https://img.shields.io/npm/types/typescript?style=flat-square)
 ![code style](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)
 
@@ -21,9 +22,16 @@ Available as github action. Automatically generate a new image at the end of the
 ```yaml
 - uses: Platane/snk@master
   with:
+    # github user name to read the contribution graph from (**required**)
     github_user_name: platane
-    gif_out_path: dist/github-contribution-grid-snake.gif
-    svg_out_path: dist/github-contribution-grid-snake.svg
+
+    # path of the generated gif file
+    # If left empty, the gif file will not be generated
+    gif_out_path: dist/github-snake.gif
+
+    # path of the generated svg file
+    # If left empty, the svg file will not be generated
+    svg_out_path: dist/github-snake.svg
 ```
 
 > [example with cron job](https://github.com/Platane/Platane/blob/master/.github/workflows/main.yml#L13-L18)
