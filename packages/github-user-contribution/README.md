@@ -26,4 +26,4 @@ const { cells, colorScheme } = await getGithubUserContribution("platane");
 
 ## Implementation
 
-Based on the html page. Which is very unstable. Might switch to using github api but afaik it's a bit complex.
+Based on the html page. Which is very unstable. We might switch to using github api but afaik it's a bit complex.
