@@ -23,7 +23,8 @@ Available as github action. Automatically generate a new image at the end of the
 - uses: Platane/snk@master
   with:
     # github user name to read the contribution graph from (**required**)
-    github_user_name: platane
+    # using action context var `github.repository_owner` or specified user
+    github_user_name: ${{ github.repository_owner }}
 
     # path of the generated gif file
     # If left empty, the gif file will not be generated
