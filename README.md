@@ -35,7 +35,7 @@ Available as github action. Automatically generate a new image at the end of the
     svg_out_path: dist/github-snake.svg
 ```
 
-> [example with cron job](https://github.com/Platane/Platane/blob/master/.github/workflows/main.yml#L13-L18)
+> [example with cron job](https://github.com/Platane/Platane/blob/master/.github/workflows/main.yml#L24-L29)
 
 **interactive demo**
 
