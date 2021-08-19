@@ -12,7 +12,7 @@ const drawOptions = {
   colorBorder: "#1b1f230a",
   colorDots: { 1: "#9be9a8", 2: "#40c463", 3: "#30a14e", 4: "#216e39" },
   colorEmpty: "#ebedf0",
-  colorSnake: "purple",
+  colorSnake: "blue",
   dark: {
     colorEmpty: "#161b22",
     colorDots: { 1: "#01311f", 2: "#034525", 3: "#0f6d31", 4: "#00c647" },

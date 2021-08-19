@@ -227,7 +227,7 @@ const onSubmit = async (userName: string) => {
     colorBorder: "#1b1f230a",
     colorDots: colorScheme as any,
     colorEmpty: colorScheme[0],
-    colorSnake: "purple",
+    colorSnake: "blue",
     cells,
   };
 
