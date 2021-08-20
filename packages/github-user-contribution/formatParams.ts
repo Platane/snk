@@ -25,9 +25,8 @@ export const formatParams = (options: Options = {}) => {
   for (const s of ["from", "to"])
     if (o[s]) {
       const value = formatDate(o[s]);
-      const currentDate = new Date()
-      const utcDate = new Date(currentDate.getUTCFullYear(), currentDate.getUTCMonth(), currentDate.getUTCDate())
-      if (value >= formatDate(utcDate))
+      
+      if (value >= formatDate(new Date()))
         throw new Error("cannot get contribution for date in the future");
 
       sp.set(s, value);

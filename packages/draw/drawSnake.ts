@@ -13,6 +13,7 @@ export const drawSnake = (
   o: Options
 ) => {
   const cells = snakeToCells(snake);
+  
   for (let i = 0; i < cells.length; i++) {
     const u = (i + 1) * 0.6;
 
