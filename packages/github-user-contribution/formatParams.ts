@@ -25,7 +25,7 @@ export const formatParams = (options: Options = {}) => {
   for (const s of ["from", "to"])
     if (o[s]) {
       const value = formatDate(o[s]);
-      
+
       if (value >= formatDate(new Date()))
         throw new Error("cannot get contribution for date in the future");
 
