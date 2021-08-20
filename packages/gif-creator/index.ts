@@ -18,6 +18,7 @@ const withTmpDir = async <T>(
   const { name: dir, removeCallback: cleanUp } = tmp.dirSync({
     unsafeCleanup: true,
   });
+  console.log('>>>', dir);
 
   try {
     return await handler(dir);
