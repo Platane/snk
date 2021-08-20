@@ -16,7 +16,7 @@ const drawOptions = {
   colorBorder: "#1b1f230a",
   colorDots: { 1: "#9be9a8", 2: "#40c463", 3: "#30a14e", 4: "#216e39" },
   colorEmpty: "#ebedf0",
-  colorSnake: "blue",
+  colorSnake: "purple",
 };
 
 const gifOptions = { frameDuration: 200, step: 1 };

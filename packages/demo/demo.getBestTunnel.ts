@@ -47,7 +47,7 @@ const onChange = () => {
   if (tunnel) {
     tunnel.forEach(({ x, y }) => highlightCell(x, y));
     highlightCell(x, y, "red");
-    highlightCell(tunnel[i].x, tunnel[i].y, "blue");
+    highlightCell(tunnel[i].x, tunnel[i].y, "purple");
   }
 };
 

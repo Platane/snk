@@ -14,7 +14,7 @@ export const drawOptions = {
     4: "#216e39",
   },
   colorEmpty: "#ebedf0",
-  colorSnake: "blue",
+  colorSnake: "purple",
   dark: {
     colorEmpty: "#161b22",
     colorDots: { 1: "#01311f", 2: "#034525", 3: "#0f6d31", 4: "#00c647" },
