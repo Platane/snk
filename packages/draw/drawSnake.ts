@@ -13,7 +13,7 @@ export const drawSnake = (
   o: Options
 ) => {
   const cells = snakeToCells(snake);
-
+  console.log('snake color', o.colorSnake);
   for (let i = 0; i < cells.length; i++) {
     const u = (i + 1) * 0.6;
 
@@ -44,6 +44,7 @@ export const drawSnakeLerp = (
 ) => {
   const m = 0.8;
   const n = snake0.length / 2;
+  console.log('snake color', o.colorSnake);
   for (let i = 0; i < n; i++) {
     const u = (i + 1) * 0.6 * (o.sizeCell / 16);
 
