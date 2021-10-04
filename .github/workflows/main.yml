@@ -7,7 +7,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - run: sudo apt-get install gifsicle graphicsmagick
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
         with:
@@ -23,7 +22,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - run: sudo apt-get install gifsicle graphicsmagick
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
         with:
