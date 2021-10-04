@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+import { execFileSync } from "child_process";
 import { createCanvas } from "canvas";
 import { Grid, copyGrid, Color } from "@snk/types/grid";
 import { Snake } from "@snk/types/snake";
@@ -10,7 +11,9 @@ import {
 } from "@snk/draw/drawWorld";
 import { step } from "@snk/solver/step";
 import tmp from "tmp";
-import execa from "execa";
+import gifsicle from "gifsicle";
+// @ts-ignore
+import GIFEncoder from "gif-encoder-2";
 
 const withTmpDir = async <T>(
   handler: (dir: string) => Promise<T>
@@ -41,6 +44,11 @@ export const createGif = async (
     const grid = copyGrid(grid0);
     const stack: Color[] = [];
 
+    const encoder = new GIFEncoder(width, height, "octree", false);
+    encoder.setRepeat(0);
+    encoder.setDelay(gifOptions.frameDuration);
+    encoder.start();
+
     for (let i = 0; i < chain.length; i += 1) {
       const snake0 = chain[i];
       const snake1 = chain[Math.min(chain.length - 1, i + 1)];
@@ -60,41 +68,18 @@ export const createGif = async (
           drawOptions
         );
 
-        const buffer = canvas.toBuffer("image/png", {
-          compressionLevel: 0,
-          filters: canvas.PNG_FILTER_NONE,
-        });
-
-        const fileName = path.join(
-          dir,
-          `${(i * gifOptions.step + k).toString().padStart(4, "0")}.png`
-        );
-
-        fs.writeFileSync(fileName, buffer);
+        encoder.addFrame(ctx);
       }
     }
 
     const outFileName = path.join(dir, "out.gif");
     const optimizedFileName = path.join(dir, "out.optimized.gif");
 
-    await execa(
-      "gm",
-      [
-        "convert",
-        ["-loop", "0"],
-        ["-delay", (gifOptions.frameDuration / 10).toString()],
-        // ["-dispose", "2"], // for transparent gif
-        // ["-layers", "OptimizeFrame"],
-        // ["-compress", "LZW"],
-        // ["-strip"],
+    encoder.finish();
+    fs.writeFileSync(outFileName, encoder.out.getData());
 
-        path.join(dir, "*.png"),
-        outFileName,
-      ].flat()
-    );
-
-    await execa(
-      "gifsicle",
+    execFileSync(
+      gifsicle,
       [
         //
         "--optimize=3",

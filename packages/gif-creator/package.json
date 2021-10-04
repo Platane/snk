@@ -5,11 +5,12 @@
     "@snk/draw": "1.0.0",
     "@snk/solver": "1.0.0",
     "canvas": "2.8.0",
-    "execa": "5.1.1",
-    "tmp": "0.2.1"
+    "tmp": "0.2.1",
+    "gif-encoder-2": "1.0.5",
+    "gifsicle": "5.2.0"
   },
   "devDependencies": {
-    "@types/execa": "2.0.0",
+    "@types/gifsicle": "5.2.0",
     "@types/tmp": "0.2.1",
     "@zeit/ncc": "0.22.3"
   },
