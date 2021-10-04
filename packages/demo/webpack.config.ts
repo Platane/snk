@@ -9,9 +9,8 @@ import { getGithubUserContribution } from "@snk/github-user-contribution";
 const demos: string[] = require("./demo.json");
 
 const webpackDevServerConfiguration: WebpackDevServerConfiguration = {
-  open: true,
-  openPage: demos[1] + ".html",
-  after: (app) => {
+  open: { target: demos[1] + ".html" },
+  onAfterSetupMiddleware: ({ app }) => {
     app.get("/api/github-user-contribution/:userName", async (req, res) => {
       const userName: string = req.params.userName;
       res.send(await getGithubUserContribution(userName));

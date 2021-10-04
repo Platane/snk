@@ -26,7 +26,7 @@ import { generateContributionSnake } from "./generateContributionSnake";
       fs.writeFileSync(format.gif, gif);
       console.log(`::set-output name=gif_out_path::${format.gif}`);
     }
-  } catch (e) {
+  } catch (e: any) {
     core.setFailed(`Action failed with "${e.message}"`);
   }
 })();
