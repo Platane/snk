@@ -1,6 +1,4 @@
-export type Options =
-  | { from?: string | Date; to?: string | Date }
-  | { year: number };
+export type Options = { from?: string; to?: string } | { year: number };
 
 export const formatParams = (options: Options = {}) => {
   const sp = new URLSearchParams();
@@ -8,26 +6,18 @@ export const formatParams = (options: Options = {}) => {
   const o: any = { ...options };
 
   if ("year" in options) {
-    const from = new Date();
-    from.setFullYear(options.year);
-    from.setMonth(0);
-    from.setDate(1);
-
-    const to = new Date();
-    to.setFullYear(options.year);
-    to.setMonth(11);
-    to.setDate(31);
-
-    o.from = from;
-    o.to = to;
+    o.from = `${options.year}-01-01`;
+    o.to = `${options.year}-12-31`;
   }
 
   for (const s of ["from", "to"])
     if (o[s]) {
-      const value = formatDate(o[s]);
+      const value = o[s];
 
       if (value >= formatDate(new Date()))
-        throw new Error("cannot get contribution for date in the future");
+        throw new Error(
+          "Cannot get contribution for a date in the future.\nPlease limit your range to the current UTC day."
+        );
 
       sp.set(s, value);
     }
@@ -35,12 +25,10 @@ export const formatParams = (options: Options = {}) => {
   return sp.toString();
 };
 
-const formatDate = (input: Date | string) => {
-  const d = new Date(input);
-
-  const year = d.getFullYear();
-  const month = d.getMonth() + 1;
-  const date = d.getDate();
+const formatDate = (d: Date) => {
+  const year = d.getUTCFullYear();
+  const month = d.getUTCMonth() + 1;
+  const date = d.getUTCDate();
 
   return [
     year,

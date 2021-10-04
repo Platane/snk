@@ -5,8 +5,18 @@ import { formatParams, Options } from "./formatParams";
 /**
  * get the contribution grid from a github user page
  *
+ * use options.from=YYYY-MM-DD options.to=YYYY-MM-DD to get the contribution grid for a specific time range
+ * or year=2019 as an alias for from=2019-01-01 to=2019-12-31
+ *
+ * otherwise return use the time range from today minus one year to today ( as seen in github profile page )
+ *
  * @param userName github user name
- * @param options set the time range: from / to or year
+ * @param options
+ *
+ * @example
+ *  getGithubUserContribution("platane", { from: "2019-01-01", to: "2019-12-31" })
+ *  getGithubUserContribution("platane", { year: 2019 })
+ *
  */
 export const getGithubUserContribution = async (
   userName: string,
