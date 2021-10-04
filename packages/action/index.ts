@@ -19,12 +19,12 @@ import { generateContributionSnake } from "./generateContributionSnake";
     if (svg) {
       fs.mkdirSync(path.dirname(format.svg), { recursive: true });
       fs.writeFileSync(format.svg, svg);
-      console.log(`::set-output name=svg_out_path::${format.svg}`);
+      core.setOutput("svg_out_path", format.svg);
     }
     if (gif) {
       fs.mkdirSync(path.dirname(format.gif), { recursive: true });
       fs.writeFileSync(format.gif, gif);
-      console.log(`::set-output name=gif_out_path::${format.gif}`);
+      core.setOutput("gif_out_path", format.gif);
     }
   } catch (e: any) {
     core.setFailed(`Action failed with "${e.message}"`);
