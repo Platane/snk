@@ -1,23 +1,28 @@
 import * as fs from "fs";
 import { performance } from "perf_hooks";
-import { createSnakeFromCells, nextSnake } from "@snk/types/snake";
+import { createSnakeFromCells } from "@snk/types/snake";
 import { realistic as grid } from "@snk/types/__fixtures__/grid";
 import { createGif } from "..";
+import { getBestRoute } from "@snk/solver/getBestRoute";
+import { getPathToPose } from "@snk/solver/getPathToPose";
 
 let snake = createSnakeFromCells(
   Array.from({ length: 4 }, (_, i) => ({ x: i, y: -1 }))
 );
 
-const chain = [snake];
-for (let y = -1; y < grid.height; y++) {
-  snake = nextSnake(snake, 0, 1);
-  chain.push(snake);
+// const chain = [snake];
+// for (let y = -1; y < grid.height; y++) {
+//   snake = nextSnake(snake, 0, 1);
+//   chain.push(snake);
 
-  for (let x = grid.width - 1; x--; ) {
-    snake = nextSnake(snake, (y + 100) % 2 ? 1 : -1, 0);
-    chain.push(snake);
-  }
-}
+//   for (let x = grid.width - 1; x--; ) {
+//     snake = nextSnake(snake, (y + 100) % 2 ? 1 : -1, 0);
+//     chain.push(snake);
+//   }
+// }
+
+const chain = getBestRoute(grid, snake)!;
+chain.push(...getPathToPose(chain.slice(-1)[0], snake)!);
 
 const drawOptions = {
   sizeBorderRadius: 2,
@@ -29,20 +34,20 @@ const drawOptions = {
   colorSnake: "purple",
 };
 
-const gifOptions = { frameDuration: 200, step: 1 };
+const gifOptions = { frameDuration: 100, step: 1 };
 
 (async () => {
   for (
     let length = 10;
     length < chain.length;
-    length += Math.round(chain.length / 3 / 10) * 10
+    length += Math.floor((chain.length - 10) / 3 / 10) * 10
   ) {
     const stats: number[] = [];
 
     let buffer: Buffer;
     const start = Date.now();
     const chainL = chain.slice(0, length);
-    for (let k = 0; k < 10 && Date.now() - start < 10 * 1000; k++) {
+    for (let k = 0; k < 10 && (Date.now() - start < 10 * 1000 || k < 2); k++) {
       const s = performance.now();
       buffer = await createGif(grid, chainL, drawOptions, gifOptions);
       stats.push(performance.now() - s);
