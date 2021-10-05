@@ -44,7 +44,7 @@ export const createGif = async (
     const grid = copyGrid(grid0);
     const stack: Color[] = [];
 
-    const encoder = new GIFEncoder(width, height, "octree", false);
+    const encoder = new GIFEncoder(width, height, "neuquant", true);
     encoder.setRepeat(0);
     encoder.setDelay(gifOptions.frameDuration);
     encoder.start();
