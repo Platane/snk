@@ -1,3 +1,4 @@
+import * as fs from "fs";
 import { performance } from "perf_hooks";
 import { createSnakeFromCells, nextSnake } from "@snk/types/snake";
 import { realistic as grid } from "@snk/types/__fixtures__/grid";
@@ -31,10 +32,41 @@ const drawOptions = {
 const gifOptions = { frameDuration: 200, step: 1 };
 
 (async () => {
-  const m = 3;
-  const s = performance.now();
-  for (let k = m; k--; )
-    await createGif(grid, chain.slice(0, 50), drawOptions, gifOptions);
+  for (
+    let length = 10;
+    length < chain.length;
+    length += Math.round(chain.length / 3 / 10) * 10
+  ) {
+    const stats: number[] = [];
 
-  console.log((performance.now() - s) / m, "ms");
+    let buffer: Buffer;
+    const start = Date.now();
+    const chainL = chain.slice(0, length);
+    for (let k = 0; k < 10 && Date.now() - start < 10 * 1000; k++) {
+      const s = performance.now();
+      buffer = await createGif(grid, chainL, drawOptions, gifOptions);
+      stats.push(performance.now() - s);
+    }
+
+    console.log(
+      [
+        "---",
+        `grid dimension:  ${grid.width}x${grid.height}`,
+        `chain length:  ${length}`,
+        `resulting size:  ${(buffer!.length / 1024).toFixed(1)}ko`,
+        `generation duration (mean):  ${(
+          stats.reduce((s, x) => x + s) / stats.length
+        ).toLocaleString(undefined, {
+          maximumFractionDigits: 0,
+        })}ms`,
+        "",
+      ].join("\n"),
+      stats
+    );
+
+    fs.writeFileSync(
+      `__tests__/__snapshots__/benchmark-output-${length}.gif`,
+      buffer!
+    );
+  }
 })();
