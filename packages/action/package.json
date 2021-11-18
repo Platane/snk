@@ -8,7 +8,7 @@
   },
   "devDependencies": {
     "@zeit/ncc": "0.22.3",
-    "ts-node": "10.2.1"
+    "ts-node": "10.4.0"
   },
   "scripts": {
     "build": "ncc build --external canvas --external gifsicle --out dist ./index.ts",
