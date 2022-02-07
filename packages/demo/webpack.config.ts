@@ -11,7 +11,7 @@ const demos: string[] = require("./demo.json");
 const webpackDevServerConfiguration: WebpackDevServerConfiguration = {
   open: { target: demos[1] + ".html" },
   onAfterSetupMiddleware: ({ app }) => {
-    app.get("/api/github-user-contribution/:userName", async (req, res) => {
+    app!.get("/api/github-user-contribution/:userName", async (req, res) => {
       const userName: string = req.params.userName;
       res.send(await getGithubUserContribution(userName));
     });
