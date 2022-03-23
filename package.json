@@ -5,19 +5,19 @@
   "private": true,
   "repository": "github:platane/snk",
   "devDependencies": {
-    "@types/jest": "27.4.0",
+    "@types/jest": "27.4.1",
     "@types/node": "16.11.7",
-    "jest": "27.5.0",
-    "prettier": "2.5.1",
+    "jest": "27.5.1",
+    "prettier": "2.6.0",
     "ts-jest": "27.1.3",
-    "typescript": "4.5.5"
+    "typescript": "4.6.2"
   },
   "workspaces": [
     "packages/**"
   ],
   "scripts": {
     "type": "tsc --noEmit",
-    "lint": "yarn prettier -c '**/*.{ts,js,json,md,yml,yaml}' '!packages/action/dist/**' '!packages/demo/dist/**' '!packages/demo/webpack.config.js'",
+    "lint": "yarn prettier -c '**/*.{ts,js,json,md,yml,yaml}' '!packages/*/dist/**'",
     "test": "jest --verbose --passWithNoTests --no-cache",
     "dev:demo": "( cd packages/demo ; yarn dev )",
     "build:demo": "( cd packages/demo ; yarn build )",

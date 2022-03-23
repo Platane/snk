@@ -2,11 +2,10 @@
   "name": "@snk/github-user-contribution",
   "version": "1.0.0",
   "dependencies": {
-    "cheerio": "~1.0.0-rc.5",
+    "cheerio": "1.0.0-rc.10",
     "node-fetch": "2.6.1"
   },
   "devDependencies": {
-    "@types/cheerio": "0.22.22",
-    "@types/node-fetch": "2.5.10"
+    "@types/node-fetch": "2.6.1"
   }
 }

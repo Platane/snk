@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "dependencies": {
     "@snk/solver": "1.0.0",
-    "csso": "4.2.0"
+    "csso": "5.0.3"
   },
   "devDependencies": {
-    "@types/csso": "4.2.0"
+    "@types/csso": "5.0.0"
   }
 }

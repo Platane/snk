@@ -1,5 +1,5 @@
 import fetch from "node-fetch";
-import cheerio from "cheerio";
+import * as cheerio from "cheerio";
 import { formatParams, Options } from "./formatParams";
 
 /**
@@ -100,10 +100,12 @@ const parseUserPage = (content: string) => {
 
 // returns the position of the svg elements, accounting for it's transform and it's parent transform
 // ( only accounts for translate transform )
-const getSvgPosition = (e: cheerio.Element): { x: number; y: number } => {
+const getSvgPosition = (
+  e: cheerio.Element | null
+): { x: number; y: number } => {
   if (!e || e.tagName === "svg") return { x: 0, y: 0 };
 
-  const p = getSvgPosition(e.parent);
+  const p = getSvgPosition(e.parent as cheerio.Element);
 
   if (e.attribs.x) p.x += +e.attribs.x;
   if (e.attribs.y) p.y += +e.attribs.y;

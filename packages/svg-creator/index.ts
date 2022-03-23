@@ -13,7 +13,7 @@ import { createSnake } from "./snake";
 import { createGrid } from "./grid";
 import { createStack } from "./stack";
 import { h } from "./utils";
-import csso from "csso";
+import * as csso from "csso";
 
 export type Options = {
   colorDots: Record<Color, string>;
