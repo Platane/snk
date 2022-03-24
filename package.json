@@ -1,7 +1,7 @@
 {
   "name": "snk",
   "description": "Generates a snake game from a github user contributions grid",
-  "version": "v1.0.2-rc.4",
+  "version": "1.0.2-rc.5",
   "private": true,
   "repository": "github:platane/snk",
   "devDependencies": {

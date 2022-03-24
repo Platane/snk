@@ -3333,7 +3333,517 @@ exports.walkContext = walkContext;
 /* 121 */,
 /* 122 */,
 /* 123 */,
-/* 124 */,
+/* 124 */
+/***/ (function(__unusedmodule, exports, __webpack_require__) {
+
+"use strict";
+
+
+const cssTree = __webpack_require__(663);
+const _Number = __webpack_require__(410);
+
+// http://www.w3.org/TR/css3-color/#svg-color
+const NAME_TO_HEX = {
+    'aliceblue': 'f0f8ff',
+    'antiquewhite': 'faebd7',
+    'aqua': '0ff',
+    'aquamarine': '7fffd4',
+    'azure': 'f0ffff',
+    'beige': 'f5f5dc',
+    'bisque': 'ffe4c4',
+    'black': '000',
+    'blanchedalmond': 'ffebcd',
+    'blue': '00f',
+    'blueviolet': '8a2be2',
+    'brown': 'a52a2a',
+    'burlywood': 'deb887',
+    'cadetblue': '5f9ea0',
+    'chartreuse': '7fff00',
+    'chocolate': 'd2691e',
+    'coral': 'ff7f50',
+    'cornflowerblue': '6495ed',
+    'cornsilk': 'fff8dc',
+    'crimson': 'dc143c',
+    'cyan': '0ff',
+    'darkblue': '00008b',
+    'darkcyan': '008b8b',
+    'darkgoldenrod': 'b8860b',
+    'darkgray': 'a9a9a9',
+    'darkgrey': 'a9a9a9',
+    'darkgreen': '006400',
+    'darkkhaki': 'bdb76b',
+    'darkmagenta': '8b008b',
+    'darkolivegreen': '556b2f',
+    'darkorange': 'ff8c00',
+    'darkorchid': '9932cc',
+    'darkred': '8b0000',
+    'darksalmon': 'e9967a',
+    'darkseagreen': '8fbc8f',
+    'darkslateblue': '483d8b',
+    'darkslategray': '2f4f4f',
+    'darkslategrey': '2f4f4f',
+    'darkturquoise': '00ced1',
+    'darkviolet': '9400d3',
+    'deeppink': 'ff1493',
+    'deepskyblue': '00bfff',
+    'dimgray': '696969',
+    'dimgrey': '696969',
+    'dodgerblue': '1e90ff',
+    'firebrick': 'b22222',
+    'floralwhite': 'fffaf0',
+    'forestgreen': '228b22',
+    'fuchsia': 'f0f',
+    'gainsboro': 'dcdcdc',
+    'ghostwhite': 'f8f8ff',
+    'gold': 'ffd700',
+    'goldenrod': 'daa520',
+    'gray': '808080',
+    'grey': '808080',
+    'green': '008000',
+    'greenyellow': 'adff2f',
+    'honeydew': 'f0fff0',
+    'hotpink': 'ff69b4',
+    'indianred': 'cd5c5c',
+    'indigo': '4b0082',
+    'ivory': 'fffff0',
+    'khaki': 'f0e68c',
+    'lavender': 'e6e6fa',
+    'lavenderblush': 'fff0f5',
+    'lawngreen': '7cfc00',
+    'lemonchiffon': 'fffacd',
+    'lightblue': 'add8e6',
+    'lightcoral': 'f08080',
+    'lightcyan': 'e0ffff',
+    'lightgoldenrodyellow': 'fafad2',
+    'lightgray': 'd3d3d3',
+    'lightgrey': 'd3d3d3',
+    'lightgreen': '90ee90',
+    'lightpink': 'ffb6c1',
+    'lightsalmon': 'ffa07a',
+    'lightseagreen': '20b2aa',
+    'lightskyblue': '87cefa',
+    'lightslategray': '789',
+    'lightslategrey': '789',
+    'lightsteelblue': 'b0c4de',
+    'lightyellow': 'ffffe0',
+    'lime': '0f0',
+    'limegreen': '32cd32',
+    'linen': 'faf0e6',
+    'magenta': 'f0f',
+    'maroon': '800000',
+    'mediumaquamarine': '66cdaa',
+    'mediumblue': '0000cd',
+    'mediumorchid': 'ba55d3',
+    'mediumpurple': '9370db',
+    'mediumseagreen': '3cb371',
+    'mediumslateblue': '7b68ee',
+    'mediumspringgreen': '00fa9a',
+    'mediumturquoise': '48d1cc',
+    'mediumvioletred': 'c71585',
+    'midnightblue': '191970',
+    'mintcream': 'f5fffa',
+    'mistyrose': 'ffe4e1',
+    'moccasin': 'ffe4b5',
+    'navajowhite': 'ffdead',
+    'navy': '000080',
+    'oldlace': 'fdf5e6',
+    'olive': '808000',
+    'olivedrab': '6b8e23',
+    'orange': 'ffa500',
+    'orangered': 'ff4500',
+    'orchid': 'da70d6',
+    'palegoldenrod': 'eee8aa',
+    'palegreen': '98fb98',
+    'paleturquoise': 'afeeee',
+    'palevioletred': 'db7093',
+    'papayawhip': 'ffefd5',
+    'peachpuff': 'ffdab9',
+    'peru': 'cd853f',
+    'pink': 'ffc0cb',
+    'plum': 'dda0dd',
+    'powderblue': 'b0e0e6',
+    'purple': '800080',
+    'rebeccapurple': '639',
+    'red': 'f00',
+    'rosybrown': 'bc8f8f',
+    'royalblue': '4169e1',
+    'saddlebrown': '8b4513',
+    'salmon': 'fa8072',
+    'sandybrown': 'f4a460',
+    'seagreen': '2e8b57',
+    'seashell': 'fff5ee',
+    'sienna': 'a0522d',
+    'silver': 'c0c0c0',
+    'skyblue': '87ceeb',
+    'slateblue': '6a5acd',
+    'slategray': '708090',
+    'slategrey': '708090',
+    'snow': 'fffafa',
+    'springgreen': '00ff7f',
+    'steelblue': '4682b4',
+    'tan': 'd2b48c',
+    'teal': '008080',
+    'thistle': 'd8bfd8',
+    'tomato': 'ff6347',
+    'turquoise': '40e0d0',
+    'violet': 'ee82ee',
+    'wheat': 'f5deb3',
+    'white': 'fff',
+    'whitesmoke': 'f5f5f5',
+    'yellow': 'ff0',
+    'yellowgreen': '9acd32'
+};
+
+const HEX_TO_NAME = {
+    '800000': 'maroon',
+    '800080': 'purple',
+    '808000': 'olive',
+    '808080': 'gray',
+    '00ffff': 'cyan',
+    'f0ffff': 'azure',
+    'f5f5dc': 'beige',
+    'ffe4c4': 'bisque',
+    '000000': 'black',
+    '0000ff': 'blue',
+    'a52a2a': 'brown',
+    'ff7f50': 'coral',
+    'ffd700': 'gold',
+    '008000': 'green',
+    '4b0082': 'indigo',
+    'fffff0': 'ivory',
+    'f0e68c': 'khaki',
+    '00ff00': 'lime',
+    'faf0e6': 'linen',
+    '000080': 'navy',
+    'ffa500': 'orange',
+    'da70d6': 'orchid',
+    'cd853f': 'peru',
+    'ffc0cb': 'pink',
+    'dda0dd': 'plum',
+    'f00': 'red',
+    'ff0000': 'red',
+    'fa8072': 'salmon',
+    'a0522d': 'sienna',
+    'c0c0c0': 'silver',
+    'fffafa': 'snow',
+    'd2b48c': 'tan',
+    '008080': 'teal',
+    'ff6347': 'tomato',
+    'ee82ee': 'violet',
+    'f5deb3': 'wheat',
+    'ffffff': 'white',
+    'ffff00': 'yellow'
+};
+
+function hueToRgb(p, q, t) {
+    if (t < 0) {
+        t += 1;
+    }
+    if (t > 1) {
+        t -= 1;
+    }
+    if (t < 1 / 6) {
+        return p + (q - p) * 6 * t;
+    }
+    if (t < 1 / 2) {
+        return q;
+    }
+    if (t < 2 / 3) {
+        return p + (q - p) * (2 / 3 - t) * 6;
+    }
+    return p;
+}
+
+function hslToRgb(h, s, l, a) {
+    let r;
+    let g;
+    let b;
+
+    if (s === 0) {
+        r = g = b = l; // achromatic
+    } else {
+        const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+        const p = 2 * l - q;
+
+        r = hueToRgb(p, q, h + 1 / 3);
+        g = hueToRgb(p, q, h);
+        b = hueToRgb(p, q, h - 1 / 3);
+    }
+
+    return [
+        Math.round(r * 255),
+        Math.round(g * 255),
+        Math.round(b * 255),
+        a
+    ];
+}
+
+function toHex(value) {
+    value = value.toString(16);
+
+    return value.length === 1 ? '0' + value : value;
+}
+
+function parseFunctionArgs(functionArgs, count, rgb) {
+    let cursor = functionArgs.head;
+    let args = [];
+    let wasValue = false;
+
+    while (cursor !== null) {
+        const { type, value } = cursor.data;
+
+        switch (type) {
+            case 'Number':
+            case 'Percentage':
+                if (wasValue) {
+                    return;
+                }
+
+                wasValue = true;
+                args.push({
+                    type,
+                    value: Number(value)
+                });
+
+                break;
+
+            case 'Operator':
+                if (value === ',') {
+                    if (!wasValue) {
+                        return;
+                    }
+                    wasValue = false;
+                } else if (wasValue || value !== '+') {
+                    return;
+                }
+
+                break;
+
+            default:
+                // something we couldn't understand
+                return;
+        }
+
+        cursor = cursor.next;
+    }
+
+    if (args.length !== count) {
+        // invalid arguments count
+        // TODO: remove those tokens
+        return;
+    }
+
+    if (args.length === 4) {
+        if (args[3].type !== 'Number') {
+            // 4th argument should be a number
+            // TODO: remove those tokens
+            return;
+        }
+
+        args[3].type = 'Alpha';
+    }
+
+    if (rgb) {
+        if (args[0].type !== args[1].type || args[0].type !== args[2].type) {
+            // invalid color, numbers and percentage shouldn't be mixed
+            // TODO: remove those tokens
+            return;
+        }
+    } else {
+        if (args[0].type !== 'Number' ||
+            args[1].type !== 'Percentage' ||
+            args[2].type !== 'Percentage') {
+            // invalid color, for hsl values should be: number, percentage, percentage
+            // TODO: remove those tokens
+            return;
+        }
+
+        args[0].type = 'Angle';
+    }
+
+    return args.map(function(arg) {
+        let value = Math.max(0, arg.value);
+
+        switch (arg.type) {
+            case 'Number':
+                // fit value to [0..255] range
+                value = Math.min(value, 255);
+                break;
+
+            case 'Percentage':
+                // convert 0..100% to value in [0..255] range
+                value = Math.min(value, 100) / 100;
+
+                if (!rgb) {
+                    return value;
+                }
+
+                value = 255 * value;
+                break;
+
+            case 'Angle':
+                // fit value to (-360..360) range
+                return (((value % 360) + 360) % 360) / 360;
+
+            case 'Alpha':
+                // fit value to [0..1] range
+                return Math.min(value, 1);
+        }
+
+        return Math.round(value);
+    });
+}
+
+function compressFunction(node, item) {
+    let functionName = node.name;
+    let args;
+
+    if (functionName === 'rgba' || functionName === 'hsla') {
+        args = parseFunctionArgs(node.children, 4, functionName === 'rgba');
+
+        if (!args) {
+            // something went wrong
+            return;
+        }
+
+        if (functionName === 'hsla') {
+            args = hslToRgb(...args);
+            node.name = 'rgba';
+        }
+
+        if (args[3] === 0) {
+            // try to replace `rgba(x, x, x, 0)` to `transparent`
+            // always replace `rgba(0, 0, 0, 0)` to `transparent`
+            // otherwise avoid replacement in gradients since it may break color transition
+            // http://stackoverflow.com/questions/11829410/css3-gradient-rendering-issues-from-transparent-to-white
+            const scopeFunctionName = this.function && this.function.name;
+
+            if ((args[0] === 0 && args[1] === 0 && args[2] === 0) ||
+                !/^(?:to|from|color-stop)$|gradient$/i.test(scopeFunctionName)) {
+
+                item.data = {
+                    type: 'Identifier',
+                    loc: node.loc,
+                    name: 'transparent'
+                };
+
+                return;
+            }
+        }
+
+        if (args[3] !== 1) {
+            // replace argument values for normalized/interpolated
+            node.children.forEach((node, item, list) => {
+                if (node.type === 'Operator') {
+                    if (node.value !== ',') {
+                        list.remove(item);
+                    }
+                    return;
+                }
+
+                item.data = {
+                    type: 'Number',
+                    loc: node.loc,
+                    value: _Number.packNumber(args.shift())
+                };
+            });
+
+            return;
+        }
+
+        // otherwise convert to rgb, i.e. rgba(255, 0, 0, 1) -> rgb(255, 0, 0)
+        functionName = 'rgb';
+    }
+
+    if (functionName === 'hsl') {
+        args = args || parseFunctionArgs(node.children, 3, false);
+
+        if (!args) {
+            // something went wrong
+            return;
+        }
+
+        // convert to rgb
+        args = hslToRgb(...args);
+        functionName = 'rgb';
+    }
+
+    if (functionName === 'rgb') {
+        args = args || parseFunctionArgs(node.children, 3, true);
+
+        if (!args) {
+            // something went wrong
+            return;
+        }
+
+        item.data = {
+            type: 'Hash',
+            loc: node.loc,
+            value: toHex(args[0]) + toHex(args[1]) + toHex(args[2])
+        };
+
+        compressHex(item.data, item);
+    }
+}
+
+function compressIdent(node, item) {
+    if (this.declaration === null) {
+        return;
+    }
+
+    let color = node.name.toLowerCase();
+
+    if (NAME_TO_HEX.hasOwnProperty(color) &&
+        cssTree.lexer.matchDeclaration(this.declaration).isType(node, 'color')) {
+        const hex = NAME_TO_HEX[color];
+
+        if (hex.length + 1 <= color.length) {
+            // replace for shorter hex value
+            item.data = {
+                type: 'Hash',
+                loc: node.loc,
+                value: hex
+            };
+        } else {
+            // special case for consistent colors
+            if (color === 'grey') {
+                color = 'gray';
+            }
+
+            // just replace value for lower cased name
+            node.name = color;
+        }
+    }
+}
+
+function compressHex(node, item) {
+    let color = node.value.toLowerCase();
+
+    // #112233 -> #123
+    if (color.length === 6 &&
+        color[0] === color[1] &&
+        color[2] === color[3] &&
+        color[4] === color[5]) {
+        color = color[0] + color[2] + color[4];
+    }
+
+    if (HEX_TO_NAME[color]) {
+        item.data = {
+            type: 'Identifier',
+            loc: node.loc,
+            name: HEX_TO_NAME[color]
+        };
+    } else {
+        node.value = color;
+    }
+}
+
+exports.compressFunction = compressFunction;
+exports.compressHex = compressHex;
+exports.compressIdent = compressIdent;
+
+
+/***/ }),
 /* 125 */,
 /* 126 */,
 /* 127 */
@@ -3491,7 +4001,7 @@ const Dimension = __webpack_require__(47);
 const Percentage = __webpack_require__(922);
 const _Number = __webpack_require__(410);
 const Url = __webpack_require__(838);
-const color = __webpack_require__(281);
+const color = __webpack_require__(124);
 
 const handlers = {
     Atrule,
@@ -4478,88 +4988,7 @@ module.exports = eval("require")("encoding");
 
 
 /***/ }),
-/* 175 */
-/***/ (function(__unusedmodule, exports, __webpack_require__) {
-
-"use strict";
-
-exports.__esModule = true;
-exports.getPathToPose = void 0;
-var snake_1 = __webpack_require__(859);
-var grid_1 = __webpack_require__(503);
-var tunnel_1 = __webpack_require__(236);
-var point_1 = __webpack_require__(446);
-var sortPush_1 = __webpack_require__(955);
-var isEmptySafe = function (grid, x, y) {
-    return !(0, grid_1.isInside)(grid, x, y) || (0, grid_1.isEmpty)((0, grid_1.getColor)(grid, x, y));
-};
-var getPathToPose = function (snake0, target, grid) {
-    if ((0, snake_1.snakeEquals)(snake0, target))
-        return [];
-    var targetCells = (0, snake_1.snakeToCells)(target).reverse();
-    var snakeN = (0, snake_1.getSnakeLength)(snake0);
-    var box = {
-        min: {
-            x: Math.min((0, snake_1.getHeadX)(snake0), (0, snake_1.getHeadX)(target)) - snakeN - 1,
-            y: Math.min((0, snake_1.getHeadY)(snake0), (0, snake_1.getHeadY)(target)) - snakeN - 1
-        },
-        max: {
-            x: Math.max((0, snake_1.getHeadX)(snake0), (0, snake_1.getHeadX)(target)) + snakeN + 1,
-            y: Math.max((0, snake_1.getHeadY)(snake0), (0, snake_1.getHeadY)(target)) + snakeN + 1
-        }
-    };
-    var t0 = targetCells[0], forbidden = targetCells.slice(1);
-    forbidden.slice(0, 3);
-    var openList = [{ snake: snake0, w: 0 }];
-    var closeList = [];
-    while (openList.length) {
-        var o = openList.shift();
-        var x = (0, snake_1.getHeadX)(o.snake);
-        var y = (0, snake_1.getHeadY)(o.snake);
-        if (x === t0.x && y === t0.y) {
-            var path = [];
-            var e = o;
-            while (e) {
-                path.push(e.snake);
-                e = e.parent;
-            }
-            path.unshift.apply(path, (0, tunnel_1.getTunnelPath)(path[0], targetCells));
-            path.pop();
-            path.reverse();
-            return path;
-        }
-        var _loop_1 = function (i) {
-            var _a = point_1.around4[i], dx = _a.x, dy = _a.y;
-            var nx = x + dx;
-            var ny = y + dy;
-            if (!(0, snake_1.snakeWillSelfCollide)(o.snake, dx, dy) &&
-                (!grid || isEmptySafe(grid, nx, ny)) &&
-                (grid
-                    ? (0, grid_1.isInsideLarge)(grid, 2, nx, ny)
-                    : box.min.x <= nx &&
-                        nx <= box.max.x &&
-                        box.min.y <= ny &&
-                        ny <= box.max.y) &&
-                !forbidden.some(function (p) { return p.x === nx && p.y === ny; })) {
-                var snake_2 = (0, snake_1.nextSnake)(o.snake, dx, dy);
-                if (!closeList.some(function (s) { return (0, snake_1.snakeEquals)(snake_2, s); })) {
-                    var w = o.w + 1;
-                    var h = Math.abs(nx - x) + Math.abs(ny - y);
-                    var f = w + h;
-                    (0, sortPush_1.sortPush)(openList, { f: f, w: w, snake: snake_2, parent: o }, function (a, b) { return a.f - b.f; });
-                    closeList.push(snake_2);
-                }
-            }
-        };
-        for (var i = 0; i < point_1.around4.length; i++) {
-            _loop_1(i);
-        }
-    }
-};
-exports.getPathToPose = getPathToPose;
-
-
-/***/ }),
+/* 175 */,
 /* 176 */,
 /* 177 */,
 /* 178 */,
@@ -8527,509 +8956,80 @@ module.exports = mergeRule;
 
 "use strict";
 
-
-const cssTree = __webpack_require__(663);
-const _Number = __webpack_require__(410);
-
-// http://www.w3.org/TR/css3-color/#svg-color
-const NAME_TO_HEX = {
-    'aliceblue': 'f0f8ff',
-    'antiquewhite': 'faebd7',
-    'aqua': '0ff',
-    'aquamarine': '7fffd4',
-    'azure': 'f0ffff',
-    'beige': 'f5f5dc',
-    'bisque': 'ffe4c4',
-    'black': '000',
-    'blanchedalmond': 'ffebcd',
-    'blue': '00f',
-    'blueviolet': '8a2be2',
-    'brown': 'a52a2a',
-    'burlywood': 'deb887',
-    'cadetblue': '5f9ea0',
-    'chartreuse': '7fff00',
-    'chocolate': 'd2691e',
-    'coral': 'ff7f50',
-    'cornflowerblue': '6495ed',
-    'cornsilk': 'fff8dc',
-    'crimson': 'dc143c',
-    'cyan': '0ff',
-    'darkblue': '00008b',
-    'darkcyan': '008b8b',
-    'darkgoldenrod': 'b8860b',
-    'darkgray': 'a9a9a9',
-    'darkgrey': 'a9a9a9',
-    'darkgreen': '006400',
-    'darkkhaki': 'bdb76b',
-    'darkmagenta': '8b008b',
-    'darkolivegreen': '556b2f',
-    'darkorange': 'ff8c00',
-    'darkorchid': '9932cc',
-    'darkred': '8b0000',
-    'darksalmon': 'e9967a',
-    'darkseagreen': '8fbc8f',
-    'darkslateblue': '483d8b',
-    'darkslategray': '2f4f4f',
-    'darkslategrey': '2f4f4f',
-    'darkturquoise': '00ced1',
-    'darkviolet': '9400d3',
-    'deeppink': 'ff1493',
-    'deepskyblue': '00bfff',
-    'dimgray': '696969',
-    'dimgrey': '696969',
-    'dodgerblue': '1e90ff',
-    'firebrick': 'b22222',
-    'floralwhite': 'fffaf0',
-    'forestgreen': '228b22',
-    'fuchsia': 'f0f',
-    'gainsboro': 'dcdcdc',
-    'ghostwhite': 'f8f8ff',
-    'gold': 'ffd700',
-    'goldenrod': 'daa520',
-    'gray': '808080',
-    'grey': '808080',
-    'green': '008000',
-    'greenyellow': 'adff2f',
-    'honeydew': 'f0fff0',
-    'hotpink': 'ff69b4',
-    'indianred': 'cd5c5c',
-    'indigo': '4b0082',
-    'ivory': 'fffff0',
-    'khaki': 'f0e68c',
-    'lavender': 'e6e6fa',
-    'lavenderblush': 'fff0f5',
-    'lawngreen': '7cfc00',
-    'lemonchiffon': 'fffacd',
-    'lightblue': 'add8e6',
-    'lightcoral': 'f08080',
-    'lightcyan': 'e0ffff',
-    'lightgoldenrodyellow': 'fafad2',
-    'lightgray': 'd3d3d3',
-    'lightgrey': 'd3d3d3',
-    'lightgreen': '90ee90',
-    'lightpink': 'ffb6c1',
-    'lightsalmon': 'ffa07a',
-    'lightseagreen': '20b2aa',
-    'lightskyblue': '87cefa',
-    'lightslategray': '789',
-    'lightslategrey': '789',
-    'lightsteelblue': 'b0c4de',
-    'lightyellow': 'ffffe0',
-    'lime': '0f0',
-    'limegreen': '32cd32',
-    'linen': 'faf0e6',
-    'magenta': 'f0f',
-    'maroon': '800000',
-    'mediumaquamarine': '66cdaa',
-    'mediumblue': '0000cd',
-    'mediumorchid': 'ba55d3',
-    'mediumpurple': '9370db',
-    'mediumseagreen': '3cb371',
-    'mediumslateblue': '7b68ee',
-    'mediumspringgreen': '00fa9a',
-    'mediumturquoise': '48d1cc',
-    'mediumvioletred': 'c71585',
-    'midnightblue': '191970',
-    'mintcream': 'f5fffa',
-    'mistyrose': 'ffe4e1',
-    'moccasin': 'ffe4b5',
-    'navajowhite': 'ffdead',
-    'navy': '000080',
-    'oldlace': 'fdf5e6',
-    'olive': '808000',
-    'olivedrab': '6b8e23',
-    'orange': 'ffa500',
-    'orangered': 'ff4500',
-    'orchid': 'da70d6',
-    'palegoldenrod': 'eee8aa',
-    'palegreen': '98fb98',
-    'paleturquoise': 'afeeee',
-    'palevioletred': 'db7093',
-    'papayawhip': 'ffefd5',
-    'peachpuff': 'ffdab9',
-    'peru': 'cd853f',
-    'pink': 'ffc0cb',
-    'plum': 'dda0dd',
-    'powderblue': 'b0e0e6',
-    'purple': '800080',
-    'rebeccapurple': '639',
-    'red': 'f00',
-    'rosybrown': 'bc8f8f',
-    'royalblue': '4169e1',
-    'saddlebrown': '8b4513',
-    'salmon': 'fa8072',
-    'sandybrown': 'f4a460',
-    'seagreen': '2e8b57',
-    'seashell': 'fff5ee',
-    'sienna': 'a0522d',
-    'silver': 'c0c0c0',
-    'skyblue': '87ceeb',
-    'slateblue': '6a5acd',
-    'slategray': '708090',
-    'slategrey': '708090',
-    'snow': 'fffafa',
-    'springgreen': '00ff7f',
-    'steelblue': '4682b4',
-    'tan': 'd2b48c',
-    'teal': '008080',
-    'thistle': 'd8bfd8',
-    'tomato': 'ff6347',
-    'turquoise': '40e0d0',
-    'violet': 'ee82ee',
-    'wheat': 'f5deb3',
-    'white': 'fff',
-    'whitesmoke': 'f5f5f5',
-    'yellow': 'ff0',
-    'yellowgreen': '9acd32'
+exports.__esModule = true;
+exports.getPathToPose = void 0;
+var snake_1 = __webpack_require__(859);
+var grid_1 = __webpack_require__(503);
+var tunnel_1 = __webpack_require__(236);
+var point_1 = __webpack_require__(446);
+var sortPush_1 = __webpack_require__(955);
+var isEmptySafe = function (grid, x, y) {
+    return !(0, grid_1.isInside)(grid, x, y) || (0, grid_1.isEmpty)((0, grid_1.getColor)(grid, x, y));
 };
-
-const HEX_TO_NAME = {
-    '800000': 'maroon',
-    '800080': 'purple',
-    '808000': 'olive',
-    '808080': 'gray',
-    '00ffff': 'cyan',
-    'f0ffff': 'azure',
-    'f5f5dc': 'beige',
-    'ffe4c4': 'bisque',
-    '000000': 'black',
-    '0000ff': 'blue',
-    'a52a2a': 'brown',
-    'ff7f50': 'coral',
-    'ffd700': 'gold',
-    '008000': 'green',
-    '4b0082': 'indigo',
-    'fffff0': 'ivory',
-    'f0e68c': 'khaki',
-    '00ff00': 'lime',
-    'faf0e6': 'linen',
-    '000080': 'navy',
-    'ffa500': 'orange',
-    'da70d6': 'orchid',
-    'cd853f': 'peru',
-    'ffc0cb': 'pink',
-    'dda0dd': 'plum',
-    'f00': 'red',
-    'ff0000': 'red',
-    'fa8072': 'salmon',
-    'a0522d': 'sienna',
-    'c0c0c0': 'silver',
-    'fffafa': 'snow',
-    'd2b48c': 'tan',
-    '008080': 'teal',
-    'ff6347': 'tomato',
-    'ee82ee': 'violet',
-    'f5deb3': 'wheat',
-    'ffffff': 'white',
-    'ffff00': 'yellow'
+var getPathToPose = function (snake0, target, grid) {
+    if ((0, snake_1.snakeEquals)(snake0, target))
+        return [];
+    var targetCells = (0, snake_1.snakeToCells)(target).reverse();
+    var snakeN = (0, snake_1.getSnakeLength)(snake0);
+    var box = {
+        min: {
+            x: Math.min((0, snake_1.getHeadX)(snake0), (0, snake_1.getHeadX)(target)) - snakeN - 1,
+            y: Math.min((0, snake_1.getHeadY)(snake0), (0, snake_1.getHeadY)(target)) - snakeN - 1
+        },
+        max: {
+            x: Math.max((0, snake_1.getHeadX)(snake0), (0, snake_1.getHeadX)(target)) + snakeN + 1,
+            y: Math.max((0, snake_1.getHeadY)(snake0), (0, snake_1.getHeadY)(target)) + snakeN + 1
+        }
+    };
+    var t0 = targetCells[0], forbidden = targetCells.slice(1);
+    forbidden.slice(0, 3);
+    var openList = [{ snake: snake0, w: 0 }];
+    var closeList = [];
+    while (openList.length) {
+        var o = openList.shift();
+        var x = (0, snake_1.getHeadX)(o.snake);
+        var y = (0, snake_1.getHeadY)(o.snake);
+        if (x === t0.x && y === t0.y) {
+            var path = [];
+            var e = o;
+            while (e) {
+                path.push(e.snake);
+                e = e.parent;
+            }
+            path.unshift.apply(path, (0, tunnel_1.getTunnelPath)(path[0], targetCells));
+            path.pop();
+            path.reverse();
+            return path;
+        }
+        var _loop_1 = function (i) {
+            var _a = point_1.around4[i], dx = _a.x, dy = _a.y;
+            var nx = x + dx;
+            var ny = y + dy;
+            if (!(0, snake_1.snakeWillSelfCollide)(o.snake, dx, dy) &&
+                (!grid || isEmptySafe(grid, nx, ny)) &&
+                (grid
+                    ? (0, grid_1.isInsideLarge)(grid, 2, nx, ny)
+                    : box.min.x <= nx &&
+                        nx <= box.max.x &&
+                        box.min.y <= ny &&
+                        ny <= box.max.y) &&
+                !forbidden.some(function (p) { return p.x === nx && p.y === ny; })) {
+                var snake_2 = (0, snake_1.nextSnake)(o.snake, dx, dy);
+                if (!closeList.some(function (s) { return (0, snake_1.snakeEquals)(snake_2, s); })) {
+                    var w = o.w + 1;
+                    var h = Math.abs(nx - x) + Math.abs(ny - y);
+                    var f = w + h;
+                    (0, sortPush_1.sortPush)(openList, { f: f, w: w, snake: snake_2, parent: o }, function (a, b) { return a.f - b.f; });
+                    closeList.push(snake_2);
+                }
+            }
+        };
+        for (var i = 0; i < point_1.around4.length; i++) {
+            _loop_1(i);
+        }
+    }
 };
-
-function hueToRgb(p, q, t) {
-    if (t < 0) {
-        t += 1;
-    }
-    if (t > 1) {
-        t -= 1;
-    }
-    if (t < 1 / 6) {
-        return p + (q - p) * 6 * t;
-    }
-    if (t < 1 / 2) {
-        return q;
-    }
-    if (t < 2 / 3) {
-        return p + (q - p) * (2 / 3 - t) * 6;
-    }
-    return p;
-}
-
-function hslToRgb(h, s, l, a) {
-    let r;
-    let g;
-    let b;
-
-    if (s === 0) {
-        r = g = b = l; // achromatic
-    } else {
-        const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-        const p = 2 * l - q;
-
-        r = hueToRgb(p, q, h + 1 / 3);
-        g = hueToRgb(p, q, h);
-        b = hueToRgb(p, q, h - 1 / 3);
-    }
-
-    return [
-        Math.round(r * 255),
-        Math.round(g * 255),
-        Math.round(b * 255),
-        a
-    ];
-}
-
-function toHex(value) {
-    value = value.toString(16);
-
-    return value.length === 1 ? '0' + value : value;
-}
-
-function parseFunctionArgs(functionArgs, count, rgb) {
-    let cursor = functionArgs.head;
-    let args = [];
-    let wasValue = false;
-
-    while (cursor !== null) {
-        const { type, value } = cursor.data;
-
-        switch (type) {
-            case 'Number':
-            case 'Percentage':
-                if (wasValue) {
-                    return;
-                }
-
-                wasValue = true;
-                args.push({
-                    type,
-                    value: Number(value)
-                });
-
-                break;
-
-            case 'Operator':
-                if (value === ',') {
-                    if (!wasValue) {
-                        return;
-                    }
-                    wasValue = false;
-                } else if (wasValue || value !== '+') {
-                    return;
-                }
-
-                break;
-
-            default:
-                // something we couldn't understand
-                return;
-        }
-
-        cursor = cursor.next;
-    }
-
-    if (args.length !== count) {
-        // invalid arguments count
-        // TODO: remove those tokens
-        return;
-    }
-
-    if (args.length === 4) {
-        if (args[3].type !== 'Number') {
-            // 4th argument should be a number
-            // TODO: remove those tokens
-            return;
-        }
-
-        args[3].type = 'Alpha';
-    }
-
-    if (rgb) {
-        if (args[0].type !== args[1].type || args[0].type !== args[2].type) {
-            // invalid color, numbers and percentage shouldn't be mixed
-            // TODO: remove those tokens
-            return;
-        }
-    } else {
-        if (args[0].type !== 'Number' ||
-            args[1].type !== 'Percentage' ||
-            args[2].type !== 'Percentage') {
-            // invalid color, for hsl values should be: number, percentage, percentage
-            // TODO: remove those tokens
-            return;
-        }
-
-        args[0].type = 'Angle';
-    }
-
-    return args.map(function(arg) {
-        let value = Math.max(0, arg.value);
-
-        switch (arg.type) {
-            case 'Number':
-                // fit value to [0..255] range
-                value = Math.min(value, 255);
-                break;
-
-            case 'Percentage':
-                // convert 0..100% to value in [0..255] range
-                value = Math.min(value, 100) / 100;
-
-                if (!rgb) {
-                    return value;
-                }
-
-                value = 255 * value;
-                break;
-
-            case 'Angle':
-                // fit value to (-360..360) range
-                return (((value % 360) + 360) % 360) / 360;
-
-            case 'Alpha':
-                // fit value to [0..1] range
-                return Math.min(value, 1);
-        }
-
-        return Math.round(value);
-    });
-}
-
-function compressFunction(node, item) {
-    let functionName = node.name;
-    let args;
-
-    if (functionName === 'rgba' || functionName === 'hsla') {
-        args = parseFunctionArgs(node.children, 4, functionName === 'rgba');
-
-        if (!args) {
-            // something went wrong
-            return;
-        }
-
-        if (functionName === 'hsla') {
-            args = hslToRgb(...args);
-            node.name = 'rgba';
-        }
-
-        if (args[3] === 0) {
-            // try to replace `rgba(x, x, x, 0)` to `transparent`
-            // always replace `rgba(0, 0, 0, 0)` to `transparent`
-            // otherwise avoid replacement in gradients since it may break color transition
-            // http://stackoverflow.com/questions/11829410/css3-gradient-rendering-issues-from-transparent-to-white
-            const scopeFunctionName = this.function && this.function.name;
-
-            if ((args[0] === 0 && args[1] === 0 && args[2] === 0) ||
-                !/^(?:to|from|color-stop)$|gradient$/i.test(scopeFunctionName)) {
-
-                item.data = {
-                    type: 'Identifier',
-                    loc: node.loc,
-                    name: 'transparent'
-                };
-
-                return;
-            }
-        }
-
-        if (args[3] !== 1) {
-            // replace argument values for normalized/interpolated
-            node.children.forEach((node, item, list) => {
-                if (node.type === 'Operator') {
-                    if (node.value !== ',') {
-                        list.remove(item);
-                    }
-                    return;
-                }
-
-                item.data = {
-                    type: 'Number',
-                    loc: node.loc,
-                    value: _Number.packNumber(args.shift())
-                };
-            });
-
-            return;
-        }
-
-        // otherwise convert to rgb, i.e. rgba(255, 0, 0, 1) -> rgb(255, 0, 0)
-        functionName = 'rgb';
-    }
-
-    if (functionName === 'hsl') {
-        args = args || parseFunctionArgs(node.children, 3, false);
-
-        if (!args) {
-            // something went wrong
-            return;
-        }
-
-        // convert to rgb
-        args = hslToRgb(...args);
-        functionName = 'rgb';
-    }
-
-    if (functionName === 'rgb') {
-        args = args || parseFunctionArgs(node.children, 3, true);
-
-        if (!args) {
-            // something went wrong
-            return;
-        }
-
-        item.data = {
-            type: 'Hash',
-            loc: node.loc,
-            value: toHex(args[0]) + toHex(args[1]) + toHex(args[2])
-        };
-
-        compressHex(item.data, item);
-    }
-}
-
-function compressIdent(node, item) {
-    if (this.declaration === null) {
-        return;
-    }
-
-    let color = node.name.toLowerCase();
-
-    if (NAME_TO_HEX.hasOwnProperty(color) &&
-        cssTree.lexer.matchDeclaration(this.declaration).isType(node, 'color')) {
-        const hex = NAME_TO_HEX[color];
-
-        if (hex.length + 1 <= color.length) {
-            // replace for shorter hex value
-            item.data = {
-                type: 'Hash',
-                loc: node.loc,
-                value: hex
-            };
-        } else {
-            // special case for consistent colors
-            if (color === 'grey') {
-                color = 'gray';
-            }
-
-            // just replace value for lower cased name
-            node.name = color;
-        }
-    }
-}
-
-function compressHex(node, item) {
-    let color = node.value.toLowerCase();
-
-    // #112233 -> #123
-    if (color.length === 6 &&
-        color[0] === color[1] &&
-        color[2] === color[3] &&
-        color[4] === color[5]) {
-        color = color[0] + color[2] + color[4];
-    }
-
-    if (HEX_TO_NAME[color]) {
-        item.data = {
-            type: 'Identifier',
-            loc: node.loc,
-            name: HEX_TO_NAME[color]
-        };
-    } else {
-        node.value = color;
-    }
-}
-
-exports.compressFunction = compressFunction;
-exports.compressHex = compressHex;
-exports.compressIdent = compressIdent;
+exports.getPathToPose = getPathToPose;
 
 
 /***/ }),
@@ -48038,6 +48038,29 @@ module.exports = {"--*":{"syntax":"<declaration-value>","media":"all","inherited
 
 "use strict";
 
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -48079,12 +48102,10 @@ exports.generateContributionSnake = void 0;
 var github_user_contribution_1 = __webpack_require__(132);
 var userContributionToGrid_1 = __webpack_require__(528);
 var getBestRoute_1 = __webpack_require__(862);
-var gif_creator_1 = __webpack_require__(345);
-var svg_creator_1 = __webpack_require__(180);
 var snake_1 = __webpack_require__(986);
-var getPathToPose_1 = __webpack_require__(175);
+var getPathToPose_1 = __webpack_require__(281);
 var generateContributionSnake = function (userName, format) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, cells, colorScheme, grid, snake, drawOptions, gifOptions, chain, output, _b;
+    var _a, cells, colorScheme, grid, snake, drawOptions, gifOptions, chain, output, createGif, _b, createSvg;
     return __generator(this, function (_c) {
         switch (_c.label) {
             case 0:
@@ -48113,19 +48134,25 @@ var generateContributionSnake = function (userName, format) { return __awaiter(v
                 chain = (0, getBestRoute_1.getBestRoute)(grid, snake);
                 chain.push.apply(chain, (0, getPathToPose_1.getPathToPose)(chain.slice(-1)[0], snake));
                 output = {};
-                if (!format.gif) return [3 /*break*/, 3];
+                if (!format.gif) return [3 /*break*/, 4];
                 console.log("📹 creating gif");
-                _b = output;
-                return [4 /*yield*/, (0, gif_creator_1.createGif)(grid, chain, drawOptions, gifOptions)];
+                return [4 /*yield*/, Promise.resolve().then(function () { return __importStar(__webpack_require__(345)); })];
             case 2:
-                _b.gif = _c.sent();
-                _c.label = 3;
+                createGif = (_c.sent()).createGif;
+                _b = output;
+                return [4 /*yield*/, createGif(grid, chain, drawOptions, gifOptions)];
             case 3:
-                if (format.svg) {
-                    console.log("🖌 creating svg");
-                    output.svg = (0, svg_creator_1.createSvg)(grid, chain, drawOptions, gifOptions);
-                }
-                return [2 /*return*/, output];
+                _b.gif = _c.sent();
+                _c.label = 4;
+            case 4:
+                if (!format.svg) return [3 /*break*/, 6];
+                console.log("🖌 creating svg");
+                return [4 /*yield*/, Promise.resolve().then(function () { return __importStar(__webpack_require__(180)); })];
+            case 5:
+                createSvg = (_c.sent()).createSvg;
+                output.svg = createSvg(grid, chain, drawOptions, gifOptions);
+                _c.label = 6;
+            case 6: return [2 /*return*/, output];
         }
     });
 }); };
