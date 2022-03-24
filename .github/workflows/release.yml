@@ -55,8 +55,8 @@ jobs:
       - name: build svg-only action
         run: |
           yarn install --frozen-lockfile
-          yarn build:demo
-          mv packages/demo/dist/* svg-only/
+          yarn build:action
+          mv packages/action/dist/* svg-only/
 
       - name: push new commit
         uses: EndBug/add-and-commit@v7
@@ -70,6 +70,5 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: v${{ github.event.inputs.version }}
-          # release_name: Release ${{ github.event.inputs.version }}
           body: ${{ github.event.inputs.description }}
           prerelease: ${{ github.event.inputs.prerelease }}
