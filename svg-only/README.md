@@ -6,4 +6,4 @@ As a drawback, it can not generate gif image.
 
 ## Build process
 
-file is built and push on release, by the release action.
+dist file are built and push on release, by the release action.
