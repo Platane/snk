@@ -12,7 +12,7 @@ import {
 import { userContributionToGrid } from "../action/userContributionToGrid";
 import { snake4 as snake } from "@snk/types/__fixtures__/snake";
 import { getPathToPose } from "@snk/solver/getPathToPose";
-import { createSvg } from "../svg-creator";
+import { createSvg } from "@snk/svg-creator";
 
 const createForm = ({
   onSubmit,

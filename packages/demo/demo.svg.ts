@@ -1,6 +1,6 @@
 import "./menu";
 import { getBestRoute } from "@snk/solver/getBestRoute";
-import { createSvg } from "../svg-creator";
+import { createSvg } from "@snk/svg-creator";
 import { grid, snake } from "./sample";
 import { drawOptions } from "./canvas";
 import { getPathToPose } from "@snk/solver/getPathToPose";
