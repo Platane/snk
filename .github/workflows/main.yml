@@ -38,7 +38,7 @@ jobs:
 
       - name: update action.yml
         run: |
-          cat action.yml | sed "s/image: .*/image: Dockerfile" > action.yml
+          sed -i "s/image: .*/image: Dockerfile/" action.yml
 
       - name: generate-snake-game-from-github-contribution-grid
         id: generate-snake
