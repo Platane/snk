@@ -36516,7 +36516,7 @@ var createGrid = function (cells, _a, duration) {
     var sizeBorderRadius = _a.sizeBorderRadius, sizeDot = _a.sizeDot, sizeCell = _a.sizeCell;
     var svgElements = [];
     var styles = [
-        ".c{\n      shape-rendering: geometricPrecision;\n      rx: ".concat(sizeBorderRadius, ";\n      ry: ").concat(sizeBorderRadius, ";\n      fill: var(--ce);\n      stroke-width: 1px;\n      stroke: var(--cb);\n      animation: none ").concat(duration, "ms linear infinite;\n    }"),
+        ".c{\n      shape-rendering: geometricPrecision;\n      fill: var(--ce);\n      stroke-width: 1px;\n      stroke: var(--cb);\n      animation: none ".concat(duration, "ms linear infinite;\n    }"),
     ];
     var i = 0;
     for (var _i = 0, cells_1 = cells; _i < cells_1.length; _i++) {
@@ -36536,6 +36536,8 @@ var createGrid = function (cells, _a, duration) {
             "class": ["c", id].filter(Boolean).join(" "),
             x: x * s + m,
             y: y * s + m,
+            rx: sizeBorderRadius,
+            ry: sizeBorderRadius,
             width: d,
             height: d
         }));
