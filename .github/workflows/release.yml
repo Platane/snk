@@ -42,7 +42,7 @@ jobs:
 
       - name: update action.yml
         run: |
-          sed -i "s/image: .*/image: docker:\/\/platane\/snk:${{ steps.docker-build.outputs.digest }}/" action.yml
+          sed -i "s/image: .*/image: docker:\/\/platane\/snk@${{ steps.docker-build.outputs.digest }}/" action.yml
 
       - uses: actions/setup-node@v2
         with:
