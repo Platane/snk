@@ -5,7 +5,9 @@
     "@actions/core": "1.6.0",
     "@snk/gif-creator": "1.0.0",
     "@snk/github-user-contribution": "1.0.0",
-    "@snk/svg-creator": "1.0.0"
+    "@snk/solver": "1.0.0",
+    "@snk/svg-creator": "1.0.0",
+    "@snk/types": "1.0.0"
   },
   "devDependencies": {
     "@zeit/ncc": "0.22.3",

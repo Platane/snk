@@ -32,7 +32,8 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - uses: docker/build-push-action@v2
+      - name: build and publish the docker image
+        uses: docker/build-push-action@v2
         id: docker-build
         with:
           push: true
@@ -40,7 +41,7 @@ jobs:
             platane/snk:${{ github.sha }}
             platane/snk:${{ github.event.inputs.version }}
 
-      - name: update action.yml
+      - name: update action.yml to point to the newly created docker image
         run: |
           sed -i "s/image: .*/image: docker:\/\/platane\/snk@${{ steps.docker-build.outputs.digest }}/" action.yml
 
@@ -49,19 +50,19 @@ jobs:
           cache: yarn
           node-version: 16
 
-      - name: bump version
-        run: yarn version --no-git-tag-version --new-version ${{ github.event.inputs.version }}
-
       - name: build svg-only action
         run: |
           yarn install --frozen-lockfile
           yarn build:action
           mv packages/action/dist svg-only/dist
 
+      - name: bump package version
+        run: yarn version --no-git-tag-version --new-version ${{ github.event.inputs.version }}
+
       - name: push new commit
         uses: EndBug/add-and-commit@v7
         with:
-          add: package.json svg-only action.yml
+          add: package.json svg-only/dist action.yml
           message: 📦 ${{ github.event.inputs.version }}
           tag: v${{ github.event.inputs.version }}
 
