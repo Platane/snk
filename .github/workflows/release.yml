@@ -1,6 +1,7 @@
 name: release
 
 on:
+  push:
   workflow_dispatch:
     inputs:
       description:
@@ -51,8 +52,6 @@ jobs:
         with:
           push: true
           tags: platane/snk:${{ github.sha }} platane/snk:${{ github.ref.name }}
-          file: Dockerfile
-          context: .
 
       - name: update action.yml
         run: |
