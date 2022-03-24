@@ -1,0 +1,88 @@
+name: release
+
+ workflow_dispatch:
+    inputs:
+      description:
+        description: 'Version description'
+        type: string
+      version:
+        description: 'Version'
+        default: '0.0.1'
+        required: true 
+        type: string
+      prerelease:
+        description: 'Prerelease'
+        default: false
+        required: true 
+        type: boolean
+      
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: docker/setup-qemu-action@v1
+
+      - uses: docker/setup-buildx-action@v1
+
+      - uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # - name: prepare tags
+      #   id: tags
+      #   run: |
+      #     VERSION=$(npm pkg get version | tr -d '"')
+      #     BRANCH=$(echo $GITHUB_REF_NAME | sed "s/\//_/g")
+      #     echo "::set-output name=tag1::$GITHUB_SHA"
+      #     if [[ "$BRANCH" == 'master' ]]; then
+      #       echo "::set-output name=tag2::latest"
+      #       echo "::set-output name=tag3::$VERSION"
+      #     else
+      #       echo "::set-output name=tag2::$BRANCH"
+      #       echo "::set-output name=tag3::$BRANCH-$VERSION"
+      #     fi
+
+      - uses: docker/build-push-action@v2
+        id: docker-build
+        with:
+          push: true
+          tags: platane/snk:${{ github.sha }} platane/snk:${{ github.ref.name }}
+          file: Dockerfile
+          context: .
+
+      - name: update action.yml
+        run: |
+          cat action.yml | sed "s/image: .*/image: docker:\/\/platane\/snk:${{ steps.docker-build.outputs.digest }}/" > action.yml
+
+      - uses: actions/setup-node@v2
+        with:
+          cache: yarn
+          node-version: 16
+      
+      - name: bump version
+        run: yarn version --no-git-tag-version --new-version ${{ github.ref.name }}
+
+      - name: build svg-only action
+        run: |
+          yarn install --frozen-lockfile
+          yarn build:demo
+          mv packages/demo/dist/* svg-only/
+
+      - name: push new commit
+        uses: EndBug/add-and-commit@v7
+        with:
+          add: package.json svg-only action.yml
+          message: 📦 ${{ github.event.inputs.version }}
+          tag: v${{ github.event.inputs.version }}
+
+      - uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ github.event.inputs.version }}
+          # release_name: Release ${{ github.event.inputs.version }}
+          body: ${{ github.event.inputs.description }}
+          prerelease: ${{ github.event.inputs.prerelease }}

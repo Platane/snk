@@ -1,26 +1,20 @@
 name: "generate-snake-game-from-github-contribution-grid"
-description: "Generates a snake game from a github user contributions grid. Output the animation as gif or svg"
+description: "Generates a snake game from a github user contributions grid. Output the animation as svg"
 author: "platane"
 
 runs:
-  using: docker
-  image: Dockerfile
+  using: node16
+  main: index.js
 
 inputs:
   github_user_name:
     description: "github user name"
     required: true
-  gif_out_path:
-    description: "path of the generated gif file. If left empty, the gif file will not be generated."
-    required: false
-    default: null
   svg_out_path:
     description: "path of the generated svg file. If left empty, the svg file will not be generated."
     required: false
     default: null
 
 outputs:
-  gif_out_path:
-    description: "path of the generated gif"
   svg_out_path:
     description: "path of the generated svg"
