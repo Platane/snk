@@ -36,7 +36,9 @@ jobs:
         id: docker-build
         with:
           push: true
-          tags: platane/snk:${{ github.sha }} platane/snk:${{ github.event.inputs.version }}
+          tags: |
+            platane/snk:${{ github.sha }}
+            platane/snk:${{ github.event.inputs.version }}
 
       - name: update action.yml
         run: |
