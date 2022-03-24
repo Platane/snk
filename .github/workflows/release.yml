@@ -4,19 +4,19 @@ on:
   workflow_dispatch:
     inputs:
       description:
-        description: 'Version description'
+        description: "Version description"
         type: string
       version:
-        description: 'Version'
-        default: '0.0.1'
-        required: true 
+        description: "Version"
+        default: "0.0.1"
+        required: true
         type: string
       prerelease:
-        description: 'Prerelease'
+        description: "Prerelease"
         default: false
-        required: true 
+        required: true
         type: boolean
-      
+
 jobs:
   release:
     runs-on: ubuntu-latest
@@ -62,7 +62,7 @@ jobs:
         with:
           cache: yarn
           node-version: 16
-      
+
       - name: bump version
         run: yarn version --no-git-tag-version --new-version ${{ github.ref.name }}
 
