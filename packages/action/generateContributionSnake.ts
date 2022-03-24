@@ -1,8 +1,6 @@
 import { getGithubUserContribution } from "@snk/github-user-contribution";
 import { userContributionToGrid } from "./userContributionToGrid";
 import { getBestRoute } from "@snk/solver/getBestRoute";
-import { createGif } from "@snk/gif-creator";
-import { createSvg } from "../svg-creator";
 import { snake4 } from "@snk/types/__fixtures__/snake";
 import { getPathToPose } from "@snk/solver/getPathToPose";
 
@@ -41,11 +39,13 @@ export const generateContributionSnake = async (
 
   if (format.gif) {
     console.log("📹 creating gif");
+    const { createGif } = await import("@snk/gif-creator");
     output.gif = await createGif(grid, chain, drawOptions, gifOptions);
   }
 
   if (format.svg) {
     console.log("🖌 creating svg");
+    const { createSvg } = await import("@snk/svg-creator");
     output.svg = createSvg(grid, chain, drawOptions, gifOptions);
   }
 
