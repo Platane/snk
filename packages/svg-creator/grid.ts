@@ -22,8 +22,6 @@ export const createGrid = (
   const styles = [
     `.c{
       shape-rendering: geometricPrecision;
-      rx: ${sizeBorderRadius};
-      ry: ${sizeBorderRadius};
       fill: var(--ce);
       stroke-width: 1px;
       stroke: var(--cb);
@@ -56,6 +54,8 @@ export const createGrid = (
         class: ["c", id].filter(Boolean).join(" "),
         x: x * s + m,
         y: y * s + m,
+        rx: sizeBorderRadius,
+        ry: sizeBorderRadius,
         width: d,
         height: d,
       })
