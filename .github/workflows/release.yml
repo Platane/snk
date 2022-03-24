@@ -54,6 +54,7 @@ jobs:
         run: |
           yarn install --frozen-lockfile
           yarn build:action
+          rm -r svg-only/dist
           mv packages/action/dist svg-only/dist
 
       - name: bump package version
