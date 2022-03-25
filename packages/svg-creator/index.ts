@@ -115,6 +115,10 @@ export const createSvg = (
       xmlns: "http://www.w3.org/2000/svg",
     }).replace("/>", ">"),
 
+    "<desc>",
+    "Generated with https://github.com/Platane/snk",
+    "</desc>",
+
     "<style>",
     optimizeCss(style),
     "</style>",
