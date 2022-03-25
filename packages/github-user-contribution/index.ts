@@ -124,8 +124,6 @@ const getSvgPosition = (
   return p;
 };
 
-type ThenArg<T> = T extends PromiseLike<infer U> ? U : T;
-
-export type Res = ThenArg<ReturnType<typeof getGithubUserContribution>>;
+export type Res = Awaited<ReturnType<typeof getGithubUserContribution>>;
 
 export type Cell = Res["cells"][number];
