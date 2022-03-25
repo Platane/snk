@@ -1,18 +1,17 @@
-import { getBestRoute } from "@snk/solver/getBestRoute";
 import { Color, copyGrid, Grid } from "@snk/types/grid";
 import { step } from "@snk/solver/step";
 import { isStableAndBound, stepSpring } from "./springUtils";
-import { Res } from "@snk/github-user-contribution";
-import { Snake } from "@snk/types/snake";
+import type { Res } from "@snk/github-user-contribution";
+import type { Snake } from "@snk/types/snake";
 import {
   drawLerpWorld,
   getCanvasWorldSize,
   Options,
 } from "@snk/draw/drawWorld";
-import { userContributionToGrid } from "../action/userContributionToGrid";
-import { snake4 as snake } from "@snk/types/__fixtures__/snake";
-import { getPathToPose } from "@snk/solver/getPathToPose";
+import { userContributionToGrid } from "@snk/action/userContributionToGrid";
 import { createSvg } from "@snk/svg-creator";
+import { createRpcClient } from "./worker-utils";
+import type { API as WorkerAPI } from "./demo.interactive.worker";
 
 const createForm = ({
   onSubmit,
@@ -47,15 +46,24 @@ const createForm = ({
 
   form.addEventListener("submit", (event) => {
     event.preventDefault();
-    onSubmit(input.value).catch((err) => {
-      label.innerText = "error :(";
-      throw err;
-    });
+
+    onSubmit(input.value)
+      .finally(() => {
+        clearTimeout(timeout);
+      })
+      .catch((err) => {
+        label.innerText = "error :(";
+        throw err;
+      });
 
     input.disabled = true;
     submit.disabled = true;
     form.appendChild(label);
     label.innerText = "loading ...";
+
+    const timeout = setTimeout(() => {
+      label.innerText = "loading ( it might take a while ) ... ";
+    }, 5000);
   });
 
   //
@@ -75,6 +83,7 @@ const createGithubProfile = () => {
   container.style.opacity = "0";
   container.style.display = "flex";
   container.style.flexDirection = "column";
+  container.style.height = "120px";
   container.style.alignItems = "flex-start";
   const image = document.createElement("img");
   image.style.width = "100px";
@@ -232,12 +241,23 @@ const onSubmit = async (userName: string) => {
   };
 
   const grid = userContributionToGrid(cells, colorScheme);
-  const chain = getBestRoute(grid, snake)!;
-  chain.push(...getPathToPose(chain.slice(-1)[0], snake)!);
+
+  const chain = await getChain(grid);
+
   dispose();
 
   createViewer({ grid0: grid, chain, drawOptions });
 };
+
+const worker = new Worker(
+  new URL(
+    "./demo.interactive.worker.ts",
+    // @ts-ignore
+    import.meta.url
+  )
+);
+
+const { getChain } = createRpcClient<WorkerAPI>(worker);
 
 const profile = createGithubProfile();
 const { dispose } = createForm({
