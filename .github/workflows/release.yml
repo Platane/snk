@@ -60,6 +60,8 @@ jobs:
         run: |
           VERSION=${{ github.event.inputs.version }}
 
+          git config --global user.email "bot@platane.me"
+          git config --global user.name "release bot"
           git add package.json svg-only/dist action.yml
           git commit -m "📦 $VERSION"
           git tag v$VERSION
