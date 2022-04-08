@@ -67,9 +67,9 @@ jobs:
           git tag v$VERSION
           git push origin master --tags
 
-          if [[ "$VERSION" =~ ^\d+\.\d+\.\d+$ ]] then
-            git tag --force v$( echo VERSION | cut -d. -f 1-1 )
-            git tag --force v$( echo VERSION | cut -d. -f 1-2 )
+          if [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            git tag v$( echo $VERSION | cut -d. -f 1-1 )
+            git tag v$( echo $VERSION | cut -d. -f 1-2 )
             git push origin --tags --force
             echo ::set-output name=prerelease::false
           else 
