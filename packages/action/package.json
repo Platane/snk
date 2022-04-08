@@ -10,7 +10,7 @@
     "@snk/types": "1.0.0"
   },
   "devDependencies": {
-    "@zeit/ncc": "0.22.3",
+    "@vercel/ncc": "0.24.1",
     "ts-node": "10.7.0"
   },
   "scripts": {
