@@ -21,7 +21,7 @@ Available as github action. Automatically generate a new image at the end of the
 **github action**
 
 ```yaml
-- uses: Platane/snk@v1.1.0
+- uses: Platane/snk@v1
   with:
     # github user name to read the contribution graph from (**required**)
     # using action context var `github.repository_owner` or specified user
@@ -38,7 +38,7 @@ Available as github action. Automatically generate a new image at the end of the
 
 [example with cron job](https://github.com/Platane/Platane/blob/master/.github/workflows/main.yml#L24-L29)
 
-If you are only interested in generating a svg, you can use this other faster action: `uses: Platane/snk/svg-only@v1.1.0`
+If you are only interested in generating a svg, you can use this other faster action: `uses: Platane/snk/svg-only@v1`
 
 **interactive demo**
 
