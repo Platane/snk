@@ -11,11 +11,6 @@ on:
       description:
         description: "Version description"
         type: string
-      prerelease:
-        description: "Prerelease"
-        default: false
-        required: true
-        type: boolean
 
 jobs:
   release:
@@ -60,12 +55,24 @@ jobs:
       - name: bump package version
         run: yarn version --no-git-tag-version --new-version ${{ github.event.inputs.version }}
 
-      - name: push new commit
-        uses: EndBug/add-and-commit@v7
-        with:
-          add: package.json svg-only/dist action.yml
-          message: 📦 ${{ github.event.inputs.version }}
-          tag: v${{ github.event.inputs.version }}
+      - name: push new build, tag version and push
+        id: push-tags
+        run: |
+          VERSION=${{ github.event.inputs.version }}
+
+          git add package.json svg-only/dist action.yml
+          git commit -m "📦 $VERSION"
+          git tag v$VERSION
+          git push origin master --tags
+
+          if [[ "$VERSION" =~ ^\d+\.\d+\.\d+$ ]] then
+            git tag --force v$( echo VERSION | cut -d. -f 1-1 )
+            git tag --force v$( echo VERSION | cut -d. -f 1-2 )
+            git push origin --tags --force
+            echo ::set-output name=prerelease::false
+          else 
+            echo ::set-output name=prerelease::true
+          fi
 
       - uses: actions/create-release@v1
         env:
@@ -73,4 +80,4 @@ jobs:
         with:
           tag_name: v${{ github.event.inputs.version }}
           body: ${{ github.event.inputs.description }}
-          prerelease: ${{ github.event.inputs.prerelease }}
+          prerelease: ${{ steps.push-tags.outputs.prerelease }}
