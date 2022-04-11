@@ -7,7 +7,7 @@ jest.setTimeout(2 * 60 * 1000);
 
 const silent = (handler: () => void | Promise<void>) => async () => {
   const originalConsoleLog = console.log;
-  // console.log = () => undefined;
+  console.log = () => undefined;
   try {
     return await handler();
   } finally {

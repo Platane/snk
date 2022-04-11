@@ -54,7 +54,7 @@ jobs:
         run: |
           ls dist
           test -f dist/github-contribution-grid-snake.svg
-          test -f dist/github-contribution-grid-snake-dark.gif
+          test -f dist/github-contribution-grid-snake-dark.svg
           test -f dist/github-contribution-grid-snake.gif
 
       - uses: crazy-max/ghaction-github-pages@v2.5.0
