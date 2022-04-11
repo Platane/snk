@@ -32781,55 +32781,51 @@ var userContributionToGrid_1 = __webpack_require__(5740);
 var getBestRoute_1 = __webpack_require__(2705);
 var snake_1 = __webpack_require__(7087);
 var getPathToPose_1 = __webpack_require__(6963);
-var generateContributionSnake = function (userName, format) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, cells, colorScheme, grid, snake, drawOptions, gifOptions, chain, output, createGif, _b, createSvg;
-    return __generator(this, function (_c) {
-        switch (_c.label) {
+var generateContributionSnake = function (userName, outputs) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, cells, colorScheme, grid, snake, chain;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
             case 0:
                 console.log("🎣 fetching github user contribution");
                 return [4 /*yield*/, (0, github_user_contribution_1.getGithubUserContribution)(userName)];
             case 1:
-                _a = _c.sent(), cells = _a.cells, colorScheme = _a.colorScheme;
+                _a = _b.sent(), cells = _a.cells, colorScheme = _a.colorScheme;
                 grid = (0, userContributionToGrid_1.userContributionToGrid)(cells, colorScheme);
                 snake = snake_1.snake4;
-                drawOptions = {
-                    sizeBorderRadius: 2,
-                    sizeCell: 16,
-                    sizeDot: 12,
-                    colorBorder: "#1b1f230a",
-                    colorDots: colorScheme,
-                    colorEmpty: colorScheme[0],
-                    colorSnake: "purple",
-                    cells: cells,
-                    dark: {
-                        colorEmpty: "#161b22",
-                        colorDots: { 1: "#01311f", 2: "#034525", 3: "#0f6d31", 4: "#00c647" }
-                    }
-                };
-                gifOptions = { frameDuration: 100, step: 1 };
                 console.log("📡 computing best route");
                 chain = (0, getBestRoute_1.getBestRoute)(grid, snake);
                 chain.push.apply(chain, (0, getPathToPose_1.getPathToPose)(chain.slice(-1)[0], snake));
-                output = {};
-                if (!format.gif) return [3 /*break*/, 4];
-                console.log("📹 creating gif");
-                return [4 /*yield*/, Promise.resolve().then(function () { return __importStar(__webpack_require__(340)); })];
-            case 2:
-                createGif = (_c.sent()).createGif;
-                _b = output;
-                return [4 /*yield*/, createGif(grid, chain, drawOptions, gifOptions)];
-            case 3:
-                _b.gif = _c.sent();
-                _c.label = 4;
-            case 4:
-                if (!format.svg) return [3 /*break*/, 6];
-                console.log("🖌 creating svg");
-                return [4 /*yield*/, Promise.resolve().then(function () { return __importStar(__webpack_require__(7415)); })];
-            case 5:
-                createSvg = (_c.sent()).createSvg;
-                output.svg = createSvg(grid, chain, drawOptions, gifOptions);
-                _c.label = 6;
-            case 6: return [2 /*return*/, output];
+                return [2 /*return*/, Promise.all(outputs.map(function (out, i) { return __awaiter(void 0, void 0, void 0, function () {
+                        var format, drawOptions, gifOptions, _a, createSvg, createGif;
+                        return __generator(this, function (_b) {
+                            switch (_b.label) {
+                                case 0:
+                                    if (!out)
+                                        return [2 /*return*/];
+                                    format = out.format, drawOptions = out.drawOptions, gifOptions = out.gifOptions;
+                                    _a = format;
+                                    switch (_a) {
+                                        case "svg": return [3 /*break*/, 1];
+                                        case "gif": return [3 /*break*/, 3];
+                                    }
+                                    return [3 /*break*/, 6];
+                                case 1:
+                                    console.log("\uD83D\uDD8C creating svg (outputs[".concat(i, "])"));
+                                    return [4 /*yield*/, Promise.resolve().then(function () { return __importStar(__webpack_require__(7415)); })];
+                                case 2:
+                                    createSvg = (_b.sent()).createSvg;
+                                    return [2 /*return*/, createSvg(grid, chain, drawOptions, gifOptions)];
+                                case 3:
+                                    console.log("\uD83D\uDCF9 creating gif (outputs[".concat(i, "])"));
+                                    return [4 /*yield*/, Promise.resolve().then(function () { return __importStar(__webpack_require__(340)); })];
+                                case 4:
+                                    createGif = (_b.sent()).createGif;
+                                    return [4 /*yield*/, createGif(grid, chain, drawOptions, gifOptions)];
+                                case 5: return [2 /*return*/, _b.sent()];
+                                case 6: return [2 /*return*/];
+                            }
+                        });
+                    }); }))];
         }
     });
 }); };
@@ -32907,30 +32903,30 @@ var fs = __importStar(__webpack_require__(5747));
 var path = __importStar(__webpack_require__(5622));
 var core = __importStar(__webpack_require__(7117));
 var generateContributionSnake_1 = __webpack_require__(8847);
+var outputsOptions_1 = __webpack_require__(3379);
 (function () { return __awaiter(void 0, void 0, void 0, function () {
-    var userName, format, _a, svg, gif, e_1;
+    var userName, outputs, results_1, e_1;
+    var _a;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
                 _b.trys.push([0, 2, , 3]);
                 userName = core.getInput("github_user_name");
-                format = {
-                    svg: core.getInput("svg_out_path"),
-                    gif: core.getInput("gif_out_path")
-                };
-                return [4 /*yield*/, (0, generateContributionSnake_1.generateContributionSnake)(userName, format)];
+                outputs = (0, outputsOptions_1.parseOutputsOption)((_a = core.getMultilineInput("outputs")) !== null && _a !== void 0 ? _a : [
+                    core.getInput("gif_out_path"),
+                    core.getInput("svg_out_path"),
+                ]);
+                return [4 /*yield*/, (0, generateContributionSnake_1.generateContributionSnake)(userName, outputs)];
             case 1:
-                _a = _b.sent(), svg = _a.svg, gif = _a.gif;
-                if (svg) {
-                    fs.mkdirSync(path.dirname(format.svg), { recursive: true });
-                    fs.writeFileSync(format.svg, svg);
-                    core.setOutput("svg_out_path", format.svg);
-                }
-                if (gif) {
-                    fs.mkdirSync(path.dirname(format.gif), { recursive: true });
-                    fs.writeFileSync(format.gif, gif);
-                    core.setOutput("gif_out_path", format.gif);
-                }
+                results_1 = _b.sent();
+                outputs.forEach(function (out, i) {
+                    var result = results_1[i];
+                    if ((out === null || out === void 0 ? void 0 : out.filename) && result) {
+                        console.log("\uD83D\uDCBE writing to ".concat(out === null || out === void 0 ? void 0 : out.filename));
+                        fs.mkdirSync(path.dirname(out === null || out === void 0 ? void 0 : out.filename), { recursive: true });
+                        fs.writeFileSync(out === null || out === void 0 ? void 0 : out.filename, result);
+                    }
+                });
                 return [3 /*break*/, 3];
             case 2:
                 e_1 = _b.sent();
@@ -32940,6 +32936,106 @@ var generateContributionSnake_1 = __webpack_require__(8847);
         }
     });
 }); })();
+
+
+/***/ }),
+
+/***/ 3379:
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
+exports.__esModule = true;
+exports.parseEntry = exports.parseOutputsOption = void 0;
+var palettes_1 = __webpack_require__(3848);
+var parseOutputsOption = function (lines) { return lines.map(exports.parseEntry); };
+exports.parseOutputsOption = parseOutputsOption;
+var parseEntry = function (entry) {
+    var m = entry.trim().match(/^(.+\.(svg|gif))(\?.*)?$/);
+    if (!m)
+        return null;
+    var _ = m[0], filename = m[1], format = m[2], query = m[3];
+    var sp = new URLSearchParams(query || "");
+    var drawOptions = __assign({ sizeDotBorderRadius: 2, sizeCell: 16, sizeDot: 12 }, palettes_1.palettes["default"]);
+    var gifOptions = { step: 1, frameDuration: 100 };
+    {
+        var palette = palettes_1.palettes[sp.get("palette")];
+        if (palette) {
+            Object.assign(drawOptions, palette);
+            drawOptions.dark = palette.dark && __assign({}, palette.dark);
+        }
+    }
+    if (sp.has("color_snake"))
+        drawOptions.colorSnake = sp.get("color_snake");
+    if (sp.has("color_dots")) {
+        var colors = sp.get("color_dots").split(/[,;]/);
+        drawOptions.colorDots = colors;
+        drawOptions.colorEmpty = colors[0];
+        drawOptions.dark = undefined;
+    }
+    if (sp.has("color_dot_border"))
+        drawOptions.colorDotBorder = sp.get("color_dot_border");
+    if (sp.has("dark_color_dots")) {
+        var colors = sp.get("dark_color_dots").split(/[,;]/);
+        drawOptions.dark = __assign(__assign({}, drawOptions.dark), { colorDots: colors, colorEmpty: colors[0] });
+    }
+    if (sp.has("dark_color_dot_border") && drawOptions.dark)
+        drawOptions.dark.colorDotBorder = sp.get("color_dot_border");
+    if (sp.has("dark_color_snake") && drawOptions.dark)
+        drawOptions.dark.colorSnake = sp.get("color_snake");
+    return { filename: filename, format: format, drawOptions: drawOptions, gifOptions: gifOptions };
+};
+exports.parseEntry = parseEntry;
+
+
+/***/ }),
+
+/***/ 3848:
+/***/ (function(__unused_webpack_module, exports) {
+
+"use strict";
+
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
+exports.__esModule = true;
+exports.palettes = void 0;
+exports.palettes = {
+    "github-light": {
+        colorDotBorder: "#1b1f230a",
+        colorDots: ["#ebedf0", "#9be9a8", "#40c463", "#30a14e", "#216e39"],
+        colorEmpty: "#ebedf0",
+        colorSnake: "purple"
+    },
+    "github-dark": {
+        colorDotBorder: "#1b1f230a",
+        colorEmpty: "#161b22",
+        colorDots: ["#161b22", "#01311f", "#034525", "#0f6d31", "#00c647"],
+        colorSnake: "purple"
+    }
+};
+// aliases
+exports.palettes.github = __assign(__assign({}, exports.palettes["github-light"]), { dark: __assign({}, exports.palettes["github-dark"]) });
+exports.palettes.default = exports.palettes["github"];
 
 
 /***/ }),
@@ -32999,10 +33095,10 @@ var drawGrid = function (ctx, grid, o) {
                 ctx.save();
                 ctx.translate(x * o.sizeCell + (o.sizeCell - o.sizeDot) / 2, y * o.sizeCell + (o.sizeCell - o.sizeDot) / 2);
                 ctx.fillStyle = color;
-                ctx.strokeStyle = o.colorBorder;
+                ctx.strokeStyle = o.colorDotBorder;
                 ctx.lineWidth = 1;
                 ctx.beginPath();
-                (0, pathRoundedRect_1.pathRoundedRect)(ctx, o.sizeDot, o.sizeDot, o.sizeBorderRadius);
+                (0, pathRoundedRect_1.pathRoundedRect)(ctx, o.sizeDot, o.sizeDot, o.sizeDotBorderRadius);
                 ctx.fill();
                 ctx.stroke();
                 ctx.closePath();
@@ -34284,7 +34380,7 @@ exports.createGrid = void 0;
 var utils_1 = __webpack_require__(5913);
 var percent = function (x) { return (x * 100).toFixed(2); };
 var createGrid = function (cells, _a, duration) {
-    var sizeBorderRadius = _a.sizeBorderRadius, sizeDot = _a.sizeDot, sizeCell = _a.sizeCell;
+    var sizeDotBorderRadius = _a.sizeDotBorderRadius, sizeDot = _a.sizeDot, sizeCell = _a.sizeCell;
     var svgElements = [];
     var styles = [
         ".c{\n      shape-rendering: geometricPrecision;\n      fill: var(--ce);\n      stroke-width: 1px;\n      stroke: var(--cb);\n      animation: none ".concat(duration, "ms linear infinite;\n    }"),
@@ -34307,8 +34403,8 @@ var createGrid = function (cells, _a, duration) {
             "class": ["c", id].filter(Boolean).join(" "),
             x: x * s + m,
             y: y * s + m,
-            rx: sizeBorderRadius,
-            ry: sizeBorderRadius,
+            rx: sizeDotBorderRadius,
+            ry: sizeDotBorderRadius,
             width: d,
             height: d
         }));
@@ -34442,14 +34538,14 @@ exports.createSvg = createSvg;
 var optimizeCss = function (css) { return csso.minify(css).css; };
 var optimizeSvg = function (svg) { return svg; };
 var generateColorVar = function (drawOptions) {
-    return "\n    :root {\n    --cb: ".concat(drawOptions.colorBorder, ";\n    --cs: ").concat(drawOptions.colorSnake, ";\n    --ce: ").concat(drawOptions.colorEmpty, ";\n    ").concat(Object.entries(drawOptions.colorDots)
+    return "\n    :root {\n    --cb: ".concat(drawOptions.colorDotBorder, ";\n    --cs: ").concat(drawOptions.colorSnake, ";\n    --ce: ").concat(drawOptions.colorEmpty, ";\n    ").concat(Object.entries(drawOptions.colorDots)
         .map(function (_a) {
         var i = _a[0], color = _a[1];
         return "--c".concat(i, ":").concat(color, ";");
     })
         .join(""), "\n    }\n    ") +
         (drawOptions.dark
-            ? "\n    @media (prefers-color-scheme: dark) {\n      :root {\n        --cb: ".concat(drawOptions.dark.colorBorder || drawOptions.colorBorder, ";\n        --cs: ").concat(drawOptions.dark.colorSnake || drawOptions.colorSnake, ";\n        --ce: ").concat(drawOptions.dark.colorEmpty, ";\n        ").concat(Object.entries(drawOptions.dark.colorDots)
+            ? "\n    @media (prefers-color-scheme: dark) {\n      :root {\n        --cb: ".concat(drawOptions.dark.colorDotBorder || drawOptions.colorDotBorder, ";\n        --cs: ").concat(drawOptions.dark.colorSnake || drawOptions.colorSnake, ";\n        --ce: ").concat(drawOptions.dark.colorEmpty, ";\n        ").concat(Object.entries(drawOptions.dark.colorDots)
                 .map(function (_a) {
                 var i = _a[0], color = _a[1];
                 return "--c".concat(i, ":").concat(color, ";");
