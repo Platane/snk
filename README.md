@@ -21,24 +21,23 @@ Available as github action. Automatically generate a new image at the end of the
 **github action**
 
 ```yaml
-- uses: Platane/snk@v1
+- uses: Platane/snk@v2
   with:
     # github user name to read the contribution graph from (**required**)
     # using action context var `github.repository_owner` or specified user
     github_user_name: ${{ github.repository_owner }}
 
-    # path of the generated gif file
-    # If left empty, the gif file will not be generated
-    gif_out_path: dist/github-snake.gif
-
-    # path of the generated svg file
-    # If left empty, the svg file will not be generated
-    svg_out_path: dist/github-snake.svg
+    # list of files to generate.
+    # one file per line. Each output can be customized with options as query string.
+    outputs: |
+      dist/github-snake.svg
+      dist/github-snake.svg?palette=github-dark
+      dist/ocean.gif?color_snake=orange&color_dots=#bfd6f6,#8dbdff,#64a1f4,#4b91f1,#3c7dd9
 ```
 
 [example with cron job](https://github.com/Platane/Platane/blob/master/.github/workflows/main.yml#L24-L29)
 
-If you are only interested in generating a svg, you can use this other faster action: `uses: Platane/snk/svg-only@v1`
+If you are only interested in generating a svg, you can use this other faster action: `uses: Platane/snk/svg-only@v2`
 
 **interactive demo**
 
