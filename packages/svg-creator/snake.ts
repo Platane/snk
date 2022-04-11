@@ -1,17 +1,12 @@
 import { getSnakeLength, snakeToCells } from "@snk/types/snake";
 import type { Snake } from "@snk/types/snake";
-import type { Color } from "@snk/types/grid";
 import type { Point } from "@snk/types/point";
 import { h } from "./utils";
 
 export type Options = {
-  colorDots: Record<Color, string>;
-  colorEmpty: string;
-  colorBorder: string;
   colorSnake: string;
   sizeCell: number;
   sizeDot: number;
-  sizeBorderRadius: number;
 };
 
 const percent = (x: number) => (x * 100).toFixed(2);

@@ -65,7 +65,7 @@ jobs:
           git add package.json svg-only/dist action.yml
           git commit -m "📦 $VERSION"
           git tag v$VERSION
-          git push origin master --tags
+          git push origin main --tags
 
           if [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
             git tag v$( echo $VERSION | cut -d. -f 1-1 )

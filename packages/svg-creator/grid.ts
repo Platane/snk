@@ -5,17 +5,17 @@ import { h } from "./utils";
 export type Options = {
   colorDots: Record<Color, string>;
   colorEmpty: string;
-  colorBorder: string;
+  colorDotBorder: string;
   sizeCell: number;
   sizeDot: number;
-  sizeBorderRadius: number;
+  sizeDotBorderRadius: number;
 };
 
 const percent = (x: number) => (x * 100).toFixed(2);
 
 export const createGrid = (
   cells: (Point & { t: number | null; color: Color | Empty })[],
-  { sizeBorderRadius, sizeDot, sizeCell }: Options,
+  { sizeDotBorderRadius, sizeDot, sizeCell }: Options,
   duration: number
 ) => {
   const svgElements: string[] = [];
@@ -54,8 +54,8 @@ export const createGrid = (
         class: ["c", id].filter(Boolean).join(" "),
         x: x * s + m,
         y: y * s + m,
-        rx: sizeBorderRadius,
-        ry: sizeBorderRadius,
+        rx: sizeDotBorderRadius,
+        ry: sizeDotBorderRadius,
         width: d,
         height: d,
       })

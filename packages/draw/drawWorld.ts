@@ -7,11 +7,11 @@ import type { Snake } from "@snk/types/snake";
 export type Options = {
   colorDots: Record<Color, string>;
   colorEmpty: string;
-  colorBorder: string;
+  colorDotBorder: string;
   colorSnake: string;
   sizeCell: number;
   sizeDot: number;
-  sizeBorderRadius: number;
+  sizeDotBorderRadius: number;
   cells?: Point[];
 };
 
