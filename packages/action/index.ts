@@ -2,30 +2,28 @@ import * as fs from "fs";
 import * as path from "path";
 import * as core from "@actions/core";
 import { generateContributionSnake } from "./generateContributionSnake";
+import { parseOutputsOption } from "./outputsOptions";
 
 (async () => {
   try {
     const userName = core.getInput("github_user_name");
-    const format = {
-      svg: core.getInput("svg_out_path"),
-      gif: core.getInput("gif_out_path"),
-    };
-
-    const { svg, gif } = await generateContributionSnake(
-      userName,
-      format as any
+    const outputs = parseOutputsOption(
+      core.getMultilineInput("outputs") ?? [
+        core.getInput("gif_out_path"),
+        core.getInput("svg_out_path"),
+      ]
     );
 
-    if (svg) {
-      fs.mkdirSync(path.dirname(format.svg), { recursive: true });
-      fs.writeFileSync(format.svg, svg);
-      core.setOutput("svg_out_path", format.svg);
-    }
-    if (gif) {
-      fs.mkdirSync(path.dirname(format.gif), { recursive: true });
-      fs.writeFileSync(format.gif, gif);
-      core.setOutput("gif_out_path", format.gif);
-    }
+    const results = await generateContributionSnake(userName, outputs);
+
+    outputs.forEach((out, i) => {
+      const result = results[i];
+      if (out?.filename && result) {
+        console.log(`💾 writing to ${out?.filename}`);
+        fs.mkdirSync(path.dirname(out?.filename), { recursive: true });
+        fs.writeFileSync(out?.filename, result);
+      }
+    });
   } catch (e: any) {
     core.setFailed(`Action failed with "${e.message}"`);
   }

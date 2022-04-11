@@ -1,12 +1,13 @@
 import { Color, Grid } from "@snk/types/grid";
 import { drawLerpWorld, drawWorld } from "@snk/draw/drawWorld";
 import { Snake } from "@snk/types/snake";
+import type { Options as DrawOptions } from "@snk/svg-creator";
 
-export const drawOptions = {
-  sizeBorderRadius: 2,
+export const drawOptions: DrawOptions = {
+  sizeDotBorderRadius: 2,
   sizeCell: 16,
   sizeDot: 12,
-  colorBorder: "#1b1f230a",
+  colorDotBorder: "#1b1f230a",
   colorDots: {
     1: "#9be9a8",
     2: "#40c463",

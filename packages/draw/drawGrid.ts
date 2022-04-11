@@ -6,10 +6,10 @@ import type { Point } from "@snk/types/point";
 type Options = {
   colorDots: Record<Color, string>;
   colorEmpty: string;
-  colorBorder: string;
+  colorDotBorder: string;
   sizeCell: number;
   sizeDot: number;
-  sizeBorderRadius: number;
+  sizeDotBorderRadius: number;
   cells?: Point[];
 };
 
@@ -31,11 +31,11 @@ export const drawGrid = (
         );
 
         ctx.fillStyle = color;
-        ctx.strokeStyle = o.colorBorder;
+        ctx.strokeStyle = o.colorDotBorder;
         ctx.lineWidth = 1;
         ctx.beginPath();
 
-        pathRoundedRect(ctx, o.sizeDot, o.sizeDot, o.sizeBorderRadius);
+        pathRoundedRect(ctx, o.sizeDot, o.sizeDot, o.sizeDotBorderRadius);
 
         ctx.fill();
         ctx.stroke();

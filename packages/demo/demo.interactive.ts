@@ -6,7 +6,7 @@ import type { Snake } from "@snk/types/snake";
 import {
   drawLerpWorld,
   getCanvasWorldSize,
-  Options,
+  Options as DrawOptions,
 } from "@snk/draw/drawWorld";
 import { userContributionToGrid } from "@snk/action/userContributionToGrid";
 import { createSvg } from "@snk/svg-creator";
@@ -120,7 +120,7 @@ const createViewer = ({
 }: {
   grid0: Grid;
   chain: Snake[];
-  drawOptions: Options;
+  drawOptions: DrawOptions;
 }) => {
   //
   // canvas
@@ -229,11 +229,11 @@ const onSubmit = async (userName: string) => {
   );
   const { cells, colorScheme } = (await res.json()) as Res;
 
-  const drawOptions = {
-    sizeBorderRadius: 2,
+  const drawOptions: DrawOptions = {
+    sizeDotBorderRadius: 2,
     sizeCell: 16,
     sizeDot: 12,
-    colorBorder: "#1b1f230a",
+    colorDotBorder: "#1b1f230a",
     colorDots: colorScheme as any,
     colorEmpty: colorScheme[0],
     colorSnake: "purple",

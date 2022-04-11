@@ -18,16 +18,16 @@ import * as csso from "csso";
 export type Options = {
   colorDots: Record<Color, string>;
   colorEmpty: string;
-  colorBorder: string;
+  colorDotBorder: string;
   colorSnake: string;
   sizeCell: number;
   sizeDot: number;
-  sizeBorderRadius: number;
+  sizeDotBorderRadius: number;
   cells?: Point[];
   dark?: {
     colorDots: Record<Color, string>;
     colorEmpty: string;
-    colorBorder?: string;
+    colorDotBorder?: string;
     colorSnake?: string;
   };
 };
@@ -137,7 +137,7 @@ const optimizeSvg = (svg: string) => svg;
 const generateColorVar = (drawOptions: Options) =>
   `
     :root {
-    --cb: ${drawOptions.colorBorder};
+    --cb: ${drawOptions.colorDotBorder};
     --cs: ${drawOptions.colorSnake};
     --ce: ${drawOptions.colorEmpty};
     ${Object.entries(drawOptions.colorDots)
@@ -149,7 +149,7 @@ const generateColorVar = (drawOptions: Options) =>
     ? `
     @media (prefers-color-scheme: dark) {
       :root {
-        --cb: ${drawOptions.dark.colorBorder || drawOptions.colorBorder};
+        --cb: ${drawOptions.dark.colorDotBorder || drawOptions.colorDotBorder};
         --cs: ${drawOptions.dark.colorSnake || drawOptions.colorSnake};
         --ce: ${drawOptions.dark.colorEmpty};
         ${Object.entries(drawOptions.dark.colorDots)

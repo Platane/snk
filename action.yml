@@ -12,12 +12,33 @@ inputs:
     required: true
   gif_out_path:
     description: "path of the generated gif file. If left empty, the gif file will not be generated."
+    deprecationMessage: "gif_out_path is deprecated. Use outputs: path/to/file.gif instead."
     required: false
     default: null
   svg_out_path:
     description: "path of the generated svg file. If left empty, the svg file will not be generated."
+    deprecationMessage: "svg_out_path is deprecated. Use outputs: path/to/file.svg instead."
     required: false
     default: null
+  outputs:
+    required: false
+    default: null
+    description: |
+      list of file to generate.
+      Generates one file per line. Each output can be customized with query string.
+      following this pattern: path/to/file.<gif or svg>?palette=<github or github-dark>&color_snake=<color>&color_dots=<color>,<color>,<color>,<color>,<color>
+
+      supported option:
+
+      palette: a preset of color, one of [github, github-dark, github-light]
+      color_snake: color of the snake
+      color_dots: coma separated list of dots color. The first one is the empty cell color, the second one is the lightest shade, the third one is the second lightest shade ect ...
+
+      example:
+        outputs: |
+          dark.svg?palette=github-dark&color_snake=blue
+          light.svg?color_snake=#7845ab
+          ocean.gif?color_snake=orange&color_dots=#bfd6f6,#8dbdff,#64a1f4,#4b91f1,#3c7dd9
 
 outputs:
   gif_out_path:

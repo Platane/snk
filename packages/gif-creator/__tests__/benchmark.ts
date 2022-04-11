@@ -5,6 +5,7 @@ import { realistic as grid } from "@snk/types/__fixtures__/grid";
 import { createGif } from "..";
 import { getBestRoute } from "@snk/solver/getBestRoute";
 import { getPathToPose } from "@snk/solver/getPathToPose";
+import type { Options as DrawOptions } from "@snk/draw/drawWorld";
 
 let snake = createSnakeFromCells(
   Array.from({ length: 4 }, (_, i) => ({ x: i, y: -1 }))
@@ -24,11 +25,11 @@ let snake = createSnakeFromCells(
 const chain = getBestRoute(grid, snake)!;
 chain.push(...getPathToPose(chain.slice(-1)[0], snake)!);
 
-const drawOptions = {
-  sizeBorderRadius: 2,
+const drawOptions: DrawOptions = {
+  sizeDotBorderRadius: 2,
   sizeCell: 16,
   sizeDot: 12,
-  colorBorder: "#1b1f230a",
+  colorDotBorder: "#1b1f230a",
   colorDots: { 1: "#9be9a8", 2: "#40c463", 3: "#30a14e", 4: "#216e39" },
   colorEmpty: "#ebedf0",
   colorSnake: "purple",

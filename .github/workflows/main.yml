@@ -45,14 +45,17 @@ jobs:
         uses: ./
         with:
           github_user_name: platane
-          gif_out_path: dist/github-contribution-grid-snake.gif
-          svg_out_path: dist/github-contribution-grid-snake.svg
+          outputs: |
+            dist/github-contribution-grid-snake.svg
+            dist/github-contribution-grid-snake-dark.svg?palette=github-dark
+            dist/github-contribution-grid-snake.gif?color_snake=orange&color_dots=#bfd6f6,#8dbdff,#64a1f4,#4b91f1,#3c7dd9
 
       - name: ensure the generated file exists
         run: |
           ls dist
-          test -f ${{ steps.generate-snake.outputs.gif_out_path }}
-          test -f ${{ steps.generate-snake.outputs.svg_out_path }}
+          test -f dist/github-contribution-grid-snake.svg
+          test -f dist/github-contribution-grid-snake-dark.gif
+          test -f dist/github-contribution-grid-snake.gif
 
       - uses: crazy-max/ghaction-github-pages@v2.5.0
         with:
