@@ -32796,13 +32796,13 @@ var generateContributionSnake = function (userName, outputs) { return __awaiter(
                 chain = (0, getBestRoute_1.getBestRoute)(grid, snake);
                 chain.push.apply(chain, (0, getPathToPose_1.getPathToPose)(chain.slice(-1)[0], snake));
                 return [2 /*return*/, Promise.all(outputs.map(function (out, i) { return __awaiter(void 0, void 0, void 0, function () {
-                        var format, drawOptions, gifOptions, _a, createSvg, createGif;
+                        var format, drawOptions, animationOptions, _a, createSvg, createGif;
                         return __generator(this, function (_b) {
                             switch (_b.label) {
                                 case 0:
                                     if (!out)
                                         return [2 /*return*/];
-                                    format = out.format, drawOptions = out.drawOptions, gifOptions = out.gifOptions;
+                                    format = out.format, drawOptions = out.drawOptions, animationOptions = out.animationOptions;
                                     _a = format;
                                     switch (_a) {
                                         case "svg": return [3 /*break*/, 1];
@@ -32814,13 +32814,13 @@ var generateContributionSnake = function (userName, outputs) { return __awaiter(
                                     return [4 /*yield*/, Promise.resolve().then(function () { return __importStar(__webpack_require__(7415)); })];
                                 case 2:
                                     createSvg = (_b.sent()).createSvg;
-                                    return [2 /*return*/, createSvg(grid, chain, drawOptions, gifOptions)];
+                                    return [2 /*return*/, createSvg(grid, cells, chain, drawOptions, animationOptions)];
                                 case 3:
                                     console.log("\uD83D\uDCF9 creating gif (outputs[".concat(i, "])"));
                                     return [4 /*yield*/, Promise.resolve().then(function () { return __importStar(__webpack_require__(340)); })];
                                 case 4:
                                     createGif = (_b.sent()).createGif;
-                                    return [4 /*yield*/, createGif(grid, chain, drawOptions, gifOptions)];
+                                    return [4 /*yield*/, createGif(grid, cells, chain, drawOptions, animationOptions)];
                                 case 5: return [2 /*return*/, _b.sent()];
                                 case 6: return [2 /*return*/];
                             }
@@ -32962,13 +32962,25 @@ var palettes_1 = __webpack_require__(3848);
 var parseOutputsOption = function (lines) { return lines.map(exports.parseEntry); };
 exports.parseOutputsOption = parseOutputsOption;
 var parseEntry = function (entry) {
-    var m = entry.trim().match(/^(.+\.(svg|gif))(\?.*)?$/);
+    var m = entry.trim().match(/^(.+\.(svg|gif))(\?(.*))?$/);
     if (!m)
         return null;
-    var _ = m[0], filename = m[1], format = m[2], query = m[3];
+    var filename = m[1], format = m[2], query = m[4];
     var sp = new URLSearchParams(query || "");
+    try {
+        var o = JSON.parse(query);
+        if (Array.isArray(o.color_dots))
+            o.color_dots = o.color_dots.join(",");
+        if (Array.isArray(o.dark_color_dots))
+            o.dark_color_dots = o.dark_color_dots.join(",");
+        sp = new URLSearchParams(o);
+    }
+    catch (err) {
+        if (!(err instanceof SyntaxError))
+            throw err;
+    }
     var drawOptions = __assign({ sizeDotBorderRadius: 2, sizeCell: 16, sizeDot: 12 }, palettes_1.palettes["default"]);
-    var gifOptions = { step: 1, frameDuration: 100 };
+    var animationOptions = { step: 1, frameDuration: 100 };
     {
         var palette = palettes_1.palettes[sp.get("palette")];
         if (palette) {
@@ -32994,7 +33006,12 @@ var parseEntry = function (entry) {
         drawOptions.dark.colorDotBorder = sp.get("color_dot_border");
     if (sp.has("dark_color_snake") && drawOptions.dark)
         drawOptions.dark.colorSnake = sp.get("color_snake");
-    return { filename: filename, format: format, drawOptions: drawOptions, gifOptions: gifOptions };
+    return {
+        filename: filename,
+        format: format,
+        drawOptions: drawOptions,
+        animationOptions: animationOptions
+    };
 };
 exports.parseEntry = parseEntry;
 
@@ -33085,10 +33102,10 @@ exports.__esModule = true;
 exports.drawGrid = void 0;
 var grid_1 = __webpack_require__(2881);
 var pathRoundedRect_1 = __webpack_require__(2356);
-var drawGrid = function (ctx, grid, o) {
+var drawGrid = function (ctx, grid, cells, o) {
     var _loop_1 = function (x) {
         var _loop_2 = function (y) {
-            if (!o.cells || o.cells.some(function (c) { return c.x === x && c.y === y; })) {
+            if (!cells || cells.some(function (c) { return c.x === x && c.y === y; })) {
                 var c = (0, grid_1.getColor)(grid, x, y);
                 // @ts-ignore
                 var color = !c ? o.colorEmpty : o.colorDots[c];
@@ -33186,10 +33203,10 @@ var drawStack = function (ctx, stack, max, width, o) {
     ctx.restore();
 };
 exports.drawStack = drawStack;
-var drawWorld = function (ctx, grid, snake, stack, o) {
+var drawWorld = function (ctx, grid, cells, snake, stack, o) {
     ctx.save();
     ctx.translate(1 * o.sizeCell, 2 * o.sizeCell);
-    (0, drawGrid_1.drawGrid)(ctx, grid, o);
+    (0, drawGrid_1.drawGrid)(ctx, grid, cells, o);
     (0, drawSnake_1.drawSnake)(ctx, snake, o);
     ctx.restore();
     ctx.save();
@@ -33204,10 +33221,10 @@ var drawWorld = function (ctx, grid, snake, stack, o) {
     // ctx.restore();
 };
 exports.drawWorld = drawWorld;
-var drawLerpWorld = function (ctx, grid, snake0, snake1, stack, k, o) {
+var drawLerpWorld = function (ctx, grid, cells, snake0, snake1, stack, k, o) {
     ctx.save();
     ctx.translate(1 * o.sizeCell, 2 * o.sizeCell);
-    (0, drawGrid_1.drawGrid)(ctx, grid, o);
+    (0, drawGrid_1.drawGrid)(ctx, grid, cells, o);
     (0, drawSnake_1.drawSnakeLerp)(ctx, snake0, snake1, k, o);
     ctx.translate(0, (grid.height + 2) * o.sizeCell);
     var max = grid.data.reduce(function (sum, x) { return sum + +!!x; }, stack.length);
@@ -33321,7 +33338,7 @@ var withTmpDir = function (handler) { return __awaiter(void 0, void 0, void 0, f
         }
     });
 }); };
-var createGif = function (grid0, chain, drawOptions, gifOptions) { return __awaiter(void 0, void 0, void 0, function () {
+var createGif = function (grid0, cells, chain, drawOptions, animationOptions) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         return [2 /*return*/, withTmpDir(function (dir) { return __awaiter(void 0, void 0, void 0, function () {
                 var _a, width, height, canvas, ctx, grid, stack, encoder, i, snake0, snake1, k, outFileName, optimizedFileName;
@@ -33333,17 +33350,17 @@ var createGif = function (grid0, chain, drawOptions, gifOptions) { return __awai
                     stack = [];
                     encoder = new gif_encoder_2_1["default"](width, height, "neuquant", true);
                     encoder.setRepeat(0);
-                    encoder.setDelay(gifOptions.frameDuration);
+                    encoder.setDelay(animationOptions.frameDuration);
                     encoder.start();
                     for (i = 0; i < chain.length; i += 1) {
                         snake0 = chain[i];
                         snake1 = chain[Math.min(chain.length - 1, i + 1)];
                         (0, step_1.step)(grid, stack, snake0);
-                        for (k = 0; k < gifOptions.step; k++) {
+                        for (k = 0; k < animationOptions.step; k++) {
                             ctx.clearRect(0, 0, width, height);
                             ctx.fillStyle = "#fff";
                             ctx.fillRect(0, 0, width, height);
-                            (0, drawWorld_1.drawLerpWorld)(ctx, grid, snake0, snake1, stack, k / gifOptions.step, drawOptions);
+                            (0, drawWorld_1.drawLerpWorld)(ctx, grid, cells, snake0, snake1, stack, k / animationOptions.step, drawOptions);
                             encoder.addFrame(ctx);
                         }
                     }
@@ -34468,9 +34485,8 @@ var getCellsFromGrid = function (_a) {
         return Array.from({ length: height }, function (_, y) { return ({ x: x, y: y }); });
     }).flat();
 };
-var createLivingCells = function (grid0, chain, drawOptions) {
-    var _a;
-    var cells = ((_a = drawOptions.cells) !== null && _a !== void 0 ? _a : getCellsFromGrid(grid0)).map(function (_a) {
+var createLivingCells = function (grid0, chain, cells) {
+    var livingCells = (cells !== null && cells !== void 0 ? cells : getCellsFromGrid(grid0)).map(function (_a) {
         var x = _a.x, y = _a.y;
         return ({
             x: x,
@@ -34486,23 +34502,23 @@ var createLivingCells = function (grid0, chain, drawOptions) {
         var y = (0, snake_1.getHeadY)(snake);
         if ((0, grid_1.isInside)(grid, x, y) && !(0, grid_1.isEmpty)((0, grid_1.getColor)(grid, x, y))) {
             (0, grid_1.setColorEmpty)(grid, x, y);
-            var cell = cells.find(function (c) { return c.x === x && c.y === y; });
+            var cell = livingCells.find(function (c) { return c.x === x && c.y === y; });
             cell.t = i / chain.length;
         }
     };
     for (var i = 0; i < chain.length; i++) {
         _loop_1(i);
     }
-    return cells;
+    return livingCells;
 };
-var createSvg = function (grid, chain, drawOptions, gifOptions) {
+var createSvg = function (grid, cells, chain, drawOptions, animationOptions) {
     var width = (grid.width + 2) * drawOptions.sizeCell;
     var height = (grid.height + 5) * drawOptions.sizeCell;
-    var duration = gifOptions.frameDuration * chain.length;
-    var cells = createLivingCells(grid, chain, drawOptions);
+    var duration = animationOptions.frameDuration * chain.length;
+    var livingCells = createLivingCells(grid, chain, cells);
     var elements = [
-        (0, grid_2.createGrid)(cells, drawOptions, duration),
-        (0, stack_1.createStack)(cells, drawOptions, grid.width * drawOptions.sizeCell, (grid.height + 2) * drawOptions.sizeCell, duration),
+        (0, grid_2.createGrid)(livingCells, drawOptions, duration),
+        (0, stack_1.createStack)(livingCells, drawOptions, grid.width * drawOptions.sizeCell, (grid.height + 2) * drawOptions.sizeCell, duration),
         (0, snake_2.createSnake)(chain, drawOptions, duration),
     ];
     var viewBox = [
