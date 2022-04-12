@@ -2,7 +2,7 @@ import * as fs from "fs";
 import { performance } from "perf_hooks";
 import { createSnakeFromCells } from "@snk/types/snake";
 import { realistic as grid } from "@snk/types/__fixtures__/grid";
-import { createGif } from "..";
+import { AnimationOptions, createGif } from "..";
 import { getBestRoute } from "@snk/solver/getBestRoute";
 import { getPathToPose } from "@snk/solver/getPathToPose";
 import type { Options as DrawOptions } from "@snk/draw/drawWorld";
@@ -35,7 +35,7 @@ const drawOptions: DrawOptions = {
   colorSnake: "purple",
 };
 
-const gifOptions = { frameDuration: 100, step: 1 };
+const animationOptions: AnimationOptions = { frameDuration: 100, step: 1 };
 
 (async () => {
   for (
@@ -50,7 +50,13 @@ const gifOptions = { frameDuration: 100, step: 1 };
     const chainL = chain.slice(0, length);
     for (let k = 0; k < 10 && (Date.now() - start < 10 * 1000 || k < 2); k++) {
       const s = performance.now();
-      buffer = await createGif(grid, chainL, drawOptions, gifOptions);
+      buffer = await createGif(
+        grid,
+        null,
+        chainL,
+        drawOptions,
+        animationOptions
+      );
       stats.push(performance.now() - s);
     }
 

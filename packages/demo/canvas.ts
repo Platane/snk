@@ -1,7 +1,7 @@
 import { Color, Grid } from "@snk/types/grid";
 import { drawLerpWorld, drawWorld } from "@snk/draw/drawWorld";
 import { Snake } from "@snk/types/snake";
-import type { Options as DrawOptions } from "@snk/svg-creator";
+import type { DrawOptions as DrawOptions } from "@snk/svg-creator";
 
 export const drawOptions: DrawOptions = {
   sizeDotBorderRadius: 2,
@@ -68,7 +68,7 @@ export const createCanvas = ({
 
   const draw = (grid: Grid, snake: Snake, stack: Color[]) => {
     ctx.clearRect(0, 0, 9999, 9999);
-    drawWorld(ctx, grid, snake, stack, drawOptions);
+    drawWorld(ctx, grid, null, snake, stack, drawOptions);
   };
 
   const drawLerp = (
@@ -79,7 +79,7 @@ export const createCanvas = ({
     k: number
   ) => {
     ctx.clearRect(0, 0, 9999, 9999);
-    drawLerpWorld(ctx, grid, snake0, snake1, stack, k, drawOptions);
+    drawLerpWorld(ctx, grid, null, snake0, snake1, stack, k, drawOptions);
   };
 
   const highlightCell = (x: number, y: number, color = "orange") => {

@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
-import { createGif } from "..";
+import { AnimationOptions, createGif } from "..";
 import * as grids from "@snk/types/__fixtures__/grid";
 import { snake3 as snake } from "@snk/types/__fixtures__/snake";
 import { createSnakeFromCells, nextSnake } from "@snk/types/snake";
@@ -20,7 +20,7 @@ const drawOptions: DrawOptions = {
   colorSnake: "purple",
 };
 
-const gifOptions = { frameDuration: 200, step: 1 };
+const animationOptions: AnimationOptions = { frameDuration: 200, step: 1 };
 
 const dir = path.resolve(__dirname, "__snapshots__");
 
@@ -40,7 +40,13 @@ for (const key of [
 
     const chain = [snake, ...getBestRoute(grid, snake)!];
 
-    const gif = await createGif(grid, chain, drawOptions, gifOptions);
+    const gif = await createGif(
+      grid,
+      null,
+      chain,
+      drawOptions,
+      animationOptions
+    );
 
     expect(gif).toBeDefined();
 
@@ -64,7 +70,7 @@ it(`should generate swipper`, async () => {
     }
   }
 
-  const gif = await createGif(grid, chain, drawOptions, gifOptions);
+  const gif = await createGif(grid, null, chain, drawOptions, animationOptions);
 
   expect(gif).toBeDefined();
 

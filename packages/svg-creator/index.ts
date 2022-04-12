@@ -14,8 +14,9 @@ import { createGrid } from "./grid";
 import { createStack } from "./stack";
 import { h } from "./utils";
 import * as csso from "csso";
+import { AnimationOptions } from "@snk/gif-creator";
 
-export type Options = {
+export type DrawOptions = {
   colorDots: Record<Color, string>;
   colorEmpty: string;
   colorDotBorder: string;
@@ -23,7 +24,6 @@ export type Options = {
   sizeCell: number;
   sizeDot: number;
   sizeDotBorderRadius: number;
-  cells?: Point[];
   dark?: {
     colorDots: Record<Color, string>;
     colorEmpty: string;
@@ -40,12 +40,12 @@ const getCellsFromGrid = ({ width, height }: Grid) =>
 const createLivingCells = (
   grid0: Grid,
   chain: Snake[],
-  drawOptions: Options
+  cells: Point[] | null
 ) => {
-  const cells: (Point & {
+  const livingCells: (Point & {
     t: number | null;
     color: Color | Empty;
-  })[] = (drawOptions.cells ?? getCellsFromGrid(grid0)).map(({ x, y }) => ({
+  })[] = (cells ?? getCellsFromGrid(grid0)).map(({ x, y }) => ({
     x,
     y,
     t: null,
@@ -60,31 +60,32 @@ const createLivingCells = (
 
     if (isInside(grid, x, y) && !isEmpty(getColor(grid, x, y))) {
       setColorEmpty(grid, x, y);
-      const cell = cells.find((c) => c.x === x && c.y === y)!;
+      const cell = livingCells.find((c) => c.x === x && c.y === y)!;
       cell.t = i / chain.length;
     }
   }
 
-  return cells;
+  return livingCells;
 };
 
 export const createSvg = (
   grid: Grid,
+  cells: Point[] | null,
   chain: Snake[],
-  drawOptions: Options,
-  gifOptions: { frameDuration: number }
+  drawOptions: DrawOptions,
+  animationOptions: Pick<AnimationOptions, "frameDuration">
 ) => {
   const width = (grid.width + 2) * drawOptions.sizeCell;
   const height = (grid.height + 5) * drawOptions.sizeCell;
 
-  const duration = gifOptions.frameDuration * chain.length;
+  const duration = animationOptions.frameDuration * chain.length;
 
-  const cells = createLivingCells(grid, chain, drawOptions);
+  const livingCells = createLivingCells(grid, chain, cells);
 
   const elements = [
-    createGrid(cells, drawOptions, duration),
+    createGrid(livingCells, drawOptions, duration),
     createStack(
-      cells,
+      livingCells,
       drawOptions,
       grid.width * drawOptions.sizeCell,
       (grid.height + 2) * drawOptions.sizeCell,
@@ -134,7 +135,7 @@ export const createSvg = (
 const optimizeCss = (css: string) => csso.minify(css).css;
 const optimizeSvg = (svg: string) => svg;
 
-const generateColorVar = (drawOptions: Options) =>
+const generateColorVar = (drawOptions: DrawOptions) =>
   `
     :root {
     --cb: ${drawOptions.colorDotBorder};

@@ -5,10 +5,11 @@ import { createCanvas } from "canvas";
 import { Grid, copyGrid, Color } from "@snk/types/grid";
 import { Snake } from "@snk/types/snake";
 import {
-  Options,
+  Options as DrawOptions,
   drawLerpWorld,
   getCanvasWorldSize,
 } from "@snk/draw/drawWorld";
+import type { Point } from "@snk/types/point";
 import { step } from "@snk/solver/step";
 import tmp from "tmp";
 import gifsicle from "gifsicle";
@@ -29,11 +30,14 @@ const withTmpDir = async <T>(
   }
 };
 
+export type AnimationOptions = { frameDuration: number; step: number };
+
 export const createGif = async (
   grid0: Grid,
+  cells: Point[] | null,
   chain: Snake[],
-  drawOptions: Options,
-  gifOptions: { frameDuration: number; step: number }
+  drawOptions: DrawOptions,
+  animationOptions: AnimationOptions
 ) =>
   withTmpDir(async (dir) => {
     const { width, height } = getCanvasWorldSize(grid0, drawOptions);
@@ -46,7 +50,7 @@ export const createGif = async (
 
     const encoder = new GIFEncoder(width, height, "neuquant", true);
     encoder.setRepeat(0);
-    encoder.setDelay(gifOptions.frameDuration);
+    encoder.setDelay(animationOptions.frameDuration);
     encoder.start();
 
     for (let i = 0; i < chain.length; i += 1) {
@@ -54,17 +58,18 @@ export const createGif = async (
       const snake1 = chain[Math.min(chain.length - 1, i + 1)];
       step(grid, stack, snake0);
 
-      for (let k = 0; k < gifOptions.step; k++) {
+      for (let k = 0; k < animationOptions.step; k++) {
         ctx.clearRect(0, 0, width, height);
         ctx.fillStyle = "#fff";
         ctx.fillRect(0, 0, width, height);
         drawLerpWorld(
           ctx,
           grid,
+          cells,
           snake0,
           snake1,
           stack,
-          k / gifOptions.step,
+          k / animationOptions.step,
           drawOptions
         );
 

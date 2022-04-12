@@ -1,8 +1,8 @@
 import { drawGrid } from "./drawGrid";
 import { drawSnake, drawSnakeLerp } from "./drawSnake";
 import type { Grid, Color } from "@snk/types/grid";
-import type { Point } from "@snk/types/point";
 import type { Snake } from "@snk/types/snake";
+import type { Point } from "@snk/types/point";
 
 export type Options = {
   colorDots: Record<Color, string>;
@@ -12,7 +12,6 @@ export type Options = {
   sizeCell: number;
   sizeDot: number;
   sizeDotBorderRadius: number;
-  cells?: Point[];
 };
 
 export const drawStack = (
@@ -37,6 +36,7 @@ export const drawStack = (
 export const drawWorld = (
   ctx: CanvasRenderingContext2D,
   grid: Grid,
+  cells: Point[] | null,
   snake: Snake,
   stack: Color[],
   o: Options
@@ -44,7 +44,7 @@ export const drawWorld = (
   ctx.save();
 
   ctx.translate(1 * o.sizeCell, 2 * o.sizeCell);
-  drawGrid(ctx, grid, o);
+  drawGrid(ctx, grid, cells, o);
   drawSnake(ctx, snake, o);
 
   ctx.restore();
@@ -68,6 +68,7 @@ export const drawWorld = (
 export const drawLerpWorld = (
   ctx: CanvasRenderingContext2D,
   grid: Grid,
+  cells: Point[] | null,
   snake0: Snake,
   snake1: Snake,
   stack: Color[],
@@ -77,7 +78,7 @@ export const drawLerpWorld = (
   ctx.save();
 
   ctx.translate(1 * o.sizeCell, 2 * o.sizeCell);
-  drawGrid(ctx, grid, o);
+  drawGrid(ctx, grid, cells, o);
   drawSnakeLerp(ctx, snake0, snake1, k, o);
 
   ctx.translate(0, (grid.height + 2) * o.sizeCell);

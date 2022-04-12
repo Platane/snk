@@ -1,4 +1,4 @@
-import { Options as DrawOptions } from "@snk/svg-creator";
+import { DrawOptions as DrawOptions } from "@snk/svg-creator";
 
 export const palettes: Record<
   string,

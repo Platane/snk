@@ -2,6 +2,10 @@
 
 exports[`should parse /out.svg?{"color_snake":"yellow","color_dots":["#000","#111","#222","#333","#444"]} 1`] = `
 Object {
+  "animationOptions": Object {
+    "frameDuration": 100,
+    "step": 1,
+  },
   "drawOptions": Object {
     "colorDotBorder": "#1b1f230a",
     "colorDots": Array [
@@ -20,15 +24,15 @@ Object {
   },
   "filename": "/out.svg",
   "format": "svg",
-  "gifOptions": Object {
-    "frameDuration": 100,
-    "step": 1,
-  },
 }
 `;
 
 exports[`should parse /out.svg?color_snake=orange&color_dots=#000,#111,#222,#333,#444 1`] = `
 Object {
+  "animationOptions": Object {
+    "frameDuration": 100,
+    "step": 1,
+  },
   "drawOptions": Object {
     "colorDotBorder": "#1b1f230a",
     "colorDots": Array [
@@ -47,15 +51,15 @@ Object {
   },
   "filename": "/out.svg",
   "format": "svg",
-  "gifOptions": Object {
-    "frameDuration": 100,
-    "step": 1,
-  },
 }
 `;
 
 exports[`should parse /out.svg?color_snake=orange&color_dots=#000,#111,#222,#333,#444&dark_color_dots=#a00,#a11,#a22,#a33,#a44 1`] = `
 Object {
+  "animationOptions": Object {
+    "frameDuration": 100,
+    "step": 1,
+  },
   "drawOptions": Object {
     "colorDotBorder": "#1b1f230a",
     "colorDots": Array [
@@ -83,15 +87,15 @@ Object {
   },
   "filename": "/out.svg",
   "format": "svg",
-  "gifOptions": Object {
-    "frameDuration": 100,
-    "step": 1,
-  },
 }
 `;
 
 exports[`should parse path/to/out.gif 1`] = `
 Object {
+  "animationOptions": Object {
+    "frameDuration": 100,
+    "step": 1,
+  },
   "drawOptions": Object {
     "colorDotBorder": "#1b1f230a",
     "colorDots": Array [
@@ -121,9 +125,5 @@ Object {
   },
   "filename": "path/to/out.gif",
   "format": "gif",
-  "gifOptions": Object {
-    "frameDuration": 100,
-    "step": 1,
-  },
 }
 `;

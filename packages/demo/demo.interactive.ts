@@ -3,6 +3,7 @@ import { step } from "@snk/solver/step";
 import { isStableAndBound, stepSpring } from "./springUtils";
 import type { Res } from "@snk/github-user-contribution";
 import type { Snake } from "@snk/types/snake";
+import type { Point } from "@snk/types/point";
 import {
   drawLerpWorld,
   getCanvasWorldSize,
@@ -12,6 +13,7 @@ import { userContributionToGrid } from "@snk/action/userContributionToGrid";
 import { createSvg } from "@snk/svg-creator";
 import { createRpcClient } from "./worker-utils";
 import type { API as WorkerAPI } from "./demo.interactive.worker";
+import { AnimationOptions } from "@snk/gif-creator";
 
 const createForm = ({
   onSubmit,
@@ -116,10 +118,12 @@ const createGithubProfile = () => {
 const createViewer = ({
   grid0,
   chain,
+  cells,
   drawOptions,
 }: {
   grid0: Grid;
   chain: Snake[];
+  cells: Point[];
   drawOptions: DrawOptions;
 }) => {
   //
@@ -159,7 +163,7 @@ const createViewer = ({
     const k = spring.x % 1;
 
     ctx.clearRect(0, 0, 9999, 9999);
-    drawLerpWorld(ctx, grid, snake0, snake1, stack, k, drawOptions);
+    drawLerpWorld(ctx, grid, null, snake0, snake1, stack, k, drawOptions);
 
     if (!stable) animationFrame = requestAnimationFrame(loop);
   };
@@ -189,9 +193,9 @@ const createViewer = ({
   //
   // svg
   const svgLink = document.createElement("a");
-  const svgString = createSvg(grid0, chain, drawOptions, {
+  const svgString = createSvg(grid0, cells, chain, drawOptions, {
     frameDuration: 100,
-  });
+  } as AnimationOptions);
   const svgImageUri = `data:image/*;charset=utf-8;base64,${btoa(svgString)}`;
   svgLink.href = svgImageUri;
   svgLink.innerText = "github-user-contribution.svg";
@@ -237,7 +241,6 @@ const onSubmit = async (userName: string) => {
     colorDots: colorScheme as any,
     colorEmpty: colorScheme[0],
     colorSnake: "purple",
-    cells,
   };
 
   const grid = userContributionToGrid(cells, colorScheme);
@@ -246,7 +249,7 @@ const onSubmit = async (userName: string) => {
 
   dispose();
 
-  createViewer({ grid0: grid, chain, drawOptions });
+  createViewer({ grid0: grid, chain, cells, drawOptions });
 };
 
 const worker = new Worker(

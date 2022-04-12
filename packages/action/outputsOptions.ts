@@ -1,4 +1,5 @@
-import { Options as DrawOptions } from "@snk/svg-creator";
+import type { AnimationOptions } from "@snk/gif-creator";
+import type { DrawOptions as DrawOptions } from "@snk/svg-creator";
 import { palettes } from "./palettes";
 
 export const parseOutputsOption = (lines: string[]) => lines.map(parseEntry);
@@ -29,7 +30,7 @@ export const parseEntry = (entry: string) => {
     sizeDot: 12,
     ...palettes["default"],
   };
-  const gifOptions = { step: 1, frameDuration: 100 };
+  const animationOptions: AnimationOptions = { step: 1, frameDuration: 100 };
 
   {
     const palette = palettes[sp.get("palette")!];
@@ -62,5 +63,10 @@ export const parseEntry = (entry: string) => {
   if (sp.has("dark_color_snake") && drawOptions.dark)
     drawOptions.dark.colorSnake = sp.get("color_snake")!;
 
-  return { filename, format: format as "svg" | "gif", drawOptions, gifOptions };
+  return {
+    filename,
+    format: format as "svg" | "gif",
+    drawOptions,
+    animationOptions,
+  };
 };

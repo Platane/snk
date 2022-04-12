@@ -10,17 +10,17 @@ type Options = {
   sizeCell: number;
   sizeDot: number;
   sizeDotBorderRadius: number;
-  cells?: Point[];
 };
 
 export const drawGrid = (
   ctx: CanvasRenderingContext2D,
   grid: Grid,
+  cells: Point[] | null,
   o: Options
 ) => {
   for (let x = grid.width; x--; )
     for (let y = grid.height; y--; ) {
-      if (!o.cells || o.cells.some((c) => c.x === x && c.y === y)) {
+      if (!cells || cells.some((c) => c.x === x && c.y === y)) {
         const c = getColor(grid, x, y);
         // @ts-ignore
         const color = !c ? o.colorEmpty : o.colorDots[c];
