@@ -1,19 +1,82 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`should parse /out.svg?color_snake=orange&color_dots=#bfd6f6,#8dbdff,#64a1f4,#4b91f1,#3c7dd9 1`] = `
+exports[`should parse /out.svg?{"color_snake":"yellow","color_dots":["#000","#111","#222","#333","#444"]} 1`] = `
 Object {
   "drawOptions": Object {
     "colorDotBorder": "#1b1f230a",
     "colorDots": Array [
-      "#bfd6f6",
-      "#8dbdff",
-      "#64a1f4",
-      "#4b91f1",
-      "#3c7dd9",
+      "#000",
+      "#111",
+      "#222",
+      "#333",
+      "#444",
     ],
-    "colorEmpty": "#bfd6f6",
+    "colorEmpty": "#000",
+    "colorSnake": "yellow",
+    "dark": undefined,
+    "sizeCell": 16,
+    "sizeDot": 12,
+    "sizeDotBorderRadius": 2,
+  },
+  "filename": "/out.svg",
+  "format": "svg",
+  "gifOptions": Object {
+    "frameDuration": 100,
+    "step": 1,
+  },
+}
+`;
+
+exports[`should parse /out.svg?color_snake=orange&color_dots=#000,#111,#222,#333,#444 1`] = `
+Object {
+  "drawOptions": Object {
+    "colorDotBorder": "#1b1f230a",
+    "colorDots": Array [
+      "#000",
+      "#111",
+      "#222",
+      "#333",
+      "#444",
+    ],
+    "colorEmpty": "#000",
     "colorSnake": "orange",
     "dark": undefined,
+    "sizeCell": 16,
+    "sizeDot": 12,
+    "sizeDotBorderRadius": 2,
+  },
+  "filename": "/out.svg",
+  "format": "svg",
+  "gifOptions": Object {
+    "frameDuration": 100,
+    "step": 1,
+  },
+}
+`;
+
+exports[`should parse /out.svg?color_snake=orange&color_dots=#000,#111,#222,#333,#444&dark_color_dots=#a00,#a11,#a22,#a33,#a44 1`] = `
+Object {
+  "drawOptions": Object {
+    "colorDotBorder": "#1b1f230a",
+    "colorDots": Array [
+      "#000",
+      "#111",
+      "#222",
+      "#333",
+      "#444",
+    ],
+    "colorEmpty": "#000",
+    "colorSnake": "orange",
+    "dark": Object {
+      "colorDots": Array [
+        "#a00",
+        "#a11",
+        "#a22",
+        "#a33",
+        "#a44",
+      ],
+      "colorEmpty": "#a00",
+    },
     "sizeCell": 16,
     "sizeDot": 12,
     "sizeDotBorderRadius": 2,

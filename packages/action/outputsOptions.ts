@@ -4,12 +4,24 @@ import { palettes } from "./palettes";
 export const parseOutputsOption = (lines: string[]) => lines.map(parseEntry);
 
 export const parseEntry = (entry: string) => {
-  const m = entry.trim().match(/^(.+\.(svg|gif))(\?.*)?$/);
+  const m = entry.trim().match(/^(.+\.(svg|gif))(\?(.*))?$/);
   if (!m) return null;
 
-  const [_, filename, format, query] = m;
+  const [, filename, format, , query] = m;
 
-  const sp = new URLSearchParams(query || "");
+  let sp = new URLSearchParams(query || "");
+
+  try {
+    const o = JSON.parse(query);
+
+    if (Array.isArray(o.color_dots)) o.color_dots = o.color_dots.join(",");
+    if (Array.isArray(o.dark_color_dots))
+      o.dark_color_dots = o.dark_color_dots.join(",");
+
+    sp = new URLSearchParams(o);
+  } catch (err) {
+    if (!(err instanceof SyntaxError)) throw err;
+  }
 
   const drawOptions: DrawOptions = {
     sizeDotBorderRadius: 2,

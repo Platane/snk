@@ -3,7 +3,11 @@ import { parseEntry } from "../outputsOptions";
 [
   "path/to/out.gif",
 
-  "/out.svg?color_snake=orange&color_dots=#bfd6f6,#8dbdff,#64a1f4,#4b91f1,#3c7dd9",
+  "/out.svg?color_snake=orange&color_dots=#000,#111,#222,#333,#444",
+
+  `/out.svg?{"color_snake":"yellow","color_dots":["#000","#111","#222","#333","#444"]}`,
+
+  "/out.svg?color_snake=orange&color_dots=#000,#111,#222,#333,#444&dark_color_dots=#a00,#a11,#a22,#a33,#a44",
 ].forEach((entry) =>
   it(`should parse ${entry}`, () => {
     expect(parseEntry(entry)).toMatchSnapshot();
