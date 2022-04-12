@@ -66,7 +66,7 @@ jobs:
           GITHUB_USER_CONTRIBUTION_API_ENDPOINT: https://snk-one.vercel.app/api/github-user-contribution/
 
       - uses: crazy-max/ghaction-github-pages@v2.6.0
-        if: success() && github.ref.name == 'main'
+        if: success() && github.ref == 'refs/heads/main'
         with:
           target_branch: gh-pages
           build_dir: packages/demo/dist
