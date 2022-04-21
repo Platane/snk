@@ -1,4 +1,4 @@
-import fetch from "node-fetch";
+import { fetch } from "undici";
 import * as cheerio from "cheerio";
 import { formatParams, Options } from "./formatParams";
 
