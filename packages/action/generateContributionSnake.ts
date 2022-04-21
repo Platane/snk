@@ -28,23 +28,22 @@ export const generateContributionSnake = async (
     outputs.map(async (out, i) => {
       if (!out) return;
       const { format, drawOptions, animationOptions } = out;
-      switch (format) {
-        case "svg": {
-          console.log(`🖌 creating svg (outputs[${i}])`);
-          const { createSvg } = await import("@snk/svg-creator");
-          return createSvg(grid, cells, chain, drawOptions, animationOptions);
-        }
-        case "gif": {
-          console.log(`📹 creating gif (outputs[${i}])`);
-          const { createGif } = await import("@snk/gif-creator");
-          return await createGif(
-            grid,
-            cells,
-            chain,
-            drawOptions,
-            animationOptions
-          );
-        }
+
+      if (format === "svg" && !process.env.SNK_DISABLE_SVG) {
+        console.log(`🖌 creating svg (outputs[${i}])`);
+        const { createSvg } = await import("@snk/svg-creator");
+        return createSvg(grid, cells, chain, drawOptions, animationOptions);
+      }
+      if (format === "gif" && !process.env.SNK_DISABLE_GIF) {
+        console.log(`📹 creating gif (outputs[${i}])`);
+        const { createGif } = await import("@snk/gif-creator");
+        return await createGif(
+          grid,
+          cells,
+          chain,
+          drawOptions,
+          animationOptions
+        );
       }
     })
   );

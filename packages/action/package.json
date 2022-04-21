@@ -10,9 +10,15 @@
     "@snk/types": "1.0.0"
   },
   "devDependencies": {
-    "@vercel/ncc": "0.24.1"
+    "@rollup/plugin-commonjs": "21.1.0",
+    "@rollup/plugin-json": "4.1.0",
+    "@rollup/plugin-node-resolve": "13.2.1",
+    "esbuild": "0.14.37",
+    "rollup": "2.70.2",
+    "rollup-plugin-esbuild": "4.9.1",
+    "rollup-plugin-sizes": "1.0.4"
   },
   "scripts": {
-    "build": "ncc build --external canvas --external gifsicle --out dist ./index.ts"
+    "build": "rollup --config rollup.config.js"
   }
 }

@@ -13,7 +13,7 @@ import { createSnake } from "./snake";
 import { createGrid } from "./grid";
 import { createStack } from "./stack";
 import { h } from "./utils";
-import * as csso from "csso";
+import { minify as cssoMinify } from "csso";
 import { AnimationOptions } from "@snk/gif-creator";
 
 export type DrawOptions = {
@@ -132,7 +132,7 @@ export const createSvg = (
   return optimizeSvg(svg);
 };
 
-const optimizeCss = (css: string) => csso.minify(css).css;
+const optimizeCss = (css: string) => cssoMinify(css).css;
 const optimizeSvg = (svg: string) => svg;
 
 const generateColorVar = (drawOptions: DrawOptions) =>
