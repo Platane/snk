@@ -5,10 +5,13 @@ import { palettes } from "./palettes";
 export const parseOutputsOption = (lines: string[]) => lines.map(parseEntry);
 
 export const parseEntry = (entry: string) => {
-  const m = entry.trim().match(/^(.+\.(svg|gif))(\?(.*))?$/);
+  const m = entry.trim().match(/^(.+\.(svg|gif))(\?(.*)|\s*({.*}))?$/);
+
   if (!m) return null;
 
-  const [, filename, format, , query] = m;
+  const [, filename, format, _, q1, q2] = m;
+
+  const query = q1 ?? q2;
 
   let sp = new URLSearchParams(query || "");
 

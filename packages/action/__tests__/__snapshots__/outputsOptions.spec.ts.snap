@@ -1,5 +1,81 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`should parse /out.svg       {"color_snake":"yellow"} 1`] = `
+Object {
+  "animationOptions": Object {
+    "frameDuration": 100,
+    "step": 1,
+  },
+  "drawOptions": Object {
+    "colorDotBorder": "#1b1f230a",
+    "colorDots": Array [
+      "#ebedf0",
+      "#9be9a8",
+      "#40c463",
+      "#30a14e",
+      "#216e39",
+    ],
+    "colorEmpty": "#ebedf0",
+    "colorSnake": "yellow",
+    "dark": Object {
+      "colorDotBorder": "#1b1f230a",
+      "colorDots": Array [
+        "#161b22",
+        "#01311f",
+        "#034525",
+        "#0f6d31",
+        "#00c647",
+      ],
+      "colorEmpty": "#161b22",
+      "colorSnake": "purple",
+    },
+    "sizeCell": 16,
+    "sizeDot": 12,
+    "sizeDotBorderRadius": 2,
+  },
+  "filename": "/out.svg",
+  "format": "svg",
+}
+`;
+
+exports[`should parse /out.svg?.gif.svg?color_snake=orange 1`] = `
+Object {
+  "animationOptions": Object {
+    "frameDuration": 100,
+    "step": 1,
+  },
+  "drawOptions": Object {
+    "colorDotBorder": "#1b1f230a",
+    "colorDots": Array [
+      "#ebedf0",
+      "#9be9a8",
+      "#40c463",
+      "#30a14e",
+      "#216e39",
+    ],
+    "colorEmpty": "#ebedf0",
+    "colorSnake": "orange",
+    "dark": Object {
+      "colorDotBorder": "#1b1f230a",
+      "colorDots": Array [
+        "#161b22",
+        "#01311f",
+        "#034525",
+        "#0f6d31",
+        "#00c647",
+      ],
+      "colorEmpty": "#161b22",
+      "colorSnake": "purple",
+    },
+    "sizeCell": 16,
+    "sizeDot": 12,
+    "sizeDotBorderRadius": 2,
+  },
+  "filename": "/out.svg?.gif.svg",
+  "format": "svg",
+}
+`;
+
 exports[`should parse /out.svg?{"color_snake":"yellow","color_dots":["#000","#111","#222","#333","#444"]} 1`] = `
 Object {
   "animationOptions": Object {
