@@ -15,14 +15,15 @@ inputs:
     default: null
     description: |
       list of files to generate.
-      Generates one file per line. Each output can be customized with query string.
-      following this pattern: path/to/file.svg?palette=<github or github-dark>&color_snake=<color>&color_dots=<color>,<color>,<color>,<color>,<color>
+      one file per line. Each output can be customized with options as query string.
 
-      supported query string options:
+       supported query string options:
 
-      - palette: a preset of color, one of [github, github-dark, github-light]
-      - color_snake: color of the snake
-      - color_dots: coma separated list of dots color. The first one is the empty cell color, the second one is the lightest shade, the third one is the second lightest shade ect ...
+      - palette:      A preset of color, one of [github, github-dark, github-light]
+      - color_snake:  Color of the snake
+      - color_dots:   Coma separated list of dots color. 
+                      The first one is 0 contribution, then it goes from the low contribution to the highest.
+                      Exactly 5 colors are expected.
 
       example:
         outputs: |
