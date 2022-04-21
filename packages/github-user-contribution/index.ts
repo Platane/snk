@@ -1,5 +1,4 @@
 import fetch from "node-fetch";
-import * as cheerio from "cheerio";
 import { formatParams, Options } from "./formatParams";
 
 /**
@@ -40,72 +39,37 @@ export const getGithubUserContribution = async (
 };
 
 const parseUserPage = (content: string) => {
-  const $ = cheerio.load(content);
+  // take roughly the svg block
+  const block = content
+    .split(`class="js-calendar-graph-svg"`)[1]
+    .split("</svg>")[0];
 
-  //
-  // parse cells
-  const rawCells = $(".js-calendar-graph rect[data-count]")
-    .toArray()
-    .map((x) => {
-      const level = +x.attribs["data-level"];
-      const count = +x.attribs["data-count"];
-      const date = x.attribs["data-date"];
+  let x = 0;
+  let lastYAttribute = 0;
 
-      return {
-        svgPosition: getSvgPosition(x),
-        level,
-        count,
-        date,
-      };
-    });
+  const rects = Array.from(block.matchAll(/<rect[^>]*>/g)).map(([m]) => {
+    const date = m.match(/data-date="([^"]+)"/)![1];
+    const count = +m.match(/data-count="([^"]+)"/)![1];
+    const level = +m.match(/data-level="([^"]+)"/)![1];
+    const yAttribute = +m.match(/y="([^"]+)"/)![1];
 
-  const xMap: Record<number, true> = {};
-  const yMap: Record<number, true> = {};
-  rawCells.forEach(({ svgPosition: { x, y } }) => {
-    xMap[x] = true;
-    yMap[y] = true;
+    if (lastYAttribute > yAttribute) x++;
+
+    lastYAttribute = yAttribute;
+
+    return { date, count, level, x, yAttribute };
   });
 
-  const xRange = Object.keys(xMap)
-    .map((x) => +x)
-    .sort((a, b) => +a - +b);
-  const yRange = Object.keys(yMap)
-    .map((x) => +x)
-    .sort((a, b) => +a - +b);
+  const yAttributes = Array.from(
+    new Set(rects.map((c) => c.yAttribute)).keys()
+  ).sort();
 
-  const cells = rawCells.map(({ svgPosition, ...c }) => ({
+  const cells = rects.map(({ yAttribute, ...c }) => ({
+    y: yAttributes.indexOf(yAttribute),
     ...c,
-    x: xRange.indexOf(svgPosition.x),
-    y: yRange.indexOf(svgPosition.y),
   }));
 
   return cells;
-};
-
-// returns the position of the svg elements, accounting for it's transform and it's parent transform
-// ( only accounts for translate transform )
-const getSvgPosition = (
-  e: cheerio.Element | null
-): { x: number; y: number } => {
-  if (!e || e.tagName === "svg") return { x: 0, y: 0 };
-
-  const p = getSvgPosition(e.parent as cheerio.Element);
-
-  if (e.attribs.x) p.x += +e.attribs.x;
-  if (e.attribs.y) p.y += +e.attribs.y;
-
-  if (e.attribs.transform) {
-    const m = e.attribs.transform.match(
-      /translate\( *([\.\d]+) *, *([\.\d]+) *\)/
-    );
-
-    if (m) {
-      p.x += +m[1];
-      p.y += +m[2];
-    }
-  }
-
-  return p;
 };
 
 export type Res = Awaited<ReturnType<typeof getGithubUserContribution>>;
