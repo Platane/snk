@@ -26,7 +26,9 @@ RUN export YARN_CACHE_FOLDER="$(mktemp -d)" \
     && yarn add canvas@2.9.1 gifsicle@5.3.0 --no-lockfile \
     && rm -r "$YARN_CACHE_FOLDER"
 
-COPY --from=builder /app/packages/action/dist/ /action-release/
+COPY --from=builder /app/packages/action/dist/ /action-release/dist/
+
+RUN echo '{}' > /action-release/package.json
 
 CMD ["node", "/action-release/index.js"]
 
