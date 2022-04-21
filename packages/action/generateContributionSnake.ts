@@ -15,9 +15,9 @@ export const generateContributionSnake = async (
   } | null)[]
 ) => {
   console.log("🎣 fetching github user contribution");
-  const { cells, colorScheme } = await getGithubUserContribution(userName);
+  const cells = await getGithubUserContribution(userName);
 
-  const grid = userContributionToGrid(cells, colorScheme);
+  const grid = userContributionToGrid(cells);
   const snake = snake4;
 
   console.log("📡 computing best route");

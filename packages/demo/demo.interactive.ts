@@ -163,7 +163,7 @@ const createViewer = ({
     const k = spring.x % 1;
 
     ctx.clearRect(0, 0, 9999, 9999);
-    drawLerpWorld(ctx, grid, null, snake0, snake1, stack, k, drawOptions);
+    drawLerpWorld(ctx, grid, cells, snake0, snake1, stack, k, drawOptions);
 
     if (!stable) animationFrame = requestAnimationFrame(loop);
   };
@@ -231,19 +231,19 @@ const onSubmit = async (userName: string) => {
   const res = await fetch(
     process.env.GITHUB_USER_CONTRIBUTION_API_ENDPOINT + userName
   );
-  const { cells, colorScheme } = (await res.json()) as Res;
+  const cells = (await res.json()) as Res;
 
   const drawOptions: DrawOptions = {
     sizeDotBorderRadius: 2,
     sizeCell: 16,
     sizeDot: 12,
     colorDotBorder: "#1b1f230a",
-    colorDots: colorScheme as any,
-    colorEmpty: colorScheme[0],
+    colorDots: ["#ebedf0", "#9be9a8", "#40c463", "#30a14e", "#216e39"],
+    colorEmpty: "#ebedf0",
     colorSnake: "purple",
   };
 
-  const grid = userContributionToGrid(cells, colorScheme);
+  const grid = userContributionToGrid(cells);
 
   const chain = await getChain(grid);
 

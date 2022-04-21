@@ -39,20 +39,8 @@ export const getGithubUserContribution = async (
   return parseUserPage(resText);
 };
 
-const defaultColorScheme = [
-  "#ebedf0",
-  "#9be9a8",
-  "#40c463",
-  "#30a14e",
-  "#216e39",
-];
-
 const parseUserPage = (content: string) => {
   const $ = cheerio.load(content);
-
-  //
-  // "parse" colorScheme
-  const colorScheme = [...defaultColorScheme];
 
   //
   // parse cells
@@ -63,13 +51,9 @@ const parseUserPage = (content: string) => {
       const count = +x.attribs["data-count"];
       const date = x.attribs["data-date"];
 
-      const color = colorScheme[level];
-
-      if (!color) throw new Error("could not determine the color of the cell");
-
       return {
         svgPosition: getSvgPosition(x),
-        color,
+        level,
         count,
         date,
       };
@@ -95,7 +79,7 @@ const parseUserPage = (content: string) => {
     y: yRange.indexOf(svgPosition.y),
   }));
 
-  return { cells, colorScheme };
+  return cells;
 };
 
 // returns the position of the svg elements, accounting for it's transform and it's parent transform
@@ -126,4 +110,4 @@ const getSvgPosition = (
 
 export type Res = Awaited<ReturnType<typeof getGithubUserContribution>>;
 
-export type Cell = Res["cells"][number];
+export type Cell = Res[number];
