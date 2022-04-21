@@ -30,5 +30,5 @@ COPY --from=builder /app/packages/action/dist/ /action-release/dist/
 
 RUN echo '{}' > /action-release/package.json
 
-CMD ["node", "/action-release/index.js"]
+CMD ["node", "/action-release/dist/index.js"]
 
