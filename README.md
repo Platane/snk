@@ -14,7 +14,7 @@ Make it a snake Game, generate a snake path where the cells get eaten in an orde
 
 Generate a [gif](https://github.com/Platane/snk/raw/output/github-contribution-grid-snake.gif) or [svg](https://github.com/Platane/snk/raw/output/github-contribution-grid-snake.svg) image.
 
-Available as github action. Automatically generate a new image at the end of the day. Which makes for great [github profile readme](https://docs.github.com/en/free-pro-team@latest/github/setting-up-and-managing-your-github-profile/managing-your-profile-readme)
+Available as github action. It can automatically generate a new image each day. Which makes for great [github profile readme](https://docs.github.com/en/free-pro-team@latest/github/setting-up-and-managing-your-github-profile/managing-your-profile-readme)
 
 ## Usage
 
@@ -38,13 +38,22 @@ Available as github action. Automatically generate a new image at the end of the
     #                 Exactly 5 colors are expected.
     outputs: |
       dist/github-snake.svg
-      dist/github-snake.svg?palette=github-dark
+      dist/github-snake-dark.svg?palette=github-dark
       dist/ocean.gif?color_snake=orange&color_dots=#bfd6f6,#8dbdff,#64a1f4,#4b91f1,#3c7dd9
 ```
 
 [example with cron job](https://github.com/Platane/Platane/blob/master/.github/workflows/main.yml#L24-L29)
 
-If you are only interested in generating a svg, you can use this other faster action: `uses: Platane/snk/svg-only@v2
+If you are only interested in generating a svg, consider using this faster action: `uses: Platane/snk/svg-only@v2`
+
+**dark mode**
+
+For **dark mode** support on github, use this [special syntax](https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax#specifying-the-theme-an-image-is-shown-to=) in your readme.
+
+```md
+![GitHub Snake Light](github-snake.svg#gh-light-mode-only)
+![GitHub Snake dark](github-snake-dark.svg#gh-dark-mode-only)
+```
 
 **interactive demo**
 
