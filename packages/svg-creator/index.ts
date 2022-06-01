@@ -13,6 +13,7 @@ import { createSnake } from "./snake";
 import { createGrid } from "./grid";
 import { createStack } from "./stack";
 import { h } from "./utils";
+// @ts-ignore
 import { minify as minifyCss } from "csso/dist/csso.js";
 import { AnimationOptions } from "@snk/gif-creator";
 
