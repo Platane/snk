@@ -14,7 +14,7 @@ import { createGrid } from "./grid";
 import { createStack } from "./stack";
 import { h } from "./utils";
 // @ts-ignore
-import { minify as minifyCss } from "csso/dist/csso.esm.js";
+import { minify as minifyCss } from "csso/dist/csso.esm";
 import { AnimationOptions } from "@snk/gif-creator";
 
 export type DrawOptions = {
