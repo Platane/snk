@@ -13,6 +13,7 @@
     "@vercel/ncc": "0.24.1"
   },
   "scripts": {
-    "build": "ncc build --external canvas --external gifsicle --out dist ./index.ts"
+    "build": "ncc build --external canvas --external gifsicle --out dist ./index.ts",
+    "run:build": "INPUT_GITHUB_USER_NAME=platane INPUT_OUTPUTS='dist/out.svg' node dist/index.js"
   }
 }
