@@ -1,14 +1,14 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`should parse /out.svg       {"color_snake":"yellow"} 1`] = `
-Object {
-  "animationOptions": Object {
+{
+  "animationOptions": {
     "frameDuration": 100,
     "step": 1,
   },
-  "drawOptions": Object {
+  "drawOptions": {
     "colorDotBorder": "#1b1f230a",
-    "colorDots": Array [
+    "colorDots": [
       "#ebedf0",
       "#9be9a8",
       "#40c463",
@@ -17,9 +17,9 @@ Object {
     ],
     "colorEmpty": "#ebedf0",
     "colorSnake": "yellow",
-    "dark": Object {
+    "dark": {
       "colorDotBorder": "#1b1f230a",
-      "colorDots": Array [
+      "colorDots": [
         "#161b22",
         "#01311f",
         "#034525",
@@ -39,14 +39,14 @@ Object {
 `;
 
 exports[`should parse /out.svg?.gif.svg?color_snake=orange 1`] = `
-Object {
-  "animationOptions": Object {
+{
+  "animationOptions": {
     "frameDuration": 100,
     "step": 1,
   },
-  "drawOptions": Object {
+  "drawOptions": {
     "colorDotBorder": "#1b1f230a",
-    "colorDots": Array [
+    "colorDots": [
       "#ebedf0",
       "#9be9a8",
       "#40c463",
@@ -55,9 +55,9 @@ Object {
     ],
     "colorEmpty": "#ebedf0",
     "colorSnake": "orange",
-    "dark": Object {
+    "dark": {
       "colorDotBorder": "#1b1f230a",
-      "colorDots": Array [
+      "colorDots": [
         "#161b22",
         "#01311f",
         "#034525",
@@ -77,14 +77,14 @@ Object {
 `;
 
 exports[`should parse /out.svg?{"color_snake":"yellow","color_dots":["#000","#111","#222","#333","#444"]} 1`] = `
-Object {
-  "animationOptions": Object {
+{
+  "animationOptions": {
     "frameDuration": 100,
     "step": 1,
   },
-  "drawOptions": Object {
+  "drawOptions": {
     "colorDotBorder": "#1b1f230a",
-    "colorDots": Array [
+    "colorDots": [
       "#000",
       "#111",
       "#222",
@@ -104,14 +104,14 @@ Object {
 `;
 
 exports[`should parse /out.svg?color_snake=orange&color_dots=#000,#111,#222,#333,#444 1`] = `
-Object {
-  "animationOptions": Object {
+{
+  "animationOptions": {
     "frameDuration": 100,
     "step": 1,
   },
-  "drawOptions": Object {
+  "drawOptions": {
     "colorDotBorder": "#1b1f230a",
-    "colorDots": Array [
+    "colorDots": [
       "#000",
       "#111",
       "#222",
@@ -131,14 +131,14 @@ Object {
 `;
 
 exports[`should parse /out.svg?color_snake=orange&color_dots=#000,#111,#222,#333,#444&dark_color_dots=#a00,#a11,#a22,#a33,#a44 1`] = `
-Object {
-  "animationOptions": Object {
+{
+  "animationOptions": {
     "frameDuration": 100,
     "step": 1,
   },
-  "drawOptions": Object {
+  "drawOptions": {
     "colorDotBorder": "#1b1f230a",
-    "colorDots": Array [
+    "colorDots": [
       "#000",
       "#111",
       "#222",
@@ -147,8 +147,8 @@ Object {
     ],
     "colorEmpty": "#000",
     "colorSnake": "orange",
-    "dark": Object {
-      "colorDots": Array [
+    "dark": {
+      "colorDots": [
         "#a00",
         "#a11",
         "#a22",
@@ -167,14 +167,14 @@ Object {
 `;
 
 exports[`should parse path/to/out.gif 1`] = `
-Object {
-  "animationOptions": Object {
+{
+  "animationOptions": {
     "frameDuration": 100,
     "step": 1,
   },
-  "drawOptions": Object {
+  "drawOptions": {
     "colorDotBorder": "#1b1f230a",
-    "colorDots": Array [
+    "colorDots": [
       "#ebedf0",
       "#9be9a8",
       "#40c463",
@@ -183,9 +183,9 @@ Object {
     ],
     "colorEmpty": "#ebedf0",
     "colorSnake": "purple",
-    "dark": Object {
+    "dark": {
       "colorDotBorder": "#1b1f230a",
-      "colorDots": Array [
+      "colorDots": [
         "#161b22",
         "#01311f",
         "#034525",
