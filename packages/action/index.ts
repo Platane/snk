@@ -1,7 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
 import * as core from "@actions/core";
-import { generateContributionSnake } from "./generateContributionSnake";
 import { parseOutputsOption } from "./outputsOptions";
 
 (async () => {
@@ -14,6 +13,9 @@ import { parseOutputsOption } from "./outputsOptions";
       ]
     );
 
+    const { generateContributionSnake } = await import(
+      "./generateContributionSnake"
+    );
     const results = await generateContributionSnake(userName, outputs);
 
     outputs.forEach((out, i) => {

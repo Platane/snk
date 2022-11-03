@@ -1,15 +1,14 @@
 import { getSnakeLength, snakeToCells } from "@snk/types/snake";
 import type { Snake } from "@snk/types/snake";
 import type { Point } from "@snk/types/point";
-import { h } from "./utils";
+import { h } from "./xml-utils";
+import { createAnimation } from "./css-utils";
 
 export type Options = {
   colorSnake: string;
   sizeCell: number;
   sizeDot: number;
 };
-
-const percent = (x: number) => (x * 100).toFixed(2);
 
 const lerp = (k: number, a: number, b: number) => (1 - k) * a + k * b;
 
@@ -55,8 +54,8 @@ export const createSnake = (
 
   const styles = [
     `.s{ 
-      shape-rendering:geometricPrecision;
-      fill:var(--cs);
+      shape-rendering: geometricPrecision;
+      fill: var(--cs);
       animation: none linear ${duration}ms infinite
     }`,
 
@@ -64,16 +63,17 @@ export const createSnake = (
       const id = `s${i}`;
       const animationName = id;
 
-      return [
-        `@keyframes ${animationName} {` +
-          removeInterpolatedPositions(
-            positions.map((tr, i, { length }) => ({ ...tr, t: i / length }))
-          )
-            .map((p) => `${percent(p.t)}%{${transform(p)}}`)
-            .join("") +
-          "}",
+      const keyframes = removeInterpolatedPositions(
+        positions.map((tr, i, { length }) => ({ ...tr, t: i / length }))
+      ).map(({ t, ...p }) => ({ t, style: transform(p) }));
 
-        `.s.${id}{${transform(positions[0])};animation-name: ${animationName}}`,
+      return [
+        createAnimation(animationName, keyframes),
+
+        `.s.${id}{
+          ${transform(positions[0])};
+          animation-name: ${animationName}
+        }`,
       ];
     }),
   ].flat();
