@@ -44,9 +44,47 @@ jobs:
           test -f dist/github-contribution-grid-snake-dark.svg
           test -f dist/github-contribution-grid-snake.gif
 
-      - uses: crazy-max/ghaction-github-pages@v2.5.0
+      - uses: crazy-max/ghaction-github-pages@v3.1.0
         with:
           target_branch: output
+          build_dir: dist
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  test-action-svg-only:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          cache: yarn
+          node-version: 16
+      - run: yarn install --frozen-lockfile
+
+      - name: build svg-only action
+        run: |
+          yarn build:action
+          rm -r svg-only/dist
+          mv packages/action/dist svg-only/dist
+
+      - name: generate-snake-game-from-github-contribution-grid
+        id: generate-snake
+        uses: ./svg-only
+        with:
+          github_user_name: platane
+          outputs: |
+            dist/github-contribution-grid-snake.svg
+            dist/github-contribution-grid-snake-dark.svg?palette=github-dark
+
+      - name: ensure the generated file exists
+        run: |
+          ls dist
+          test -f dist/github-contribution-grid-snake.svg
+          test -f dist/github-contribution-grid-snake-dark.svg
+
+      - uses: crazy-max/ghaction-github-pages@v3.1.0
+        with:
+          target_branch: output-svg-only
           build_dir: dist
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
