@@ -3,7 +3,7 @@ description: "Generates a snake game from a github user contributions grid. Outp
 author: "platane"
 
 runs:
-  using: node16
+  using: node18
   main: dist/index.js
 
 inputs:
@@ -12,7 +12,6 @@ inputs:
     required: true
   outputs:
     required: false
-    default: null
     description: |
       list of files to generate.
       one file per line. Each output can be customized with options as query string.

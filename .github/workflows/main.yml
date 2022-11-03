@@ -11,7 +11,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           cache: yarn
-          node-version: 16
+          node-version: 18
       - run: yarn install --frozen-lockfile
 
       - run: yarn type
@@ -58,7 +58,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           cache: yarn
-          node-version: 16
+          node-version: 18
       - run: yarn install --frozen-lockfile
 
       - name: build svg-only action
@@ -96,7 +96,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           cache: yarn
-          node-version: 16
+          node-version: 18
       - run: yarn install --frozen-lockfile
 
       - run: yarn build:demo
