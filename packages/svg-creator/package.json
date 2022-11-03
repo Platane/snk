@@ -2,10 +2,7 @@
   "name": "@snk/svg-creator",
   "version": "1.0.0",
   "dependencies": {
-    "@snk/solver": "1.0.0",
-    "csso": "5.0.3"
+    "@snk/solver": "1.0.0"
   },
-  "devDependencies": {
-    "@types/csso": "5.0.0"
-  }
+  "devDependencies": {}
 }

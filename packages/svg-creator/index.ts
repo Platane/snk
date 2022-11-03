@@ -9,12 +9,12 @@ import { getHeadX, getHeadY } from "@snk/types/snake";
 import type { Snake } from "@snk/types/snake";
 import type { Grid, Color, Empty } from "@snk/types/grid";
 import type { Point } from "@snk/types/point";
+import type { AnimationOptions } from "@snk/gif-creator";
 import { createSnake } from "./snake";
 import { createGrid } from "./grid";
 import { createStack } from "./stack";
-import { h } from "./utils";
-import * as csso from "csso";
-import { AnimationOptions } from "@snk/gif-creator";
+import { h } from "./xml-utils";
+import { minifyCss } from "./css-utils";
 
 export type DrawOptions = {
   colorDots: Record<Color, string>;
@@ -132,7 +132,7 @@ export const createSvg = (
   return optimizeSvg(svg);
 };
 
-const optimizeCss = (css: string) => csso.minify(css).css;
+const optimizeCss = (css: string) => minifyCss(css);
 const optimizeSvg = (svg: string) => svg;
 
 const generateColorVar = (drawOptions: DrawOptions) =>

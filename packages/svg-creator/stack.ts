@@ -1,11 +1,10 @@
 import type { Color, Empty } from "@snk/types/grid";
-import { h } from "./utils";
+import { createAnimation } from "./css-utils";
+import { h } from "./xml-utils";
 
 export type Options = {
   sizeDot: number;
 };
-
-const percent = (x: number) => (x * 100).toFixed(2);
 
 export const createStack = (
   cells: { t: number | null; color: Color | Empty }[],
@@ -56,23 +55,28 @@ export const createStack = (
     );
 
     styles.push(
-      `@keyframes ${animationName} {` +
+      createAnimation(
+        animationName,
         [
-          ...ts.map((t, i, { length }) => [
-            { scale: i / length, t: t - 0.0001 },
-            { scale: (i + 1) / length, t: t + 0.0001 },
-          ]),
-          [{ scale: 1, t: 1 }],
-        ]
-          .flat()
-          .map(
-            ({ scale, t }) =>
-              `${percent(t)}%{transform:scale(${scale.toFixed(2)},1)}`
-          )
-          .join("\n") +
-        "}",
+          ...ts
+            .map((t, i, { length }) => [
+              { scale: i / length, t: t - 0.0001 },
+              { scale: (i + 1) / length, t: t + 0.0001 },
+            ])
+            .flat(),
+          { scale: 1, t: 1 },
+        ].map(({ scale, t }) => ({
+          t,
+          style: `transform:scale(${scale.toFixed(3)},1)`,
+        }))
+      ),
 
-      `.u.${id}{fill:var(--c${color});animation-name:${animationName};transform-origin:${x}px 0}`
+      `.u.${id} {
+        fill: var(--c${color});
+        animation-name: ${animationName};
+        transform-origin: ${x}px 0
+      }
+      `
     );
   }
 
