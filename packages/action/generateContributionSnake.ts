@@ -9,7 +9,7 @@ import type { AnimationOptions } from "@snk/gif-creator";
 export const generateContributionSnake = async (
   userName: string,
   outputs: ({
-    format: "svg" | "gif";
+    format: "svg" | "gif" |"png";
     drawOptions: DrawOptions;
     animationOptions: AnimationOptions;
   } | null)[]
