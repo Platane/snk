@@ -11,12 +11,12 @@ const drawOptions: DrawOptions = {
   sizeCell: 16,
   sizeDot: 12,
   colorDotBorder: "#1b1f230a",
-  colorDots: { 1: "#9be9a8", 2: "#40c463", 3: "#30a14e", 4: "#216e39" },
+  colorDots: { 1: "#B6E3FF", 2: "#54AEFF", 3: "#0969DA", 4: "#0A3069" },
   colorEmpty: "#ebedf0",
   colorSnake: "purple",
   dark: {
     colorEmpty: "#161b22",
-    colorDots: { 1: "#01311f", 2: "#034525", 3: "#0f6d31", 4: "#00c647" },
+    colorDots: { 1: "#0A3069", 2: "#0969DA", 3: "#54AEFF", 4: "#B6E3FF" },
   },
 };
 

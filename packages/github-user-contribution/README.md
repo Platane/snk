@@ -9,7 +9,7 @@ const { cells, colorScheme } = await getGithubUserContribution("platane");
 
 // colorScheme = [
 //    "#ebedf0",
-//    "#9be9a8",
+//    "#B6E3FF",
 //    ...
 // ]
 // cells = [

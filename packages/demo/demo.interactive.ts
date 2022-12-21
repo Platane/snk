@@ -238,7 +238,7 @@ const onSubmit = async (userName: string) => {
     sizeCell: 16,
     sizeDot: 12,
     colorDotBorder: "#1b1f230a",
-    colorDots: ["#ebedf0", "#9be9a8", "#40c463", "#30a14e", "#216e39"],
+    colorDots: ["#ebedf0", "#B6E3FF", "#54AEFF", "#0969DA", "#0A3069"],
     colorEmpty: "#ebedf0",
     colorSnake: "purple",
   };
