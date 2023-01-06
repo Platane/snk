@@ -47,18 +47,22 @@ const parseUserPage = (content: string) => {
   let x = 0;
   let lastYAttribute = 0;
 
-  const rects = Array.from(block.matchAll(/<rect[^>]*>/g)).map(([m]) => {
-    const date = m.match(/data-date="([^"]+)"/)![1];
-    const count = +m.match(/data-count="([^"]+)"/)![1];
-    const level = +m.match(/data-level="([^"]+)"/)![1];
-    const yAttribute = +m.match(/y="([^"]+)"/)![1];
+  const rects = Array.from(block.matchAll(/<rect[^>]*>[^<]*<\/rect>/g)).map(
+    ([m]) => {
+      const date = m.match(/data-date="([^"]+)"/)![1];
+      const level = +m.match(/data-level="([^"]+)"/)![1];
+      const yAttribute = +m.match(/y="([^"]+)"/)![1];
 
-    if (lastYAttribute > yAttribute) x++;
+      const literalCount = m.match(/(No|\d+) contributions? on/)![1];
+      const count = literalCount === "No" ? 0 : +literalCount;
 
-    lastYAttribute = yAttribute;
+      if (lastYAttribute > yAttribute) x++;
 
-    return { date, count, level, x, yAttribute };
-  });
+      lastYAttribute = yAttribute;
+
+      return { date, count, level, x, yAttribute };
+    }
+  );
 
   const yAttributes = Array.from(
     new Set(rects.map((c) => c.yAttribute)).keys()
