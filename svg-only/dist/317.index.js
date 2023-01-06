@@ -84,11 +84,12 @@ const parseUserPage = (content) => {
         .split("</svg>")[0];
     let x = 0;
     let lastYAttribute = 0;
-    const rects = Array.from(block.matchAll(/<rect[^>]*>/g)).map(([m]) => {
+    const rects = Array.from(block.matchAll(/<rect[^>]*>[^<]*<\/rect>/g)).map(([m]) => {
         const date = m.match(/data-date="([^"]+)"/)[1];
-        const count = +m.match(/data-count="([^"]+)"/)[1];
         const level = +m.match(/data-level="([^"]+)"/)[1];
         const yAttribute = +m.match(/y="([^"]+)"/)[1];
+        const literalCount = m.match(/(No|\d+) contributions? on/)[1];
+        const count = literalCount === "No" ? 0 : +literalCount;
         if (lastYAttribute > yAttribute)
             x++;
         lastYAttribute = yAttribute;
