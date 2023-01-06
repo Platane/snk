@@ -14,6 +14,7 @@ import { createSvg } from "@snk/svg-creator";
 import { createRpcClient } from "./worker-utils";
 import type { API as WorkerAPI } from "./demo.interactive.worker";
 import { AnimationOptions } from "@snk/gif-creator";
+import { basePalettes } from "@snk/action/palettes";
 
 const createForm = ({
   onSubmit,
@@ -119,13 +120,18 @@ const createViewer = ({
   grid0,
   chain,
   cells,
-  drawOptions,
 }: {
   grid0: Grid;
   chain: Snake[];
   cells: Point[];
-  drawOptions: DrawOptions;
 }) => {
+  const drawOptions: DrawOptions = {
+    sizeDotBorderRadius: 2,
+    sizeCell: 16,
+    sizeDot: 12,
+    ...basePalettes["github-light"],
+  };
+
   //
   // canvas
   const canvas = document.createElement("canvas");
@@ -171,12 +177,12 @@ const createViewer = ({
 
   //
   // controls
-  const input = document.createElement("input") as any;
+  const input = document.createElement("input");
   input.type = "range";
-  input.value = 0;
-  input.step = 1;
-  input.min = 0;
-  input.max = chain.length;
+  input.value = "0";
+  input.step = "1";
+  input.min = "0";
+  input.max = "" + chain.length;
   input.style.width = "calc( 100% - 20px )";
   input.addEventListener("input", () => {
     spring.target = +input.value;
@@ -191,9 +197,48 @@ const createViewer = ({
   document.body.append(input);
 
   //
+  const schemaSelect = document.createElement("select");
+  schemaSelect.style.margin = "10px";
+  schemaSelect.style.alignSelf = "flex-start";
+  schemaSelect.value = "github-light";
+  schemaSelect.addEventListener("change", () => {
+    Object.assign(drawOptions, basePalettes[schemaSelect.value]);
+
+    svgString = createSvg(grid0, cells, chain, drawOptions, {
+      frameDuration: 100,
+    } as AnimationOptions);
+    const svgImageUri = `data:image/*;charset=utf-8;base64,${btoa(svgString)}`;
+    svgLink.href = svgImageUri;
+
+    if (schemaSelect.value.includes("dark"))
+      document.body.parentElement?.classList.add("dark-mode");
+    else document.body.parentElement?.classList.remove("dark-mode");
+
+    loop();
+  });
+  for (const name of Object.keys(basePalettes)) {
+    const option = document.createElement("option");
+    option.value = name;
+    option.innerText = name;
+    schemaSelect.appendChild(option);
+  }
+  document.body.append(schemaSelect);
+
+  //
+  // dark mode
+  const style = document.createElement("style");
+  style.innerText = `
+  html { transition:background-color 180ms }
+  a { transition:color 180ms }
+  html.dark-mode{ background-color:#0d1117 }
+  html.dark-mode a{ color:rgb(201, 209, 217) }
+  `;
+  document.head.append(style);
+
+  //
   // svg
   const svgLink = document.createElement("a");
-  const svgString = createSvg(grid0, cells, chain, drawOptions, {
+  let svgString = createSvg(grid0, cells, chain, drawOptions, {
     frameDuration: 100,
   } as AnimationOptions);
   const svgImageUri = `data:image/*;charset=utf-8;base64,${btoa(svgString)}`;
@@ -203,7 +248,10 @@ const createViewer = ({
   svgLink.addEventListener("click", (e) => {
     const w = window.open("")!;
     w.document.write(
-      `<a href="${svgImageUri}" download="github-user-contribution.svg">` +
+      (document.body.parentElement?.classList.contains("dark-mode")
+        ? "<style>html{ background-color:#0d1117 }</style>"
+        : "") +
+        `<a href="${svgLink.href}" download="github-user-contribution.svg">` +
         svgString +
         "<a/>"
     );
@@ -233,23 +281,13 @@ const onSubmit = async (userName: string) => {
   );
   const cells = (await res.json()) as Res;
 
-  const drawOptions: DrawOptions = {
-    sizeDotBorderRadius: 2,
-    sizeCell: 16,
-    sizeDot: 12,
-    colorDotBorder: "#1b1f230a",
-    colorDots: ["#ebedf0", "#9be9a8", "#40c463", "#30a14e", "#216e39"],
-    colorEmpty: "#ebedf0",
-    colorSnake: "purple",
-  };
-
   const grid = userContributionToGrid(cells);
 
   const chain = await getChain(grid);
 
   dispose();
 
-  createViewer({ grid0: grid, chain, cells, drawOptions });
+  createViewer({ grid0: grid, chain, cells });
 };
 
 const worker = new Worker(
