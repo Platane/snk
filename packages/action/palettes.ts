@@ -1,6 +1,6 @@
 import { DrawOptions as DrawOptions } from "@snk/svg-creator";
 
-export const palettes: Record<
+export const basePalettes: Record<
   string,
   Pick<
     DrawOptions,
@@ -22,6 +22,7 @@ export const palettes: Record<
 };
 
 // aliases
+export const palettes = { ...basePalettes };
 palettes["github"] = {
   ...palettes["github-light"],
   dark: { ...palettes["github-dark"] },
