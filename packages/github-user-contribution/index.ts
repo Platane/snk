@@ -60,8 +60,12 @@ const parseUserPage = (content: string) => {
     .toArray()
     .map((x) => {
       const level = +x.attribs["data-level"];
-      const count = +x.attribs["data-count"];
       const date = x.attribs["data-date"];
+
+      const literalCount = $(x)
+        .text()
+        .match(/(No|\d+) contributions? on/)![1];
+      const count = literalCount === "No" ? 0 : +literalCount;
 
       const color = colorScheme[level];
 
