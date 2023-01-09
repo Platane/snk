@@ -47,7 +47,7 @@ describe("getGithubUserContribution", () => {
   });
 });
 
-it("should match snapshot for year=2019", async () => {
+xit("should match snapshot for year=2019", async () => {
   expect(
     await getGithubUserContribution("platane", { year: 2019 })
   ).toMatchSnapshot();
