@@ -56,4 +56,7 @@ type R = { repo: string } & Partial<{
         .toFixed(2)
         .padStart(6, " ")}% ${count} `
     );
+
+  const gif_repos = repos.filter((r) => r.workflow_file?.includes(".gif"));
+  console.log("repo with git ouput", gif_repos.length);
 })();
