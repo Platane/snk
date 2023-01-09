@@ -56,7 +56,7 @@ const parseUserPage = (content: string) => {
 
   //
   // parse cells
-  const rawCells = $(".js-calendar-graph rect[data-count]")
+  const rawCells = $(".js-calendar-graph rect[data-level][data-date]")
     .toArray()
     .map((x) => {
       const level = +x.attribs["data-level"];
