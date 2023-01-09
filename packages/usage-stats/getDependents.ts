@@ -1,11 +1,10 @@
-import * as fs from "fs";
-import fetch from "node-fetch";
 import { load as CheerioLoad } from "cheerio";
+import { httpGet } from "./httpGet";
 
 const getPackages = async (repo: string) => {
-  const pageText = await fetch(
+  const pageText = await httpGet(
     `https://github.com/${repo}/network/dependents`
-  ).then((res) => res.text());
+  );
   const $ = CheerioLoad(pageText);
 
   return $("#dependents .select-menu-list a")
@@ -29,17 +28,15 @@ const getDependentByPackage = async (repo: string, packageId: string) => {
     | null = `https://github.com/${repo}/network/dependents?package_id=${packageId}`;
 
   while (url) {
-    console.log(url, repos.length);
+    const $ = CheerioLoad(await httpGet(url));
 
-    await wait(1000 + Math.floor(Math.random() * 500));
+    console.log(repos.length);
 
-    const $ = CheerioLoad(await fetch(url).then((res) => res.text()));
-
-    const rs = $(`#dependents [data-hovercard-type="repository"]`)
+    const reposOnPage = $(`#dependents [data-hovercard-type="repository"]`)
       .toArray()
       .map((el) => $(el).attr("href")!.slice(1));
 
-    repos.push(...rs);
+    repos.push(...reposOnPage);
 
     const nextButton = $(`#dependents a`)
       .filter((_, el) => $(el).text().trim().toLowerCase() === "next")
@@ -47,16 +44,12 @@ const getDependentByPackage = async (repo: string, packageId: string) => {
 
     const href = nextButton ? nextButton.attr("href") : null;
 
-    pages.push({ url, rs, next: href });
-    fs.writeFileSync(
-      __dirname + `/out-${packageId}.json`,
-      JSON.stringify(pages)
-    );
+    pages.push({ url, reposOnPage, next: href });
 
     url = href ? new URL(href, "https://github.com").toString() : null;
   }
 
-  return repos;
+  return { repos, pages };
 };
 
 export const getDependents = async (repo: string) => {
@@ -65,15 +58,10 @@ export const getDependents = async (repo: string) => {
   const ps: (typeof packages[number] & { dependents: string[] })[] = [];
 
   for (const p of packages)
-    ps.push({ ...p, dependents: await getDependentByPackage(repo, p.id) });
+    ps.push({
+      ...p,
+      dependents: (await getDependentByPackage(repo, p.id)).repos,
+    });
 
   return ps;
 };
-
-const wait = (delay = 0) => new Promise((r) => setTimeout(r, delay));
-
-(async () => {
-  const res = await getDependents("platane/snk");
-
-  fs.writeFileSync(__dirname + "/cache/out.json", JSON.stringify(res));
-})();

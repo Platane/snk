@@ -7,9 +7,10 @@
     "cheerio": "1.0.0-rc.12",
     "node-fetch": "2.6.7",
     "octokit": "2.0.11",
-    "dotenv": "16.0.3"
+    "dotenv": "16.0.3",
+    "park-miller": "1.1.0"
   },
   "scripts": {
-    "start": "sucrase-node stats.ts"
+    "start": "sucrase-node index.ts"
   }
 }
