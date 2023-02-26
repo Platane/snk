@@ -23,8 +23,5 @@ export const basePalettes: Record<
 
 // aliases
 export const palettes = { ...basePalettes };
-palettes["github"] = {
-  ...palettes["github-light"],
-  dark: { ...palettes["github-dark"] },
-};
+palettes["github"] = palettes["github-light"];
 palettes["default"] = palettes["github"];
