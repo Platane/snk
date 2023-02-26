@@ -21,19 +21,19 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
-      - uses: docker/setup-qemu-action@v1
+      - uses: docker/setup-qemu-action@v2
 
-      - uses: docker/setup-buildx-action@v1
+      - uses: docker/setup-buildx-action@v2
 
-      - uses: docker/login-action@v1
+      - uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: build and publish the docker image
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v4
         id: docker-build
         with:
           push: true
@@ -45,7 +45,7 @@ jobs:
         run: |
           sed -i "s/image: .*/image: docker:\/\/platane\/snk@${{ steps.docker-build.outputs.digest }}/" action.yml
 
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v3
         with:
           cache: yarn
           node-version: 16
@@ -81,7 +81,7 @@ jobs:
             echo "prerelease=true" >> $GITHUB_OUTPUT
           fi
 
-      - uses: ncipollo/release-action@v1.11.1
+      - uses: ncipollo/release-action@v1.12.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:

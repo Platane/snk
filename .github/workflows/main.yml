@@ -7,8 +7,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
           cache: yarn
           node-version: 16
@@ -21,7 +21,7 @@ jobs:
   test-action:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: update action.yml to use image from local Dockerfile
         run: |
@@ -92,8 +92,8 @@ jobs:
   deploy-ghpages:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
           cache: yarn
           node-version: 16
@@ -103,7 +103,7 @@ jobs:
         env:
           GITHUB_USER_CONTRIBUTION_API_ENDPOINT: https://snk-one.vercel.app/api/github-user-contribution/
 
-      - uses: crazy-max/ghaction-github-pages@v2.6.0
+      - uses: crazy-max/ghaction-github-pages@v3.1.0
         if: success() && github.ref == 'refs/heads/main'
         with:
           target_branch: gh-pages
