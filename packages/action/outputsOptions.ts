@@ -32,6 +32,7 @@ export const parseEntry = (entry: string) => {
     sizeCell: 16,
     sizeDot: 12,
     ...palettes["default"],
+    dark: palettes["default"].dark && { ...palettes["default"].dark },
   };
   const animationOptions: AnimationOptions = { step: 1, frameDuration: 100 };
 
@@ -40,6 +41,14 @@ export const parseEntry = (entry: string) => {
     if (palette) {
       Object.assign(drawOptions, palette);
       drawOptions.dark = palette.dark && { ...palette.dark };
+    }
+  }
+
+  {
+    const dark_palette = palettes[sp.get("dark_palette")!];
+    if (dark_palette) {
+      const clone = { ...dark_palette, dark: undefined };
+      drawOptions.dark = clone;
     }
   }
 
@@ -56,6 +65,8 @@ export const parseEntry = (entry: string) => {
   if (sp.has("dark_color_dots")) {
     const colors = sp.get("dark_color_dots")!.split(/[,;]/);
     drawOptions.dark = {
+      colorDotBorder: drawOptions.colorDotBorder,
+      colorSnake: drawOptions.colorSnake,
       ...drawOptions.dark,
       colorDots: colors,
       colorEmpty: colors[0],
