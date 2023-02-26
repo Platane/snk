@@ -2991,7 +2991,7 @@ var external_path_ = __nccwpck_require__(1017);
 // EXTERNAL MODULE: ../../node_modules/@actions/core/lib/core.js
 var core = __nccwpck_require__(7117);
 ;// CONCATENATED MODULE: ./palettes.ts
-const palettes = {
+const basePalettes = {
     "github-light": {
         colorDotBorder: "#1b1f230a",
         colorDots: ["#ebedf0", "#9be9a8", "#40c463", "#30a14e", "#216e39"],
@@ -3006,10 +3006,8 @@ const palettes = {
     },
 };
 // aliases
-palettes["github"] = {
-    ...palettes["github-light"],
-    dark: { ...palettes["github-dark"] },
-};
+const palettes = { ...basePalettes };
+palettes["github"] = palettes["github-light"];
 palettes["default"] = palettes["github"];
 
 ;// CONCATENATED MODULE: ./outputsOptions.ts
@@ -3039,6 +3037,7 @@ const parseEntry = (entry) => {
         sizeCell: 16,
         sizeDot: 12,
         ...palettes["default"],
+        dark: palettes["default"].dark && { ...palettes["default"].dark },
     };
     const animationOptions = { step: 1, frameDuration: 100 };
     {
@@ -3046,6 +3045,13 @@ const parseEntry = (entry) => {
         if (palette) {
             Object.assign(drawOptions, palette);
             drawOptions.dark = palette.dark && { ...palette.dark };
+        }
+    }
+    {
+        const dark_palette = palettes[sp.get("dark_palette")];
+        if (dark_palette) {
+            const clone = { ...dark_palette, dark: undefined };
+            drawOptions.dark = clone;
         }
     }
     if (sp.has("color_snake"))
@@ -3061,6 +3067,8 @@ const parseEntry = (entry) => {
     if (sp.has("dark_color_dots")) {
         const colors = sp.get("dark_color_dots").split(/[,;]/);
         drawOptions.dark = {
+            colorDotBorder: drawOptions.colorDotBorder,
+            colorSnake: drawOptions.colorSnake,
             ...drawOptions.dark,
             colorDots: colors,
             colorEmpty: colors[0],

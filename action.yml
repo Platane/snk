@@ -4,7 +4,7 @@ author: "platane"
 
 runs:
   using: docker
-  image: docker://platane/snk@sha256:dcb351bdad223f2a2161fa5d6e3c9102e6ebe9fbde99a10fa3bf443d69f61a0f
+  image: docker://platane/snk@sha256:bd0f7538482216785abbee29da431738f5ea9aff9fc3a4b8df37708a808f0968
 
 inputs:
   github_user_name:

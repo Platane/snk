@@ -689,14 +689,14 @@ const generateContributionSnake = async (userName, outputs) => {
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "V0": () => (/* binding */ isInside),
-/* harmony export */   "HJ": () => (/* binding */ isInsideLarge),
-/* harmony export */   "VJ": () => (/* binding */ copyGrid),
-/* harmony export */   "Lq": () => (/* binding */ getColor),
-/* harmony export */   "xb": () => (/* binding */ isEmpty),
-/* harmony export */   "vk": () => (/* binding */ setColor),
 /* harmony export */   "Dy": () => (/* binding */ setColorEmpty),
-/* harmony export */   "u1": () => (/* binding */ createEmptyGrid)
+/* harmony export */   "HJ": () => (/* binding */ isInsideLarge),
+/* harmony export */   "Lq": () => (/* binding */ getColor),
+/* harmony export */   "V0": () => (/* binding */ isInside),
+/* harmony export */   "VJ": () => (/* binding */ copyGrid),
+/* harmony export */   "u1": () => (/* binding */ createEmptyGrid),
+/* harmony export */   "vk": () => (/* binding */ setColor),
+/* harmony export */   "xb": () => (/* binding */ isEmpty)
 /* harmony export */ });
 /* unused harmony exports isGridEmpty, gridEquals */
 const isInside = (grid, x, y) => x >= 0 && y >= 0 && x < grid.width && y < grid.height;
@@ -733,13 +733,13 @@ const createEmptyGrid = (width, height) => ({
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "If": () => (/* binding */ getHeadX),
 /* harmony export */   "IP": () => (/* binding */ getHeadY),
+/* harmony export */   "If": () => (/* binding */ getHeadX),
 /* harmony export */   "JJ": () => (/* binding */ getSnakeLength),
+/* harmony export */   "Ks": () => (/* binding */ snakeToCells),
 /* harmony export */   "kE": () => (/* binding */ snakeEquals),
 /* harmony export */   "kv": () => (/* binding */ nextSnake),
 /* harmony export */   "nJ": () => (/* binding */ snakeWillSelfCollide),
-/* harmony export */   "Ks": () => (/* binding */ snakeToCells),
 /* harmony export */   "xG": () => (/* binding */ createSnakeFromCells)
 /* harmony export */ });
 /* unused harmony export copySnake */
