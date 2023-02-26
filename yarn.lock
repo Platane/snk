@@ -1289,6 +1289,11 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-14.0.23.tgz#676fa0883450ed9da0bb24156213636290892806"
   integrity sha512-Z4U8yDAl5TFkmYsZdFPdjeMa57NOvnaf1tljHzhouaPEp7LCj2JKkejpI1ODviIAQuW4CcQmxkQ77rnLsOOoKw==
 
+"@types/node@14.18.33":
+  version "14.18.33"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-14.18.33.tgz#8c29a0036771569662e4635790ffa9e057db379b"
+  integrity sha512-qelS/Ra6sacc4loe/3MSjXNL1dNQ/GjxNHVzuChwMfmk7HuycRLVQN2qNY3XahK+fZc5E2szqQSKUyAF0E+2bg==
+
 "@types/node@16.11.7":
   version "16.11.7"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-16.11.7.tgz#36820945061326978c42a01e56b61cd223dfdc42"
@@ -1373,42 +1378,42 @@
   dependencies:
     "@types/yargs-parser" "*"
 
-"@vercel/build-utils@5.5.7":
-  version "5.5.7"
-  resolved "https://registry.yarnpkg.com/@vercel/build-utils/-/build-utils-5.5.7.tgz#fadd9ecdda384509d000ba2ab588a894b41b02f3"
-  integrity sha512-F8brek8VcR3CLgcuKyXbb8k8y/KRwqO/yEV5dTUW6OZ0fGxxa+0RnaaY1UbHlCVF1Cnu+/IsMDsmsj9o1RCP5A==
+"@vercel/build-utils@6.3.1":
+  version "6.3.1"
+  resolved "https://registry.yarnpkg.com/@vercel/build-utils/-/build-utils-6.3.1.tgz#15aacb1f8644d71166ebee991a37c791276a7db4"
+  integrity sha512-mFd6QZJX1SaweTa9BB+zO6OyGeQWsk+z0LFhsSblnWue2wjmeZ3z3TBt8V/Wlae5NMg4+E2AFcDf/lr3ENeCfg==
 
-"@vercel/ncc@0.34.0":
-  version "0.34.0"
-  resolved "https://registry.yarnpkg.com/@vercel/ncc/-/ncc-0.34.0.tgz#d0139528320e46670d949c82967044a8f66db054"
-  integrity sha512-G9h5ZLBJ/V57Ou9vz5hI8pda/YQX5HQszCs3AmIus3XzsmRn/0Ptic5otD3xVST8QLKk7AMk7AqpsyQGN7MZ9A==
+"@vercel/ncc@0.36.1":
+  version "0.36.1"
+  resolved "https://registry.yarnpkg.com/@vercel/ncc/-/ncc-0.36.1.tgz#d4c01fdbbe909d128d1bf11c7f8b5431654c5b95"
+  integrity sha512-S4cL7Taa9yb5qbv+6wLgiKVZ03Qfkc4jGRuiUQMQ8HGBD5pcNRnHeYM33zBvJE4/zJGjJJ8GScB+WmTsn9mORw==
 
-"@vercel/node-bridge@3.1.1":
-  version "3.1.1"
-  resolved "https://registry.yarnpkg.com/@vercel/node-bridge/-/node-bridge-3.1.1.tgz#73256005577c42e4f16b5f2327f0c97ddebe18ae"
-  integrity sha512-sWg2okUTj8IbeWnAaY3IKbDp3Vinj4zdt3Q11S+cRMXO+pAUbqJxmiPD5+MS0RyIVvufoNotooiitRGlgQjA5w==
+"@vercel/node-bridge@3.1.12":
+  version "3.1.12"
+  resolved "https://registry.yarnpkg.com/@vercel/node-bridge/-/node-bridge-3.1.12.tgz#b84ceda5ef59029d4a692808e7f0db0f3ce171e6"
+  integrity sha512-RYMYzyR/QyT+1JeOHBtBxwDc8XszYbChq0b18uqt4/PQ8rUWdcHMUkUoNjScB6RmqScX+vTzYj8eLS8UfHxnaQ==
 
-"@vercel/node@2.6.1":
-  version "2.6.1"
-  resolved "https://registry.yarnpkg.com/@vercel/node/-/node-2.6.1.tgz#72237291a35d00f5a4aaf4c9049bda707369bcd3"
-  integrity sha512-8AXrXxx1XKMT5OpSjQ5ghzjw0HYp4Cuv6GUWJ48jPcvzmU9VC5mZvjmhzmbIT4pPHdKjKZLPy8/rHqDjqztuJg==
+"@vercel/node@2.9.8":
+  version "2.9.8"
+  resolved "https://registry.yarnpkg.com/@vercel/node/-/node-2.9.8.tgz#a30b6a93c55b5dc56674a096346e7a552bdf1056"
+  integrity sha512-GqRqUmdT5/l8XY68ulUJKgijCrWw/p2sgxzrq5Mj40B2nOC5CQa0HLLiNd/Q+jnIrrJkdBpB1xeVkebEv1mgng==
   dependencies:
     "@edge-runtime/vm" "2.0.0"
-    "@types/node" "*"
-    "@vercel/build-utils" "5.5.7"
-    "@vercel/node-bridge" "3.1.1"
-    "@vercel/static-config" "2.0.5"
+    "@types/node" "14.18.33"
+    "@vercel/build-utils" "6.3.1"
+    "@vercel/node-bridge" "3.1.12"
+    "@vercel/static-config" "2.0.13"
     edge-runtime "2.0.0"
     esbuild "0.14.47"
     exit-hook "2.2.1"
     node-fetch "2.6.7"
-    ts-node "8.9.1"
+    ts-node "10.9.1"
     typescript "4.3.4"
 
-"@vercel/static-config@2.0.5":
-  version "2.0.5"
-  resolved "https://registry.yarnpkg.com/@vercel/static-config/-/static-config-2.0.5.tgz#da041d2cb946f897beb69230881929afd43b35e7"
-  integrity sha512-f3wt+vQ3ARRR7hXHteMbrRNjH8iMETmP8f/t2HC8TpOjitjsjUKZg+3YS54AtLDEw/ZZ1s/7EG9nMK2BbU/t6g==
+"@vercel/static-config@2.0.13":
+  version "2.0.13"
+  resolved "https://registry.yarnpkg.com/@vercel/static-config/-/static-config-2.0.13.tgz#6ffd6879bdfa3014e7aceb68876b5757e9d90e19"
+  integrity sha512-09bVISGyhRMoL6gQTfM7n89SeUmyOlIzVMo2oNOj3thy4AIKGuN0SzEp0qNRw8d9j07rifp9JPD4rOuDRx4+eA==
   dependencies:
     ajv "8.6.3"
     json-schema-to-ts "1.6.4"
@@ -5653,7 +5658,7 @@ source-map-support@0.5.13:
     buffer-from "^1.0.0"
     source-map "^0.6.0"
 
-source-map-support@^0.5.17, source-map-support@~0.5.19:
+source-map-support@~0.5.19:
   version "0.5.19"
   resolved "https://registry.yarnpkg.com/source-map-support/-/source-map-support-0.5.19.tgz#a98b62f86dcaf4f67399648c085291ab9e8fed61"
   integrity sha512-Wonm7zOCIJzBGQdB+thsPar0kYuCIzYvxZwlBa87yi/Mdjv7Tip2cyVbLj5o0cFPN4EVkuTwb3GDDyUx2DGnGw==
@@ -6090,17 +6095,6 @@ ts-node@10.9.1:
     diff "^4.0.1"
     make-error "^1.1.1"
     v8-compile-cache-lib "^3.0.1"
-    yn "3.1.1"
-
-ts-node@8.9.1:
-  version "8.9.1"
-  resolved "https://registry.yarnpkg.com/ts-node/-/ts-node-8.9.1.tgz#2f857f46c47e91dcd28a14e052482eb14cfd65a5"
-  integrity sha512-yrq6ODsxEFTLz0R3BX2myf0WBCSQh9A+py8PBo1dCzWIOcvisbyH6akNKqDHMgXePF2kir5mm5JXJTH3OUJYOQ==
-  dependencies:
-    arg "^4.1.0"
-    diff "^4.0.1"
-    make-error "^1.1.1"
-    source-map-support "^0.5.17"
     yn "3.1.1"
 
 ts-toolbelt@^6.15.5:
