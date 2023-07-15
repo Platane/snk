@@ -15,9 +15,9 @@ __webpack_require__.d(__webpack_exports__, {
 });
 
 // EXTERNAL MODULE: ../types/grid.ts
-var types_grid = __webpack_require__(2881);
+var types_grid = __webpack_require__(72881);
 // EXTERNAL MODULE: ../types/snake.ts
-var types_snake = __webpack_require__(9347);
+var types_snake = __webpack_require__(59347);
 ;// CONCATENATED MODULE: ../svg-creator/xml-utils.ts
 const h = (element, attributes) => `<${element} ${toAttribute(attributes)}/>`;
 const toAttribute = (o) => Object.entries(o)

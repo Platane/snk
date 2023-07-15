@@ -3,7 +3,7 @@ exports.id = 317;
 exports.ids = [317];
 exports.modules = {
 
-/***/ 5317:
+/***/ 75317:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 // ESM COMPAT FLAG
@@ -15,8 +15,10 @@ __webpack_require__.d(__webpack_exports__, {
 });
 
 // EXTERNAL MODULE: ../../node_modules/node-fetch/lib/index.js
-var lib = __webpack_require__(2197);
+var lib = __webpack_require__(82197);
 var lib_default = /*#__PURE__*/__webpack_require__.n(lib);
+// EXTERNAL MODULE: ../../node_modules/jsdom/lib/api.js
+var api = __webpack_require__(31096);
 ;// CONCATENATED MODULE: ../github-user-contribution/formatParams.ts
 const formatParams = (options = {}) => {
     const sp = new URLSearchParams();
@@ -46,6 +48,7 @@ const formatDate = (d) => {
 };
 
 ;// CONCATENATED MODULE: ../github-user-contribution/index.ts
+
 
 
 /**
@@ -78,29 +81,22 @@ const getGithubUserContribution = async (userName, options = {}) => {
     return parseUserPage(resText);
 };
 const parseUserPage = (content) => {
-    const dom = document.createRange().createContextualFragment(content)
-
-  const blocks = dom.querySelectorAll(".ContributionCalendar-day")
-
-  let x = 0;
-  let lastYAttribute = 0;
-
-  const rects = Array.from(blocks).map(
-    (m) => {
-      const date = m.getAttribute('data-date');
-      const level = m.getAttribute('data-level')
-      const yAttribute = m.getAttribute('y');
-
-      const literalCount = /(No|\d+) contributions? on/.test(m.innerText);
-      const count = literalCount === "No" ? 0 : +literalCount;
-
-      if (lastYAttribute > yAttribute) x++;
-
-      lastYAttribute = yAttribute;
-
-      return { date, count, level, x, yAttribute };
-    }
-  );
+    // there's no svg block anymore, now the contributions data is displayed as a table
+    const dom = new api/* JSDOM */.wC(content);
+    const blocks = dom.window.document.querySelectorAll(".ContributionCalendar-day");
+    let x = 0;
+    let lastYAttribute = 0;
+    const rects = Array.from(blocks).map((m) => {
+        const date = m.getAttribute('data-date');
+        const level = m.getAttribute('data-level');
+        const yAttribute = m.getAttribute('y');
+        const literalCount = /(No|\d+) contributions? on/.test(m.innerText);
+        const count = literalCount ? 0 : +literalCount;
+        if (lastYAttribute > yAttribute)
+            x++;
+        lastYAttribute = yAttribute;
+        return { date, count, level, x, yAttribute };
+    });
     const yAttributes = Array.from(new Set(rects.map((c) => c.yAttribute)).keys()).sort();
     const cells = rects.map(({ yAttribute, ...c }) => ({
         y: yAttributes.indexOf(yAttribute),
@@ -110,7 +106,7 @@ const parseUserPage = (content) => {
 };
 
 // EXTERNAL MODULE: ../types/grid.ts
-var types_grid = __webpack_require__(2881);
+var types_grid = __webpack_require__(72881);
 ;// CONCATENATED MODULE: ./userContributionToGrid.ts
 
 const userContributionToGrid = (cells) => {
@@ -164,7 +160,7 @@ const fillOutside = (outside, grid, color = 0) => {
 const isOutside = (outside, x, y) => !(0,types_grid/* isInside */.V0)(outside, x, y) || (0,types_grid/* isEmpty */.xb)((0,types_grid/* getColor */.Lq)(outside, x, y));
 
 // EXTERNAL MODULE: ../types/snake.ts
-var types_snake = __webpack_require__(9347);
+var types_snake = __webpack_require__(59347);
 ;// CONCATENATED MODULE: ../solver/utils/sortPush.ts
 const sortPush = (arr, x, sortFn) => {
     let a = 0;
@@ -681,7 +677,7 @@ const generateContributionSnake = async (userName, outputs) => {
             }
             case "gif": {
                 console.log(`📹 creating gif (outputs[${i}])`);
-                const { createGif } = await Promise.all(/* import() */[__webpack_require__.e(371), __webpack_require__.e(142)]).then(__webpack_require__.bind(__webpack_require__, 7142));
+                const { createGif } = await Promise.all(/* import() */[__webpack_require__.e(371), __webpack_require__.e(142)]).then(__webpack_require__.bind(__webpack_require__, 97142));
                 return await createGif(grid, cells, chain, drawOptions, animationOptions);
             }
         }
@@ -691,7 +687,7 @@ const generateContributionSnake = async (userName, outputs) => {
 
 /***/ }),
 
-/***/ 2881:
+/***/ 72881:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
@@ -735,7 +731,7 @@ const createEmptyGrid = (width, height) => ({
 
 /***/ }),
 
-/***/ 9347:
+/***/ 59347:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {

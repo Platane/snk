@@ -1,4 +1,5 @@
 import fetch from "node-fetch";
+import jsdom from "jsdom";
 import { formatParams, Options } from "./formatParams";
 
 /**
@@ -40,23 +41,21 @@ export const getGithubUserContribution = async (
 
 const parseUserPage = (content: string) => {
   // there's no svg block anymore, now the contributions data is displayed as a table
-  const dom = document.createRange().createContextualFragment(content)
+  const dom = new jsdom.JSDOM(content);
 
-  const blocks = dom.querySelectorAll(".ContributionCalendar-day")
-
-  console.log(blocks)
+  const blocks = dom.window.document.querySelectorAll(".ContributionCalendar-day")
 
   let x = 0;
   let lastYAttribute = 0;
 
   const rects = Array.from(blocks).map(
-    (m) => {
+    (m : any) => {
       const date = m.getAttribute('data-date');
       const level = m.getAttribute('data-level')
       const yAttribute = m.getAttribute('y');
 
       const literalCount = /(No|\d+) contributions? on/.test(m.innerText);
-      const count = literalCount === "No" ? 0 : +literalCount;
+      const count = literalCount ? 0 : +literalCount;
 
       if (lastYAttribute > yAttribute) x++;
 
