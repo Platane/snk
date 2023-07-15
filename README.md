@@ -35,7 +35,7 @@ Available as github action. It can automatically generate a new image each day. 
 **github action**
 
 ```yaml
-- uses: Platane/snk@v2
+- uses: aelassas/snk@v2
   with:
     # github user name to read the contribution graph from (**required**)
     # using action context var `github.repository_owner` or specified user
@@ -84,7 +84,7 @@ For **dark mode** support on github, use this [special syntax](https://docs.gith
 
 ```
 npm install
-
+npm run build:demo
 npm run dev:demo
 ```
 
