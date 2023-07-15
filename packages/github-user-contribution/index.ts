@@ -1,4 +1,5 @@
 import fetch from "node-fetch";
+import jsdom from "jsdom";
 import { formatParams, Options } from "./formatParams";
 
 /**
@@ -26,7 +27,7 @@ export const getGithubUserContribution = async (
   const url =
     "year" in options || "from" in options || "to" in options
       ? `https://github.com/users/${userName}/contributions?` +
-        formatParams(options)
+      formatParams(options)
       : `https://github.com/${userName}`;
 
   const res = await fetch(url);
@@ -39,30 +40,32 @@ export const getGithubUserContribution = async (
 };
 
 const parseUserPage = (content: string) => {
-  // take roughly the svg block
-  const block = content
-    .split(`class="js-calendar-graph-svg"`)[1]
-    .split("</svg>")[0];
+  // there's no svg block anymore, now the contributions data is displayed as a table
+  const dom = new jsdom.JSDOM(content, { includeNodeLocations: true });
 
-  let x = 0;
-  let lastYAttribute = 0;
+  const blocks = Array.from(dom.window.document.querySelectorAll(
+    ".ContributionCalendar-day"
+  ));
 
-  const rects = Array.from(block.matchAll(/<rect[^>]*>[^<]*<\/rect>/g)).map(
-    ([m]) => {
-      const date = m.match(/data-date="([^"]+)"/)![1];
-      const level = +m.match(/data-level="([^"]+)"/)![1];
-      const yAttribute = +m.match(/y="([^"]+)"/)![1];
+  let y = 0;
+  let lastXAttribute = 0;
 
-      const literalCount = m.match(/(No|\d+) contributions? on/)![1];
-      const count = literalCount === "No" ? 0 : +literalCount;
+  const rects = blocks.map((m: Element) => {
+    const date = m.getAttribute("data-date");
+    const level = Number(m.getAttribute("data-level"));
+    const xAttribute = Number(m.getAttribute("data-ix"));
 
-      if (lastYAttribute > yAttribute) x++;
+    const literalCount = /(No|\d+) contributions? on/.test(m.innerHTML);
+    const count = literalCount ? 0 : +literalCount;
 
-      lastYAttribute = yAttribute;
-
-      return { date, count, level, x, yAttribute };
+    if (lastXAttribute > xAttribute) {
+      y++;
     }
-  );
+
+    lastXAttribute = xAttribute;
+
+    return { date, count, level, x: xAttribute, yAttribute: y };
+  });
 
   const yAttributes = Array.from(
     new Set(rects.map((c) => c.yAttribute)).keys()
@@ -71,9 +74,10 @@ const parseUserPage = (content: string) => {
   const cells = rects.map(({ yAttribute, ...c }) => ({
     y: yAttributes.indexOf(yAttribute),
     ...c,
-  }));
+  }));//.sort((c1, c2) => new Date(c1.date || '').getTime() - new Date(c2.date || '').getTime())//.slice(rects.length - 365);
 
-  return cells;
+  // return cells.slice(cells.length - 365);
+  return cells.filter(c => !!c.date);
 };
 
 export type Res = Awaited<ReturnType<typeof getGithubUserContribution>>;

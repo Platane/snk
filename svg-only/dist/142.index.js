@@ -3,7 +3,7 @@ exports.id = 142;
 exports.ids = [142];
 exports.modules = {
 
-/***/ 7142:
+/***/ 97142:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 // ESM COMPAT FLAG
@@ -15,17 +15,17 @@ __webpack_require__.d(__webpack_exports__, {
 });
 
 // EXTERNAL MODULE: external "fs"
-var external_fs_ = __webpack_require__(7147);
+var external_fs_ = __webpack_require__(57147);
 var external_fs_default = /*#__PURE__*/__webpack_require__.n(external_fs_);
 // EXTERNAL MODULE: external "path"
-var external_path_ = __webpack_require__(1017);
+var external_path_ = __webpack_require__(71017);
 var external_path_default = /*#__PURE__*/__webpack_require__.n(external_path_);
 // EXTERNAL MODULE: external "child_process"
-var external_child_process_ = __webpack_require__(2081);
+var external_child_process_ = __webpack_require__(32081);
 // EXTERNAL MODULE: external "canvas"
-var external_canvas_ = __webpack_require__(1576);
+var external_canvas_ = __webpack_require__(91576);
 // EXTERNAL MODULE: ../types/grid.ts
-var types_grid = __webpack_require__(2881);
+var types_grid = __webpack_require__(72881);
 ;// CONCATENATED MODULE: ../draw/pathRoundedRect.ts
 const pathRoundedRect_pathRoundedRect = (ctx, width, height, borderRadius) => {
     ctx.moveTo(borderRadius, 0);
@@ -144,7 +144,7 @@ const getCanvasWorldSize = (grid, o) => {
 };
 
 // EXTERNAL MODULE: ../types/snake.ts
-var types_snake = __webpack_require__(9347);
+var types_snake = __webpack_require__(59347);
 ;// CONCATENATED MODULE: ../solver/step.ts
 
 
@@ -159,12 +159,12 @@ const step = (grid, stack, snake) => {
 };
 
 // EXTERNAL MODULE: ../../node_modules/tmp/lib/tmp.js
-var tmp = __webpack_require__(6382);
+var tmp = __webpack_require__(36382);
 // EXTERNAL MODULE: external "gifsicle"
-var external_gifsicle_ = __webpack_require__(542);
+var external_gifsicle_ = __webpack_require__(50542);
 var external_gifsicle_default = /*#__PURE__*/__webpack_require__.n(external_gifsicle_);
 // EXTERNAL MODULE: ../../node_modules/gif-encoder-2/index.js
-var gif_encoder_2 = __webpack_require__(3561);
+var gif_encoder_2 = __webpack_require__(53561);
 var gif_encoder_2_default = /*#__PURE__*/__webpack_require__.n(gif_encoder_2);
 ;// CONCATENATED MODULE: ../gif-creator/index.ts
 
