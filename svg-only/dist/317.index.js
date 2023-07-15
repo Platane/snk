@@ -84,25 +84,27 @@ const parseUserPage = (content) => {
     // there's no svg block anymore, now the contributions data is displayed as a table
     const dom = new api/* JSDOM */.wC(content, { includeNodeLocations: true });
     const blocks = Array.from(dom.window.document.querySelectorAll(".ContributionCalendar-day"));
-    let x = 0;
-    let lastYAttribute = 0;
+    let y = 0;
+    let lastXAttribute = 0;
     const rects = blocks.map((m) => {
         const date = m.getAttribute("data-date");
         const level = Number(m.getAttribute("data-level"));
-        const yAttribute = Number(m.getAttribute("data-ix"));
+        const xAttribute = Number(m.getAttribute("data-ix"));
         const literalCount = /(No|\d+) contributions? on/.test(m.innerHTML);
         const count = literalCount ? 0 : +literalCount;
-        if (lastYAttribute > yAttribute)
-            x++;
-        lastYAttribute = yAttribute;
-        return { date, count, level, x, yAttribute };
+        if (lastXAttribute > xAttribute) {
+            y++;
+        }
+        lastXAttribute = xAttribute;
+        return { date, count, level, x: xAttribute, yAttribute: y };
     });
     const yAttributes = Array.from(new Set(rects.map((c) => c.yAttribute)).keys()).sort();
     const cells = rects.map(({ yAttribute, ...c }) => ({
         y: yAttributes.indexOf(yAttribute),
         ...c,
     }));
-    return cells.slice(cells.length - 365);
+    // return cells.slice(cells.length - 365);
+    return cells.filter(c => !!c.date);
 };
 
 // EXTERNAL MODULE: ../types/grid.ts
