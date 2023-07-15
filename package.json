@@ -27,7 +27,7 @@
   },
   "scripts": {
     "type": "tsc --noEmit",
-    "lint": "yarn prettier -c '**/*.{ts,js,json,md,yml,yaml}' '!packages/*/dist/**' '!svg-only/dist/**'",
+    "lint": "yarn prettier -c '**/*.{ts,js,json,md,yml,yaml}'",
     "test": "jest --verbose --passWithNoTests --no-cache",
     "dev:demo": "( cd packages/demo ; yarn dev )",
     "build:demo": "( cd packages/demo ; yarn build )",

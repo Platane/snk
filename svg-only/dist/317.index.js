@@ -82,15 +82,15 @@ const getGithubUserContribution = async (userName, options = {}) => {
 };
 const parseUserPage = (content) => {
     // there's no svg block anymore, now the contributions data is displayed as a table
-    const dom = new api/* JSDOM */.wC(content);
-    const blocks = dom.window.document.querySelectorAll(".ContributionCalendar-day");
+    const dom = new api/* JSDOM */.wC(content, { includeNodeLocations: true });
+    const blocks = Array.from(dom.window.document.querySelectorAll(".ContributionCalendar-day"));
     let x = 0;
     let lastYAttribute = 0;
-    const rects = Array.from(blocks).map((m) => {
-        const date = m.getAttribute('data-date');
-        const level = m.getAttribute('data-level');
-        const yAttribute = m.getAttribute('y');
-        const literalCount = /(No|\d+) contributions? on/.test(m.innerText);
+    const rects = blocks.map((m) => {
+        const date = m.getAttribute("data-date");
+        const level = Number(m.getAttribute("data-level"));
+        const yAttribute = Number(m.getAttribute("data-ix"));
+        const literalCount = /(No|\d+) contributions? on/.test(m.innerHTML);
         const count = literalCount ? 0 : +literalCount;
         if (lastYAttribute > yAttribute)
             x++;
@@ -102,7 +102,7 @@ const parseUserPage = (content) => {
         y: yAttributes.indexOf(yAttribute),
         ...c,
     }));
-    return cells;
+    return cells.slice(cells.length - 365);
 };
 
 // EXTERNAL MODULE: ../types/grid.ts

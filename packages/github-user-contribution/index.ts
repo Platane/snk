@@ -41,29 +41,29 @@ export const getGithubUserContribution = async (
 
 const parseUserPage = (content: string) => {
   // there's no svg block anymore, now the contributions data is displayed as a table
-  const dom = new jsdom.JSDOM(content);
+  const dom = new jsdom.JSDOM(content, { includeNodeLocations: true });
 
-  const blocks = dom.window.document.querySelectorAll(".ContributionCalendar-day")
+  const blocks = Array.from(dom.window.document.querySelectorAll(
+    ".ContributionCalendar-day"
+  ));
 
   let x = 0;
   let lastYAttribute = 0;
 
-  const rects = Array.from(blocks).map(
-    (m : any) => {
-      const date = m.getAttribute('data-date');
-      const level = m.getAttribute('data-level')
-      const yAttribute = m.getAttribute('y');
+  const rects = blocks.map((m: Element) => {
+    const date = m.getAttribute("data-date");
+    const level = Number(m.getAttribute("data-level"));
+    const yAttribute = Number(m.getAttribute("data-ix"));
 
-      const literalCount = /(No|\d+) contributions? on/.test(m.innerText);
-      const count = literalCount ? 0 : +literalCount;
+    const literalCount = /(No|\d+) contributions? on/.test(m.innerHTML);
+    const count = literalCount ? 0 : +literalCount;
 
-      if (lastYAttribute > yAttribute) x++;
+    if (lastYAttribute > yAttribute) x++;
 
-      lastYAttribute = yAttribute;
+    lastYAttribute = yAttribute;
 
-      return { date, count, level, x, yAttribute };
-    }
-  );
+    return { date, count, level, x, yAttribute };
+  });
 
   const yAttributes = Array.from(
     new Set(rects.map((c) => c.yAttribute)).keys()
@@ -74,7 +74,7 @@ const parseUserPage = (content: string) => {
     ...c,
   }));
 
-  return cells;
+  return cells.slice(cells.length - 365);
 };
 
 export type Res = Awaited<ReturnType<typeof getGithubUserContribution>>;
