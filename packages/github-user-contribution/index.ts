@@ -74,10 +74,9 @@ const parseUserPage = (content: string) => {
   const cells = rects.map(({ yAttribute, ...c }) => ({
     y: yAttributes.indexOf(yAttribute),
     ...c,
-  }));//.sort((c1, c2) => new Date(c1.date || '').getTime() - new Date(c2.date || '').getTime())//.slice(rects.length - 365);
+  }));
 
-  // return cells.slice(cells.length - 365);
-  return cells.filter(c => !!c.date);
+  return cells.filter(c => !!c.date).slice(cells.length - 365);
 };
 
 export type Res = Awaited<ReturnType<typeof getGithubUserContribution>>;
