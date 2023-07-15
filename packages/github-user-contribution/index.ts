@@ -39,21 +39,23 @@ export const getGithubUserContribution = async (
 };
 
 const parseUserPage = (content: string) => {
-  // take roughly the svg block
-  const block = content
-    .split(`class="js-calendar-graph-svg"`)[1]
-    .split("</svg>")[0];
+  // there's no svg block anymore, now the contributions data is displayed as a table
+  const dom = document.createRange().createContextualFragment(content)
+
+  const blocks = dom.querySelectorAll(".ContributionCalendar-day")
+
+  console.log(blocks)
 
   let x = 0;
   let lastYAttribute = 0;
 
-  const rects = Array.from(block.matchAll(/<rect[^>]*>[^<]*<\/rect>/g)).map(
-    ([m]) => {
-      const date = m.match(/data-date="([^"]+)"/)![1];
-      const level = +m.match(/data-level="([^"]+)"/)![1];
-      const yAttribute = +m.match(/y="([^"]+)"/)![1];
+  const rects = Array.from(blocks).map(
+    (m) => {
+      const date = m.getAttribute('data-date');
+      const level = m.getAttribute('data-level')
+      const yAttribute = m.getAttribute('y');
 
-      const literalCount = m.match(/(No|\d+) contributions? on/)![1];
+      const literalCount = /(No|\d+) contributions? on/.test(m.innerText);
       const count = literalCount === "No" ? 0 : +literalCount;
 
       if (lastYAttribute > yAttribute) x++;
