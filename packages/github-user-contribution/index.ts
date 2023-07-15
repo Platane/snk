@@ -76,7 +76,8 @@ const parseUserPage = (content: string) => {
     ...c,
   }));
 
-  return cells.filter(c => !!c.date).slice(cells.length - 365);
+  // return cells.slice(cells.length - 365);
+  return cells.filter(c => !!c.date);
 };
 
 export type Res = Awaited<ReturnType<typeof getGithubUserContribution>>;
