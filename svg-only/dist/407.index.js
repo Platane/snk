@@ -1,9 +1,9 @@
 "use strict";
-exports.id = 317;
-exports.ids = [317];
+exports.id = 407;
+exports.ids = [407];
 exports.modules = {
 
-/***/ 5317:
+/***/ 407:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 // ESM COMPAT FLAG
@@ -17,36 +17,7 @@ __webpack_require__.d(__webpack_exports__, {
 // EXTERNAL MODULE: ../../node_modules/node-fetch/lib/index.js
 var lib = __webpack_require__(2197);
 var lib_default = /*#__PURE__*/__webpack_require__.n(lib);
-;// CONCATENATED MODULE: ../github-user-contribution/formatParams.ts
-const formatParams = (options = {}) => {
-    const sp = new URLSearchParams();
-    const o = { ...options };
-    if ("year" in options) {
-        o.from = `${options.year}-01-01`;
-        o.to = `${options.year}-12-31`;
-    }
-    for (const s of ["from", "to"])
-        if (o[s]) {
-            const value = o[s];
-            if (value >= formatDate(new Date()))
-                throw new Error("Cannot get contribution for a date in the future.\nPlease limit your range to the current UTC day.");
-            sp.set(s, value);
-        }
-    return sp.toString();
-};
-const formatDate = (d) => {
-    const year = d.getUTCFullYear();
-    const month = d.getUTCMonth() + 1;
-    const date = d.getUTCDate();
-    return [
-        year,
-        month.toString().padStart(2, "0"),
-        date.toString().padStart(2, "0"),
-    ].join("-");
-};
-
 ;// CONCATENATED MODULE: ../github-user-contribution/index.ts
-
 
 /**
  * get the contribution grid from a github user page
@@ -64,43 +35,50 @@ const formatDate = (d) => {
  *  getGithubUserContribution("platane", { year: 2019 })
  *
  */
-const getGithubUserContribution = async (userName, options = {}) => {
-    // either use github.com/users/xxxx/contributions  for previous years
-    // or github.com/xxxx ( which gives the latest update to today result )
-    const url = "year" in options || "from" in options || "to" in options
-        ? `https://github.com/users/${userName}/contributions?` +
-            formatParams(options)
-        : `https://github.com/${userName}`;
-    const res = await lib_default()(url);
+const getGithubUserContribution = async (userName, o) => {
+    const query = /* GraphQL */ `
+    query ($login: String!) {
+      user(login: $login) {
+        contributionsCollection {
+          contributionCalendar {
+            weeks {
+              contributionDays {
+                contributionCount
+                contributionLevel
+                weekday
+                date
+              }
+            }
+          }
+        }
+      }
+    }
+  `;
+    const variables = { login: userName };
+    const res = await lib_default()("https://api.github.com/graphql", {
+        headers: {
+            Authorization: `bearer ${o.githubToken}`,
+            "Content-Type": "application/json",
+        },
+        method: "POST",
+        body: JSON.stringify({ variables, query }),
+    });
     if (!res.ok)
         throw new Error(res.statusText);
-    const resText = await res.text();
-    return parseUserPage(resText);
-};
-const parseUserPage = (content) => {
-    // take roughly the table block
-    const block = content
-        .split(`aria-describedby="contribution-graph-description"`)[1]
-        .split("<tbody>")[1]
-        .split("</tbody>")[0];
-    const cells = block.split("</tr>").flatMap((inside, y) => inside.split("</td>").flatMap((m) => {
-        const date = m.match(/data-date="([^"]+)"/)?.[1];
-        const literalLevel = m.match(/data-level="([^"]+)"/)?.[1];
-        const literalX = m.match(/data-ix="([^"]+)"/)?.[1];
-        const literalCount = m.match(/(No|\d+) contributions? on/)?.[1];
-        if (date && literalLevel && literalX && literalCount)
-            return [
-                {
-                    x: +literalX,
-                    y,
-                    date,
-                    count: +literalCount,
-                    level: +literalLevel,
-                },
-            ];
-        return [];
-    }));
-    return cells;
+    const { data, errors } = (await res.json());
+    if (errors?.[0])
+        throw errors[0];
+    return data.user.contributionsCollection.contributionCalendar.weeks.flatMap(({ contributionDays }, x) => contributionDays.map((d) => ({
+        x,
+        y: d.weekday,
+        date: d.date,
+        count: d.contributionCount,
+        level: (d.contributionLevel === "FOURTH_QUARTILE" && 4) ||
+            (d.contributionLevel === "THIRD_QUARTILE" && 3) ||
+            (d.contributionLevel === "SECOND_QUARTILE" && 2) ||
+            (d.contributionLevel === "FIRST_QUARTILE" && 1) ||
+            0,
+    })));
 };
 
 // EXTERNAL MODULE: ../types/grid.ts
@@ -655,9 +633,9 @@ const getPathToPose = (snake0, target, grid) => {
 
 
 
-const generateContributionSnake = async (userName, outputs) => {
+const generateContributionSnake = async (userName, outputs, options) => {
     console.log("🎣 fetching github user contribution");
-    const cells = await getGithubUserContribution(userName);
+    const cells = await getGithubUserContribution(userName, options);
     const grid = userContributionToGrid(cells);
     const snake = snake4;
     console.log("📡 computing best route");

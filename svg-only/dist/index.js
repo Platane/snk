@@ -3098,8 +3098,11 @@ const parseEntry = (entry) => {
             core.getInput("gif_out_path"),
             core.getInput("svg_out_path"),
         ]);
-        const { generateContributionSnake } = await Promise.all(/* import() */[__nccwpck_require__.e(197), __nccwpck_require__.e(317)]).then(__nccwpck_require__.bind(__nccwpck_require__, 5317));
-        const results = await generateContributionSnake(userName, outputs);
+        const githubToken = process.env.GITHUB_TOKEN;
+        const { generateContributionSnake } = await Promise.all(/* import() */[__nccwpck_require__.e(197), __nccwpck_require__.e(407)]).then(__nccwpck_require__.bind(__nccwpck_require__, 407));
+        const results = await generateContributionSnake(userName, outputs, {
+            githubToken,
+        });
         outputs.forEach((out, i) => {
             const result = results[i];
             if (out?.filename && result) {
