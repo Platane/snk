@@ -14,9 +14,9 @@ jobs:
           node-version: 16
       - run: yarn install --frozen-lockfile
 
-      - run: yarn type
-      - run: yarn lint
-      - run: yarn test --ci
+      - run: npm run type
+      - run: npm run lint
+      - run: npm run test --ci
 
   test-action:
     runs-on: ubuntu-latest
@@ -63,7 +63,7 @@ jobs:
 
       - name: build svg-only action
         run: |
-          yarn build:action
+          npm run build:action
           rm -r svg-only/dist
           mv packages/action/dist svg-only/dist
 
@@ -99,7 +99,7 @@ jobs:
           node-version: 16
       - run: yarn install --frozen-lockfile
 
-      - run: yarn build:demo
+      - run: npm run build:demo
         env:
           GITHUB_USER_CONTRIBUTION_API_ENDPOINT: https://snk-one.vercel.app/api/github-user-contribution/
 

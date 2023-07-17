@@ -53,7 +53,7 @@ jobs:
       - name: build svg-only action
         run: |
           yarn install --frozen-lockfile
-          yarn build:action
+          npm run build:action
           rm -r svg-only/dist
           mv packages/action/dist svg-only/dist
 
