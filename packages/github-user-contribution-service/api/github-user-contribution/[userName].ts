@@ -9,7 +9,7 @@ export default async (req: VercelRequest, res: VercelResponse) => {
     res.statusCode = 200;
     res.json(
       await getGithubUserContribution(userName as string, {
-        githubToken: process.env.GITHUB!,
+        githubToken: process.env.GITHUB_TOKEN!,
       })
     );
   } catch (err) {
