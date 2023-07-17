@@ -10,14 +10,14 @@
     "@snk/types": "1.0.0"
   },
   "devDependencies": {
-    "@types/dat.gui": "0.7.7",
+    "@types/dat.gui": "0.7.10",
     "dat.gui": "0.7.9",
-    "html-webpack-plugin": "5.5.0",
-    "ts-loader": "9.4.1",
+    "html-webpack-plugin": "5.5.3",
+    "ts-loader": "9.4.4",
     "ts-node": "10.9.1",
-    "webpack": "5.75.0",
-    "webpack-cli": "5.0.1",
-    "webpack-dev-server": "4.11.1"
+    "webpack": "5.88.1",
+    "webpack-cli": "5.1.4",
+    "webpack-dev-server": "4.15.1"
   },
   "scripts": {
     "build": "webpack",
