@@ -1,9 +1,18 @@
 import { getGithubUserContribution } from "..";
+import { config } from "dotenv";
+config({ path: __dirname + "/../../../.env" });
 
 describe("getGithubUserContribution", () => {
-  const promise = getGithubUserContribution("platane");
+  const promise = getGithubUserContribution("platane", {
+    githubToken: process.env.GITHUB_TOKEN!,
+  });
 
   it("should resolve", async () => {
+    console.log(
+      "process.env.GITHUB_TOKEN",
+      process.env.GITHUB_TOKEN?.replace(/\d/g, "x")
+    );
+
     await promise;
   });
 
@@ -26,10 +35,4 @@ describe("getGithubUserContribution", () => {
 
     expect(undefinedDays).toEqual([]);
   });
-});
-
-xit("should match snapshot for year=2019", async () => {
-  expect(
-    await getGithubUserContribution("platane", { year: 2019 })
-  ).toMatchSnapshot();
 });

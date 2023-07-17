@@ -2,6 +2,8 @@ import * as fs from "fs";
 import * as path from "path";
 import { generateContributionSnake } from "../generateContributionSnake";
 import { parseOutputsOption } from "../outputsOptions";
+import { config } from "dotenv";
+config({ path: __dirname + "/../../../.env" });
 
 jest.setTimeout(2 * 60 * 1000);
 
@@ -30,7 +32,9 @@ it(
 
     const outputs = parseOutputsOption(entries);
 
-    const results = await generateContributionSnake("platane", outputs);
+    const results = await generateContributionSnake("platane", outputs, {
+      githubToken: process.env.GITHUB_TOKEN!,
+    });
 
     expect(results[0]).toBeDefined();
     expect(results[1]).toBeDefined();

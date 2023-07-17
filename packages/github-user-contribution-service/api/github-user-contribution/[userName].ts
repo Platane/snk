@@ -7,7 +7,11 @@ export default async (req: VercelRequest, res: VercelResponse) => {
   try {
     res.setHeader("Access-Control-Allow-Origin", "https://platane.github.io");
     res.statusCode = 200;
-    res.json(await getGithubUserContribution(userName as string));
+    res.json(
+      await getGithubUserContribution(userName as string, {
+        githubToken: process.env.GITHUB!,
+      })
+    );
   } catch (err) {
     console.error(err);
     res.statusCode = 500;
