@@ -12,10 +12,11 @@ export const generateContributionSnake = async (
     format: "svg" | "gif";
     drawOptions: DrawOptions;
     animationOptions: AnimationOptions;
-  } | null)[]
+  } | null)[],
+  options: { githubToken: string }
 ) => {
   console.log("🎣 fetching github user contribution");
-  const cells = await getGithubUserContribution(userName);
+  const cells = await getGithubUserContribution(userName, options);
 
   const grid = userContributionToGrid(cells);
   const snake = snake4;

@@ -1,5 +1,4 @@
 import fetch from "node-fetch";
-import { formatParams, Options } from "./formatParams";
 
 /**
  * get the contribution grid from a github user page
@@ -19,57 +18,83 @@ import { formatParams, Options } from "./formatParams";
  */
 export const getGithubUserContribution = async (
   userName: string,
-  options: Options = {}
+  o: { githubToken: string }
 ) => {
-  // either use github.com/users/xxxx/contributions  for previous years
-  // or github.com/xxxx ( which gives the latest update to today result )
-  const url =
-    "year" in options || "from" in options || "to" in options
-      ? `https://github.com/users/${userName}/contributions?` +
-        formatParams(options)
-      : `https://github.com/${userName}`;
+  const query = /* GraphQL */ `
+    query ($login: String!) {
+      user(login: $login) {
+        contributionsCollection {
+          contributionCalendar {
+            weeks {
+              contributionDays {
+                contributionCount
+                contributionLevel
+                weekday
+                date
+              }
+            }
+          }
+        }
+      }
+    }
+  `;
+  const variables = { login: userName };
 
-  const res = await fetch(url);
+  const res = await fetch("https://api.github.com/graphql", {
+    headers: {
+      Authorization: `bearer ${o.githubToken}`,
+      "Content-Type": "application/json",
+    },
+    method: "POST",
+    body: JSON.stringify({ variables, query }),
+  });
 
   if (!res.ok) throw new Error(res.statusText);
 
-  const resText = await res.text();
+  const { data, errors } = (await res.json()) as {
+    data: GraphQLRes;
+    errors?: { message: string }[];
+  };
 
-  return parseUserPage(resText);
+  if (errors?.[0]) throw errors[0];
+
+  return data.user.contributionsCollection.contributionCalendar.weeks.flatMap(
+    ({ contributionDays }, x) =>
+      contributionDays.map((d) => ({
+        x,
+        y: d.weekday,
+        date: d.date,
+        count: d.contributionCount,
+        level:
+          (d.contributionLevel === "FOURTH_QUARTILE" && 4) ||
+          (d.contributionLevel === "THIRD_QUARTILE" && 3) ||
+          (d.contributionLevel === "SECOND_QUARTILE" && 2) ||
+          (d.contributionLevel === "FIRST_QUARTILE" && 1) ||
+          0,
+      }))
+  );
 };
 
-const parseUserPage = (content: string) => {
-  // take roughly the table block
-  const block = content
-    .split(`aria-describedby="contribution-graph-description"`)[1]
-    .split("<tbody>")[1]
-    .split("</tbody>")[0];
-
-  const cells = block.split("</tr>").flatMap((inside, y) =>
-    inside.split("</td>").flatMap((m) => {
-      const date = m.match(/data-date="([^"]+)"/)?.[1];
-
-      const literalLevel = m.match(/data-level="([^"]+)"/)?.[1];
-      const literalX = m.match(/data-ix="([^"]+)"/)?.[1];
-      const literalCount = m.match(/(No|\d+) contributions? on/)?.[1];
-
-      if (date && literalLevel && literalX && literalCount)
-        return [
-          {
-            x: +literalX,
-            y,
-
-            date,
-            count: +literalCount,
-            level: +literalLevel,
-          },
-        ];
-
-      return [];
-    })
-  );
-
-  return cells;
+type GraphQLRes = {
+  user: {
+    contributionsCollection: {
+      contributionCalendar: {
+        weeks: {
+          contributionDays: {
+            contributionCount: number;
+            contributionLevel:
+              | "FOURTH_QUARTILE"
+              | "THIRD_QUARTILE"
+              | "SECOND_QUARTILE"
+              | "FIRST_QUARTILE"
+              | "NONE";
+            date: string;
+            weekday: number;
+          }[];
+        }[];
+      };
+    };
+  };
 };
 
 export type Res = Awaited<ReturnType<typeof getGithubUserContribution>>;
