@@ -78,27 +78,27 @@ const getGithubUserContribution = async (userName, options = {}) => {
     return parseUserPage(resText);
 };
 const parseUserPage = (content) => {
-    // take roughly the svg block
+    // take roughly the table block
     const block = content
-        .split(`class="js-calendar-graph-svg"`)[1]
-        .split("</svg>")[0];
-    let x = 0;
-    let lastYAttribute = 0;
-    const rects = Array.from(block.matchAll(/<rect[^>]*>[^<]*<\/rect>/g)).map(([m]) => {
-        const date = m.match(/data-date="([^"]+)"/)[1];
-        const level = +m.match(/data-level="([^"]+)"/)[1];
-        const yAttribute = +m.match(/y="([^"]+)"/)[1];
-        const literalCount = m.match(/(No|\d+) contributions? on/)[1];
-        const count = literalCount === "No" ? 0 : +literalCount;
-        if (lastYAttribute > yAttribute)
-            x++;
-        lastYAttribute = yAttribute;
-        return { date, count, level, x, yAttribute };
-    });
-    const yAttributes = Array.from(new Set(rects.map((c) => c.yAttribute)).keys()).sort();
-    const cells = rects.map(({ yAttribute, ...c }) => ({
-        y: yAttributes.indexOf(yAttribute),
-        ...c,
+        .split(`aria-describedby="contribution-graph-description"`)[1]
+        .split("<tbody>")[1]
+        .split("</tbody>")[0];
+    const cells = block.split("</tr>").flatMap((inside, y) => inside.split("</td>").flatMap((m) => {
+        const date = m.match(/data-date="([^"]+)"/)?.[1];
+        const literalLevel = m.match(/data-level="([^"]+)"/)?.[1];
+        const literalX = m.match(/data-ix="([^"]+)"/)?.[1];
+        const literalCount = m.match(/(No|\d+) contributions? on/)?.[1];
+        if (date && literalLevel && literalX && literalCount)
+            return [
+                {
+                    x: +literalX,
+                    y,
+                    date,
+                    count: +literalCount,
+                    level: +literalLevel,
+                },
+            ];
+        return [];
     }));
     return cells;
 };
