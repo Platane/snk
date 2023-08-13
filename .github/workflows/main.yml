@@ -33,7 +33,7 @@ jobs:
         id: generate-snake
         uses: ./
         with:
-          github_user_name: platane
+          github_user_name: FidanNovruzlu
           outputs: |
             dist/github-contribution-grid-snake.svg
             dist/github-contribution-grid-snake-dark.svg?palette=github-dark
@@ -75,7 +75,7 @@ jobs:
         id: generate-snake
         uses: ./svg-only
         with:
-          github_user_name: platane
+          github_user_name: FidanNovruzlu
           outputs: |
             dist/github-contribution-grid-snake.svg
             dist/github-contribution-grid-snake-dark.svg?palette=github-dark
