@@ -60,9 +60,9 @@ Available as github action. It can automatically generate a new image each day. 
     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
 
-[example with cron job](https://github.com/Platane/Platane/blob/master/.github/workflows/main.yml#L25-L33)
+[example with cron job](https://github.com/Platane/Platane/blob/master/.github/workflows/main.yml#L26-L35)
 
-If you are only interested in generating a svg, consider using this faster action: `uses: Platane/snk/svg-only@v2`
+If you are only interested in generating a svg, consider using this faster action: `uses: Platane/snk/svg-only@v3`
 
 **dark mode**
 
