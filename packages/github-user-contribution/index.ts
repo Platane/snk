@@ -1,5 +1,3 @@
-import fetch from "node-fetch";
-
 /**
  * get the contribution grid from a github user page
  *

@@ -3,7 +3,7 @@ description: "Generates a snake game from a github user contributions grid. Outp
 author: "platane"
 
 runs:
-  using: node16
+  using: node20
   main: dist/index.js
 
 inputs:

@@ -48,7 +48,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           cache: yarn
-          node-version: 16
+          node-version: 20
 
       - name: build svg-only action
         run: |

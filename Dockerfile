@@ -1,4 +1,4 @@
-FROM node:16-slim as builder
+FROM node:20-slim as builder
 
 WORKDIR /app
 
@@ -18,7 +18,7 @@ RUN yarn build:action
 
 
 
-FROM node:16-slim
+FROM node:20-slim
 
 WORKDIR /action-release
 
