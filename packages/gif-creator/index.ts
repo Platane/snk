@@ -43,7 +43,7 @@ export const createGif = async (
     const { width, height } = getCanvasWorldSize(grid0, drawOptions);
 
     const canvas = createCanvas(width, height);
-    const ctx = canvas.getContext("2d")!;
+    const ctx = canvas.getContext("2d") as any as CanvasRenderingContext2D;
 
     const grid = copyGrid(grid0);
     const stack: Color[] = [];
