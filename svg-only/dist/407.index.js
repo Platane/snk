@@ -14,11 +14,7 @@ __webpack_require__.d(__webpack_exports__, {
   "generateContributionSnake": () => (/* binding */ generateContributionSnake)
 });
 
-// EXTERNAL MODULE: ../../node_modules/node-fetch/lib/index.js
-var lib = __webpack_require__(2197);
-var lib_default = /*#__PURE__*/__webpack_require__.n(lib);
 ;// CONCATENATED MODULE: ../github-user-contribution/index.ts
-
 /**
  * get the contribution grid from a github user page
  *
@@ -55,7 +51,7 @@ const getGithubUserContribution = async (userName, o) => {
     }
   `;
     const variables = { login: userName };
-    const res = await lib_default()("https://api.github.com/graphql", {
+    const res = await fetch("https://api.github.com/graphql", {
         headers: {
             Authorization: `bearer ${o.githubToken}`,
             "Content-Type": "application/json",
