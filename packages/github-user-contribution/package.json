@@ -2,10 +2,10 @@
   "name": "@snk/github-user-contribution",
   "version": "1.0.0",
   "dependencies": {
-    "node-fetch": "2.6.12"
+    "node-fetch": "2.7.0"
   },
   "devDependencies": {
-    "@types/node-fetch": "2.6.4",
+    "@types/node-fetch": "2.6.5",
     "dotenv": "16.3.1"
   }
 }
