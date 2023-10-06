@@ -2,7 +2,11 @@
   "name": "@snk/github-user-contribution-service",
   "version": "1.0.0",
   "dependencies": {
+    "node-fetch": "2.7.0",
     "@snk/github-user-contribution": "1.0.0",
     "@vercel/node": "3.0.6"
+  },
+  "devDependencies": {
+    "@types/node-fetch": "2.6.6"
   }
 }
