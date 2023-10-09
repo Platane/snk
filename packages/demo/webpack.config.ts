@@ -1,6 +1,7 @@
 import path from "path";
 import HtmlWebpackPlugin from "html-webpack-plugin";
 import webpack from "webpack";
+import * as core from "@actions/core";
 import { getGithubUserContribution } from "@snk/github-user-contribution";
 import { config } from "dotenv";
 import type { Configuration as WebpackConfiguration } from "webpack";
@@ -16,7 +17,8 @@ const webpackDevServerConfiguration: WebpackDevServerConfiguration = {
       const userName: string = req.params.userName;
       res.send(
         await getGithubUserContribution(userName, {
-          githubToken: process.env.GITHUB_TOKEN!,
+          githubToken:
+            process.env.GITHUB_TOKEN ?? core.getInput("github_token"),
         })
       );
     });

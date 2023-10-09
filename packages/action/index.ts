@@ -12,7 +12,8 @@ import { parseOutputsOption } from "./outputsOptions";
         core.getInput("svg_out_path"),
       ]
     );
-    const githubToken = process.env.GITHUB_TOKEN!;
+    const githubToken =
+      process.env.GITHUB_TOKEN ?? core.getInput("github_token");
 
     const { generateContributionSnake } = await import(
       "./generateContributionSnake"

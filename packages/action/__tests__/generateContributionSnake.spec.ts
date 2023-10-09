@@ -1,5 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
+import * as core from "@actions/core";
 import { generateContributionSnake } from "../generateContributionSnake";
 import { parseOutputsOption } from "../outputsOptions";
 import { config } from "dotenv";
@@ -33,7 +34,7 @@ it(
     const outputs = parseOutputsOption(entries);
 
     const results = await generateContributionSnake("platane", outputs, {
-      githubToken: process.env.GITHUB_TOKEN!,
+      githubToken: core.getInput("github_token"),
     });
 
     expect(results[0]).toBeDefined();
