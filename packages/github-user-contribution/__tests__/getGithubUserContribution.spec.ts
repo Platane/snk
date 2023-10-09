@@ -1,18 +1,14 @@
+import * as core from "@actions/core";
 import { getGithubUserContribution } from "..";
 import { config } from "dotenv";
 config({ path: __dirname + "/../../../.env" });
 
 describe("getGithubUserContribution", () => {
   const promise = getGithubUserContribution("platane", {
-    githubToken: process.env.GITHUB_TOKEN!,
+    githubToken: process.env.GITHUB_TOKEN ?? core.getInput("github_token"),
   });
 
   it("should resolve", async () => {
-    console.log(
-      "process.env.GITHUB_TOKEN",
-      process.env.GITHUB_TOKEN?.replace(/\d/g, "x")
-    );
-
     await promise;
   });
 

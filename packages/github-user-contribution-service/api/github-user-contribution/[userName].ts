@@ -1,3 +1,4 @@
+import * as core from "@actions/core";
 import { getGithubUserContribution } from "@snk/github-user-contribution";
 import { VercelRequest, VercelResponse } from "@vercel/node";
 import nodeFetch from "node-fetch";
@@ -12,7 +13,7 @@ export default async (req: VercelRequest, res: VercelResponse) => {
     res.statusCode = 200;
     res.json(
       await getGithubUserContribution(userName as string, {
-        githubToken: process.env.GITHUB_TOKEN!,
+        githubToken: process.env.GITHUB_TOKEN ?? core.getInput("github_token"),
       })
     );
   } catch (err) {
