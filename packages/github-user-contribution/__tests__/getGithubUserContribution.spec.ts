@@ -8,11 +8,6 @@ describe("getGithubUserContribution", () => {
   });
 
   it("should resolve", async () => {
-    console.log(
-      "process.env.GITHUB_TOKEN",
-      process.env.GITHUB_TOKEN?.replace(/\d/g, "x")
-    );
-
     await promise;
   });
 
