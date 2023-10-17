@@ -3074,7 +3074,7 @@ const parseEntry = (entry) => {
             core.getInput("gif_out_path"),
             core.getInput("svg_out_path"),
         ]);
-        const githubToken = process.env.GITHUB_TOKEN;
+        const githubToken = process.env.GITHUB_TOKEN ?? core.getInput("github_token");
         const { generateContributionSnake } = await __nccwpck_require__.e(/* import() */ 407).then(__nccwpck_require__.bind(__nccwpck_require__, 407));
         const results = await generateContributionSnake(userName, outputs, {
             githubToken,
