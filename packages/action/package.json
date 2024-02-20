@@ -10,8 +10,8 @@
     "@snk/types": "1.0.0"
   },
   "devDependencies": {
-    "@vercel/ncc": "0.38.0",
-    "dotenv": "16.3.1"
+    "@vercel/ncc": "0.38.1",
+    "dotenv": "16.4.5"
   },
   "scripts": {
     "build": "ncc build --external canvas --external gifsicle --out dist ./index.ts",

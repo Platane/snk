@@ -4,23 +4,31 @@ import webpack from "webpack";
 import { getGithubUserContribution } from "@snk/github-user-contribution";
 import { config } from "dotenv";
 import type { Configuration as WebpackConfiguration } from "webpack";
-import type { Configuration as WebpackDevServerConfiguration } from "webpack-dev-server";
+import {
+  ExpressRequestHandler,
+  type Configuration as WebpackDevServerConfiguration,
+} from "webpack-dev-server";
 config({ path: __dirname + "/../../.env" });
 
 const demos: string[] = require("./demo.json");
 
 const webpackDevServerConfiguration: WebpackDevServerConfiguration = {
   open: { target: demos[1] + ".html" },
-  onAfterSetupMiddleware: ({ app }) => {
-    app!.get("/api/github-user-contribution/:userName", async (req, res) => {
-      const userName: string = req.params.userName;
-      res.send(
-        await getGithubUserContribution(userName, {
-          githubToken: process.env.GITHUB_TOKEN!,
-        })
-      );
-    });
-  },
+  setupMiddlewares: (ms) => [
+    ...ms,
+    (async (req, res, next) => {
+      const userName = req.url.match(
+        /\/api\/github-user-contribution\/(\w+)/
+      )?.[1];
+      if (userName)
+        res.send(
+          await getGithubUserContribution(userName, {
+            githubToken: process.env.GITHUB_TOKEN!,
+          })
+        );
+      else next();
+    }) as ExpressRequestHandler,
+  ],
 };
 
 const webpackConfiguration: WebpackConfiguration = {

@@ -6,15 +6,15 @@
   "repository": "github:platane/snk",
   "devDependencies": {
     "@sucrase/jest-plugin": "3.0.0",
-    "@types/jest": "29.5.5",
-    "@types/node": "20.6.3",
+    "@types/jest": "29.5.12",
+    "@types/node": "20.11.19",
     "jest": "29.7.0",
     "prettier": "2.8.8",
-    "sucrase": "3.34.0",
-    "typescript": "5.2.2"
+    "sucrase": "3.35.0",
+    "typescript": "5.3.3"
   },
   "workspaces": [
-    "packages/**"
+    "packages/*"
   ],
   "jest": {
     "testEnvironment": "node",
