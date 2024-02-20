@@ -1,8 +1,5 @@
 import { getGithubUserContribution } from "@snk/github-user-contribution";
 import { VercelRequest, VercelResponse } from "@vercel/node";
-import nodeFetch from "node-fetch";
-
-(global as any).fetch = nodeFetch;
 
 export default async (req: VercelRequest, res: VercelResponse) => {
   const { userName } = req.query;
