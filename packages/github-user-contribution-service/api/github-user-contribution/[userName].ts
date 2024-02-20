@@ -6,6 +6,7 @@ export default async (req: VercelRequest, res: VercelResponse) => {
 
   try {
     res.setHeader("Access-Control-Allow-Origin", "https://platane.github.io");
+    res.setHeader("Cache-Control", "max-age=21600");
     res.statusCode = 200;
     res.json(
       await getGithubUserContribution(userName as string, {
