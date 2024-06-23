@@ -21,7 +21,7 @@ export const generateContributionSnake = async (
     colorBorder: "#1b1f230a",
     colorDots: colorScheme as any,
     colorEmpty: colorScheme[0],
-    colorSnake: "purple",
+    colorSnake: "#3aff3a",
     cells,
     dark: {
       colorEmpty: "#161b22",
