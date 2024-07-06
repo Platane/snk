@@ -11,9 +11,10 @@ export default async (req: VercelRequest, res: VercelResponse) => {
         "https://platane.github.io",
         "https://platane.me",
       ];
-      const reqOrigin =
-        req.url && new URL(req.url, `http://${req.headers.host}`)?.origin;
-      const allowedOrigin = allowedOrigins.find((o) => o === reqOrigin);
+
+      const allowedOrigin = allowedOrigins.find(
+        (o) => o === req.headers.origin
+      );
       if (allowedOrigin)
         res.setHeader("Access-Control-Allow-Origin", allowedOrigin);
     }
