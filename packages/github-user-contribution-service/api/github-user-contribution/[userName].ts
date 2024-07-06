@@ -5,7 +5,18 @@ export default async (req: VercelRequest, res: VercelResponse) => {
   const { userName } = req.query;
 
   try {
-    res.setHeader("Access-Control-Allow-Origin", "https://platane.github.io");
+    // handle CORS
+    {
+      const allowedOrigins = [
+        "https://platane.github.io",
+        "https://platane.me",
+      ];
+      const reqOrigin =
+        req.url && new URL(req.url, `http://${req.headers.host}`)?.origin;
+      const allowedOrigin = allowedOrigins.find((o) => o === reqOrigin);
+      if (allowedOrigin)
+        res.setHeader("Access-Control-Allow-Origin", allowedOrigin);
+    }
     res.setHeader("Cache-Control", "max-age=21600, s-maxage=21600");
     res.statusCode = 200;
     res.json(
