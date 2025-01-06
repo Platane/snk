@@ -91,3 +91,5 @@ npm run dev:demo
 ## Implementation
 
 [solver algorithm](./packages/solver/README.md)
+
+[![Star History](https://api.lucabubi.me/chart?username=Platane&repository=snk&color=violet)](https://github.com/lucabubi/star-history)
