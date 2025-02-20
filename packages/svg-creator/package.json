@@ -3,6 +3,5 @@
   "version": "1.0.0",
   "dependencies": {
     "@snk/solver": "1.0.0"
-  },
-  "devDependencies": {}
+  }
 }
