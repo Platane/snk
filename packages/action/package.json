@@ -1,18 +1,18 @@
 {
-  "name": "@snk/action",
-  "version": "1.0.0",
-  "dependencies": {
-    "@actions/core": "1.10.1",
-    "@snk/gif-creator": "1.0.0",
-    "@snk/github-user-contribution": "1.0.0",
-    "@snk/solver": "1.0.0",
-    "@snk/svg-creator": "1.0.0",
-    "@snk/types": "1.0.0"
-  },
-  "devDependencies": {
-    "@vercel/ncc": "0.38.1",
-  },
-  "scripts": {
-    "build": "ncc build --external canvas --external gifsicle --out dist ./index.ts",
-  }
+	"name": "@snk/action",
+	"version": "1.0.0",
+	"dependencies": {
+		"@actions/core": "1.10.1",
+		"@snk/gif-creator": "1.0.0",
+		"@snk/github-user-contribution": "1.0.0",
+		"@snk/solver": "1.0.0",
+		"@snk/svg-creator": "1.0.0",
+		"@snk/types": "1.0.0"
+	},
+	"devDependencies": {
+		"@vercel/ncc": "0.38.1"
+	},
+	"scripts": {
+		"build": "bun build  --external canvas --external gifsicle --target node --splitting --outdir dist ./index.ts "
+	}
 }
