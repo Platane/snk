@@ -23,7 +23,7 @@ FROM node:20-slim
 WORKDIR /action-release
 
 RUN export YARN_CACHE_FOLDER="$(mktemp -d)" \
-    && yarn add canvas@2.11.2 gifsicle@5.3.0 --no-lockfile \
+    && yarn add canvas@3.1.0 gifsicle@5.3.0 --no-lockfile \
     && rm -r "$YARN_CACHE_FOLDER"
 
 COPY --from=builder /app/packages/action/dist/ /action-release/
