@@ -4,3 +4,5 @@ dist
 !svg-only/dist
 build
 .env
+.wrangler
+.dev.vars

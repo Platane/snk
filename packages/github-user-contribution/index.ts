@@ -42,12 +42,13 @@ export const getGithubUserContribution = async (
     headers: {
       Authorization: `bearer ${o.githubToken}`,
       "Content-Type": "application/json",
+      "User-Agent": "me@platane.me",
     },
     method: "POST",
     body: JSON.stringify({ variables, query }),
   });
 
-  if (!res.ok) throw new Error(res.statusText);
+  if (!res.ok) throw new Error(await res.text().catch(() => res.statusText));
 
   const { data, errors } = (await res.json()) as {
     data: GraphQLRes;

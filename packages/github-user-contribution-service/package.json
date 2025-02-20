@@ -2,7 +2,13 @@
   "name": "@snk/github-user-contribution-service",
   "version": "1.0.0",
   "dependencies": {
-    "@snk/github-user-contribution": "1.0.0",
-    "@vercel/node": "5.1.7"
+    "@snk/github-user-contribution": "1.0.0"
+  },
+  "devDependencies": {
+    "wrangler": "3.109.2",
+    "@cloudflare/workers-types": "4.20250214.0"
+  },
+  "scripts": {
+    "deploy": "wrangler deploy"
   }
 }
