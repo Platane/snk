@@ -11,10 +11,9 @@
   },
   "devDependencies": {
     "@types/gifsicle": "5.2.2",
-    "@types/tmp": "0.2.6",
-    "@vercel/ncc": "0.38.1"
+    "@types/tmp": "0.2.6"
   },
   "scripts": {
-    "benchmark": "ncc run __tests__/benchmark.ts --quiet"
+    "benchmark": "bun __tests__/benchmark.ts"
   }
 }

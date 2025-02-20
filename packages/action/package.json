@@ -13,7 +13,6 @@
     "@vercel/ncc": "0.38.1"
   },
   "scripts": {
-    "build": "ncc build --external canvas --external gifsicle --out dist ./index.ts",
-    "build-bun": "bun build  --external canvas --external gifsicle --target node --outdir dist ./index.ts"
+    "build": "ncc build --external canvas --external gifsicle --out dist ./index.ts"
   }
 }

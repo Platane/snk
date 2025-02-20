@@ -67,7 +67,6 @@
       "devDependencies": {
         "@types/gifsicle": "5.2.2",
         "@types/tmp": "0.2.6",
-        "@vercel/ncc": "0.38.1",
       },
     },
     "packages/github-user-contribution": {
