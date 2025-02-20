@@ -95,5 +95,5 @@ export const createGif = async (
       ].flat()
     );
 
-    return fs.readFileSync(optimizedFileName);
+    return new Uint8Array(fs.readFileSync(optimizedFileName));
   });

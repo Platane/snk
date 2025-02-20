@@ -45,7 +45,7 @@ const animationOptions: AnimationOptions = { frameDuration: 100, step: 1 };
   ) {
     const stats: number[] = [];
 
-    let buffer: Buffer;
+    let buffer: Uint8Array;
     const start = Date.now();
     const chainL = chain.slice(0, length);
     for (let k = 0; k < 10 && (Date.now() - start < 10 * 1000 || k < 2); k++) {
