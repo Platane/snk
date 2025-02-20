@@ -5,5 +5,5 @@ compatibility_date = "2024-09-02"
 account_id = "56268cde636c288343cb0767952ecf2e"
 workers_dev = true
 
-[observability]
-enabled = true
+# [observability]
+# enabled = true
