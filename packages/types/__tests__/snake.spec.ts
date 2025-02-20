@@ -1,3 +1,4 @@
+import { it, expect } from "bun:test";
 import {
   createSnakeFromCells,
   nextSnake,

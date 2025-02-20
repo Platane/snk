@@ -23,7 +23,7 @@ var external_path_default = /*#__PURE__*/__webpack_require__.n(external_path_);
 // EXTERNAL MODULE: external "child_process"
 var external_child_process_ = __webpack_require__(2081);
 // EXTERNAL MODULE: external "canvas"
-var external_canvas_ = __webpack_require__(1576);
+var external_canvas_ = __webpack_require__(1813);
 // EXTERNAL MODULE: ../types/grid.ts
 var types_grid = __webpack_require__(2881);
 ;// CONCATENATED MODULE: ../draw/pathRoundedRect.ts

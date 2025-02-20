@@ -2,13 +2,11 @@ import path from "path";
 import HtmlWebpackPlugin from "html-webpack-plugin";
 import webpack from "webpack";
 import { getGithubUserContribution } from "@snk/github-user-contribution";
-import { config } from "dotenv";
 import type { Configuration as WebpackConfiguration } from "webpack";
 import {
   ExpressRequestHandler,
   type Configuration as WebpackDevServerConfiguration,
 } from "webpack-dev-server";
-config({ path: __dirname + "/../../.env" });
 
 const demos: string[] = require("./demo.json");
 

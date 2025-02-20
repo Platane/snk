@@ -1,3 +1,4 @@
+import { it, expect } from "bun:test";
 import { minifyCss } from "../css-utils";
 
 it("should minify css", () => {
@@ -6,7 +7,7 @@ it("should minify css", () => {
     .c {
         color  : red    ;
     }
-    
+
     `)
   ).toBe(".c{color:red}");
 
@@ -17,10 +18,10 @@ it("should minify css", () => {
         color  : red    ;
     }
 
-    # { 
+    # {
         animation: linear     10;
     }
-    
+
     `)
   ).toBe(".c{top:0;color:red}#{animation:linear 10}");
 });

@@ -10,11 +10,9 @@
     "@snk/types": "1.0.0"
   },
   "devDependencies": {
-    "@vercel/ncc": "0.38.1",
-    "dotenv": "16.4.5"
+    "@vercel/ncc": "0.38.1"
   },
   "scripts": {
-    "build": "ncc build --external canvas --external gifsicle --out dist ./index.ts",
-    "run:build": "INPUT_GITHUB_USER_NAME=platane INPUT_OUTPUTS='dist/out.svg' node dist/index.js"
+    "build": "ncc build --external canvas --external gifsicle --out dist ./index.ts"
   }
 }

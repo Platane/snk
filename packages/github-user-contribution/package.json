@@ -1,7 +1,4 @@
 {
   "name": "@snk/github-user-contribution",
-  "version": "1.0.0",
-  "devDependencies": {
-    "dotenv": "16.4.5"
-  }
+  "version": "1.0.0"
 }

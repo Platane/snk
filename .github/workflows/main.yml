@@ -8,15 +8,13 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v3
-        with:
-          cache: yarn
-          node-version: 20
-      - run: yarn install --frozen-lockfile
+      - uses: oven-sh/setup-bun@v1
+
+      - run: bun install --frozen-lockfile
 
       - run: npm run type
       - run: npm run lint
-      - run: npm run test --ci
+      - run: bun test
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -46,7 +44,7 @@ jobs:
           test -f dist/github-contribution-grid-snake-dark.svg
           test -f dist/github-contribution-grid-snake.gif
 
-      - uses: crazy-max/ghaction-github-pages@v3.1.0
+      - uses: crazy-max/ghaction-github-pages@v4.1.0
         with:
           target_branch: output
           build_dir: dist
@@ -57,11 +55,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v3
-        with:
-          cache: yarn
-          node-version: 20
-      - run: yarn install --frozen-lockfile
+      - uses: oven-sh/setup-bun@v1
+
+      - run: bun install --frozen-lockfile
 
       - name: build svg-only action
         run: |
@@ -84,7 +80,7 @@ jobs:
           test -f dist/github-contribution-grid-snake.svg
           test -f dist/github-contribution-grid-snake-dark.svg
 
-      - uses: crazy-max/ghaction-github-pages@v3.1.0
+      - uses: crazy-max/ghaction-github-pages@v4.1.0
         with:
           target_branch: output-svg-only
           build_dir: dist
@@ -93,22 +89,22 @@ jobs:
 
   deploy-ghpages:
     runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v3
-        with:
-          cache: yarn
-          node-version: 20
-      - run: yarn install --frozen-lockfile
+      - uses: oven-sh/setup-bun@v1
+
+      - run: bun install --frozen-lockfile
 
       - run: npm run build:demo
         env:
           GITHUB_USER_CONTRIBUTION_API_ENDPOINT: https://snk-one.vercel.app/api/github-user-contribution/
 
-      - uses: crazy-max/ghaction-github-pages@v3.1.0
-        if: success() && github.ref == 'refs/heads/main'
+      - uses: actions/upload-pages-artifact@v3
         with:
-          target_branch: gh-pages
-          build_dir: packages/demo/dist
-        env:
-          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN_GH_PAGES }}
+          path: packages/demo/dist
+
+      - uses: actions/deploy-pages@v4
+        if: success() && github.ref == 'refs/heads/main'

@@ -1,3 +1,4 @@
+import { it, expect, describe } from "bun:test";
 import { sortPush } from "../utils/sortPush";
 
 const sortFn = (a: number, b: number) => a - b;

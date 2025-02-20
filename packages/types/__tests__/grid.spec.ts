@@ -1,13 +1,14 @@
+import { it, expect, test } from "bun:test";
 import { createEmptyGrid, setColor, getColor, isInside, Color } from "../grid";
 
 it("should set / get cell", () => {
   const grid = createEmptyGrid(2, 3);
 
-  expect(getColor(grid, 0, 1)).toBe(0);
+  expect(getColor(grid, 0, 1)).toBe(0 as any);
 
   setColor(grid, 0, 1, 1 as Color);
 
-  expect(getColor(grid, 0, 1)).toBe(1);
+  expect(getColor(grid, 0, 1)).toBe(1 as any);
 });
 
 test.each([

@@ -1,6 +1,5 @@
 import { getGithubUserContribution } from "..";
-import { config } from "dotenv";
-config({ path: __dirname + "/../../../.env" });
+import { describe, it, expect } from "bun:test";
 
 describe("getGithubUserContribution", () => {
   const promise = getGithubUserContribution("platane", {

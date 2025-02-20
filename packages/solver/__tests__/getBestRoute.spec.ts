@@ -1,3 +1,4 @@
+import { it, expect } from "bun:test";
 import { getBestRoute } from "../getBestRoute";
 import { Color, createEmptyGrid, setColor } from "@snk/types/grid";
 import { createSnakeFromCells, snakeToCells } from "@snk/types/snake";

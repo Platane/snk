@@ -45,20 +45,18 @@ jobs:
         run: |
           sed -i "s/image: .*/image: docker:\/\/platane\/snk@${{ steps.docker-build.outputs.digest }}/" action.yml
 
-      - uses: actions/setup-node@v3
-        with:
-          cache: yarn
-          node-version: 20
+      - uses: oven-sh/setup-bun@v1
+
+      - run: bun install --frozen-lockfile
 
       - name: build svg-only action
         run: |
-          yarn install --frozen-lockfile
           npm run build:action
           rm -r svg-only/dist
           mv packages/action/dist svg-only/dist
 
       - name: bump package version
-        run: yarn version --no-git-tag-version --new-version ${{ github.event.inputs.version }}
+        run: npm version --no-git-tag-version --new-version ${{ github.event.inputs.version }}
 
       - name: push new build, tag version and push
         id: push-tags
@@ -77,13 +75,11 @@ jobs:
             git tag v$( echo $VERSION | cut -d. -f 1-2 )
             git push origin --tags --force
             echo "prerelease=false" >> $GITHUB_OUTPUT
-          else 
+          else
             echo "prerelease=true" >> $GITHUB_OUTPUT
           fi
 
-      - uses: ncipollo/release-action@v1.12.0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: ncipollo/release-action@v1.15.0
         with:
           tag: v${{ github.event.inputs.version }}
           body: ${{ github.event.inputs.description }}

@@ -5,30 +5,16 @@
   "private": true,
   "repository": "github:platane/snk",
   "devDependencies": {
-    "@sucrase/jest-plugin": "3.0.0",
-    "@types/jest": "29.5.12",
-    "@types/node": "20.14.10",
-    "jest": "29.7.0",
+    "@types/bun": "1.2.2",
     "prettier": "2.8.8",
-    "sucrase": "3.35.0",
     "typescript": "5.5.3"
   },
   "workspaces": [
     "packages/*"
   ],
-  "jest": {
-    "testEnvironment": "node",
-    "testMatch": [
-      "**/__tests__/**/?(*.)+(spec|test).ts"
-    ],
-    "transform": {
-      "\\.(ts|tsx)$": "@sucrase/jest-plugin"
-    }
-  },
   "scripts": {
     "type": "tsc --noEmit",
     "lint": "prettier -c '**/*.{ts,js,json,md,yml,yaml}' '!packages/*/dist/**' '!svg-only/dist/**'",
-    "test": "jest --verbose --no-cache",
     "dev:demo": "( cd packages/demo ; npm run dev )",
     "build:demo": "( cd packages/demo ; npm run build )",
     "build:action": "( cd packages/action ; npm run build )"
