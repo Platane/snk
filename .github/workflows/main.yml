@@ -100,7 +100,7 @@ jobs:
 
       - run: npm run build:demo
         env:
-          GITHUB_USER_CONTRIBUTION_API_ENDPOINT: https://snk-one.vercel.app/api/github-user-contribution/
+          GITHUB_USER_CONTRIBUTION_API_ENDPOINT: https://github-user-contribution.platane.workers.dev/github-user-contribution/
 
       - uses: actions/upload-pages-artifact@v3
         with:
