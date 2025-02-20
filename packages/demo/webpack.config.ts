@@ -7,6 +7,8 @@ import {
   ExpressRequestHandler,
   type Configuration as WebpackDevServerConfiguration,
 } from "webpack-dev-server";
+import { config } from "dotenv";
+config({ path: __dirname + "/../../.env" });
 
 const demos: string[] = require("./demo.json");
 
