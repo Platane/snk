@@ -1,27 +1,26 @@
 {
-  "name": "@snk/demo",
-  "version": "1.0.0",
-  "dependencies": {
-    "@snk/action": "1.0.0",
-    "@snk/draw": "1.0.0",
-    "@snk/github-user-contribution": "1.0.0",
-    "@snk/solver": "1.0.0",
-    "@snk/svg-creator": "1.0.0",
-    "@snk/types": "1.0.0"
-  },
-  "devDependencies": {
-    "dotenv": "16.4.5",
-    "@types/dat.gui": "0.7.13",
-    "dat.gui": "0.7.9",
-    "html-webpack-plugin": "5.6.0",
-    "ts-loader": "9.5.1",
-    "ts-node": "10.9.2",
-    "webpack": "5.92.1",
-    "webpack-cli": "5.1.4",
-    "webpack-dev-server": "5.0.4"
-  },
-  "scripts": {
-    "build": "webpack",
-    "dev": "webpack serve"
-  }
+	"name": "@snk/demo",
+	"version": "1.0.0",
+	"dependencies": {
+		"@snk/action": "1.0.0",
+		"@snk/draw": "1.0.0",
+		"@snk/github-user-contribution": "1.0.0",
+		"@snk/solver": "1.0.0",
+		"@snk/svg-creator": "1.0.0",
+		"@snk/types": "1.0.0"
+	},
+	"devDependencies": {
+		"@types/dat.gui": "0.7.13",
+		"dat.gui": "0.7.9",
+		"html-webpack-plugin": "5.6.0",
+		"ts-loader": "9.5.1",
+		"ts-node": "10.9.2",
+		"webpack": "5.92.1",
+		"webpack-cli": "5.1.4",
+		"webpack-dev-server": "5.0.4"
+	},
+	"scripts": {
+		"build": "webpack",
+		"dev": "webpack serve"
+	}
 }

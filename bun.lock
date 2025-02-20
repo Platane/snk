@@ -22,7 +22,6 @@
       },
       "devDependencies": {
         "@vercel/ncc": "0.38.1",
-        "dotenv": "16.4.5",
       },
     },
     "packages/demo": {
@@ -39,7 +38,6 @@
       "devDependencies": {
         "@types/dat.gui": "0.7.13",
         "dat.gui": "0.7.9",
-        "dotenv": "16.4.5",
         "html-webpack-plugin": "5.6.0",
         "ts-loader": "9.5.1",
         "ts-node": "10.9.2",
@@ -75,9 +73,6 @@
     "packages/github-user-contribution": {
       "name": "@snk/github-user-contribution",
       "version": "1.0.0",
-      "devDependencies": {
-        "dotenv": "16.4.5",
-      },
     },
     "packages/github-user-contribution-service": {
       "name": "@snk/github-user-contribution-service",
@@ -523,8 +518,6 @@
     "domutils": ["domutils@2.8.0", "", { "dependencies": { "dom-serializer": "^1.0.1", "domelementtype": "^2.2.0", "domhandler": "^4.2.0" } }, "sha512-w96Cjofp72M5IIhpjgobBimYEfoPjx1Vx0BSX9P30WBdZW2WIKU0T1Bd0kz2eNZ9ikjKgHbEyKx8BB6H1L3h3A=="],
 
     "dot-case": ["dot-case@3.0.4", "", { "dependencies": { "no-case": "^3.0.4", "tslib": "^2.0.3" } }, "sha512-Kv5nKlh6yRrdrGvxeJ2e5y2eRUpkUosIW4A2AS38zwSz27zu7ufDwQPi5Jhs3XAlGNetl3bmnGhQsMtkKJnj3w=="],
-
-    "dotenv": ["dotenv@16.4.5", "", {}, "sha512-ZmdL2rui+eB2YwhsWzjInR8LldtZHGDoQ1ugH85ppHKwpUHL7j7rN0Ti9NCnGiQbhaZ11FpR+7ao1dNsmduNUg=="],
 
     "download": ["download@6.2.5", "", { "dependencies": { "caw": "^2.0.0", "content-disposition": "^0.5.2", "decompress": "^4.0.0", "ext-name": "^5.0.0", "file-type": "5.2.0", "filenamify": "^2.0.0", "get-stream": "^3.0.0", "got": "^7.0.0", "make-dir": "^1.0.0", "p-event": "^1.0.0", "pify": "^3.0.0" } }, "sha512-DpO9K1sXAST8Cpzb7kmEhogJxymyVUd5qz/vCOSyvwtp2Klj2XcDt5YUuasgxka44SxF0q5RriKIwJmQHG2AuA=="],
 
