@@ -41,3 +41,5 @@ jobs:
         with:
           target_branch: manual-run-output
           build_dir: dist
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
