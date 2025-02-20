@@ -100,7 +100,7 @@ jobs:
 
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: dist
+          path: packages/demo/dist
 
       - uses: actions/deploy-pages@v4
         if: success() && github.ref == 'refs/heads/main'
