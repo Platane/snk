@@ -48,6 +48,8 @@ jobs:
         with:
           target_branch: output
           build_dir: dist
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   test-action-svg-only:
     runs-on: ubuntu-latest
@@ -82,6 +84,8 @@ jobs:
         with:
           target_branch: output-svg-only
           build_dir: dist
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   deploy-ghpages:
     runs-on: ubuntu-latest
