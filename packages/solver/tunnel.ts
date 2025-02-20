@@ -27,7 +27,7 @@ export const getTunnelPath = (snake0: Snake, tunnel: Point[]) => {
 export const updateTunnel = (
   grid: Grid,
   tunnel: Point[],
-  toDelete: Point[]
+  toDelete: Point[],
 ) => {
   while (tunnel.length) {
     const { x, y } = tunnel[0];

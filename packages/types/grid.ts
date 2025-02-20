@@ -30,7 +30,7 @@ export const setColor = (
   grid: Grid,
   x: number,
   y: number,
-  color: Color | Empty
+  color: Color | Empty,
 ) => {
   grid.data[getIndex(grid, x, y)] = color || 0;
 };

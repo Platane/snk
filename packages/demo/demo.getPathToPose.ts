@@ -8,7 +8,7 @@ const { canvas, ctx, draw, highlightCell } = createCanvas(grid);
 canvas.style.pointerEvents = "auto";
 
 const target = createSnakeFromCells(
-  snakeToCells(snake).map((p) => ({ ...p, x: p.x - 1 }))
+  snakeToCells(snake).map((p) => ({ ...p, x: p.x - 1 })),
 );
 
 let chain = [snake, ...getPathToPose(snake, target)!];

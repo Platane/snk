@@ -253,7 +253,7 @@ const createViewer = ({
         : "") +
         `<a href="${svgLink.href}" download="github-user-contribution.svg">` +
         svgString +
-        "<a/>"
+        "<a/>",
     );
     e.preventDefault();
   });
@@ -277,7 +277,7 @@ const createViewer = ({
 
 const onSubmit = async (userName: string) => {
   const res = await fetch(
-    process.env.GITHUB_USER_CONTRIBUTION_API_ENDPOINT + userName
+    process.env.GITHUB_USER_CONTRIBUTION_API_ENDPOINT + userName,
   );
   const cells = (await res.json()) as Res;
 
@@ -294,8 +294,8 @@ const worker = new Worker(
   new URL(
     "./demo.interactive.worker.ts",
     // @ts-ignore
-    import.meta.url
-  )
+    import.meta.url,
+  ),
 );
 
 const { getChain } = createRpcClient<WorkerAPI>(worker);

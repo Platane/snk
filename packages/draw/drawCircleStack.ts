@@ -59,7 +59,7 @@ export const getCircleSize = (n: number) => {
 export const drawCircleStack = (
   ctx: CanvasRenderingContext2D,
   stack: Color[],
-  o: Options
+  o: Options,
 ) => {
   for (let i = stack.length; i--; ) {
     const { x, y } = cellPath[i];
@@ -67,7 +67,7 @@ export const drawCircleStack = (
     ctx.save();
     ctx.translate(
       x * o.sizeCell + (o.sizeCell - o.sizeDot) / 2,
-      y * o.sizeCell + (o.sizeCell - o.sizeDot) / 2
+      y * o.sizeCell + (o.sizeCell - o.sizeDot) / 2,
     );
 
     //@ts-ignore

@@ -34,13 +34,13 @@ export type DrawOptions = {
 
 const getCellsFromGrid = ({ width, height }: Grid) =>
   Array.from({ length: width }, (_, x) =>
-    Array.from({ length: height }, (_, y) => ({ x, y }))
+    Array.from({ length: height }, (_, y) => ({ x, y })),
   ).flat();
 
 const createLivingCells = (
   grid0: Grid,
   chain: Snake[],
-  cells: Point[] | null
+  cells: Point[] | null,
 ) => {
   const livingCells: (Point & {
     t: number | null;
@@ -73,7 +73,7 @@ export const createSvg = (
   cells: Point[] | null,
   chain: Snake[],
   drawOptions: DrawOptions,
-  animationOptions: Pick<AnimationOptions, "frameDuration">
+  animationOptions: Pick<AnimationOptions, "frameDuration">,
 ) => {
   const width = (grid.width + 2) * drawOptions.sizeCell;
   const height = (grid.height + 5) * drawOptions.sizeCell;
@@ -89,7 +89,7 @@ export const createSvg = (
       drawOptions,
       grid.width * drawOptions.sizeCell,
       (grid.height + 2) * drawOptions.sizeCell,
-      duration
+      duration,
     ),
     createSnake(chain, drawOptions, duration),
   ];

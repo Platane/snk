@@ -16,7 +16,7 @@
  */
 export const getGithubUserContribution = async (
   userName: string,
-  o: { githubToken: string }
+  o: { githubToken: string },
 ) => {
   const query = /* GraphQL */ `
     query ($login: String!) {
@@ -69,7 +69,7 @@ export const getGithubUserContribution = async (
           (d.contributionLevel === "SECOND_QUARTILE" && 2) ||
           (d.contributionLevel === "FIRST_QUARTILE" && 1) ||
           0,
-      }))
+      })),
   );
 };
 

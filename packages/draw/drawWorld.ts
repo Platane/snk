@@ -19,7 +19,7 @@ export const drawStack = (
   stack: Color[],
   max: number,
   width: number,
-  o: { colorDots: Record<Color, string> }
+  o: { colorDots: Record<Color, string> },
 ) => {
   ctx.save();
 
@@ -39,7 +39,7 @@ export const drawWorld = (
   cells: Point[] | null,
   snake: Snake,
   stack: Color[],
-  o: Options
+  o: Options,
 ) => {
   ctx.save();
 
@@ -73,7 +73,7 @@ export const drawLerpWorld = (
   snake1: Snake,
   stack: Color[],
   k: number,
-  o: Options
+  o: Options,
 ) => {
   ctx.save();
 

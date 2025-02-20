@@ -13,7 +13,7 @@ export const generateContributionSnake = async (
     drawOptions: DrawOptions;
     animationOptions: AnimationOptions;
   } | null)[],
-  options: { githubToken: string }
+  options: { githubToken: string },
 ) => {
   console.log("🎣 fetching github user contribution");
   const cells = await getGithubUserContribution(userName, options);
@@ -43,10 +43,10 @@ export const generateContributionSnake = async (
             cells,
             chain,
             drawOptions,
-            animationOptions
+            animationOptions,
           );
         }
       }
-    })
+    }),
   );
 };

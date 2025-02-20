@@ -25,7 +25,7 @@ const onChange = () => {
 
   const url = new URL(
     config.demo + ".html?" + search,
-    window.location.href
+    window.location.href,
   ).toString();
 
   window.location.href = url;

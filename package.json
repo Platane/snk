@@ -6,7 +6,7 @@
   "repository": "github:platane/snk",
   "devDependencies": {
     "@types/bun": "1.2.2",
-    "prettier": "2.8.8",
+    "prettier": "3.5.1",
     "typescript": "5.7.3"
   },
   "workspaces": [

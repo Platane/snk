@@ -11,7 +11,7 @@ export const createStack = (
   { sizeDot }: Options,
   width: number,
   y: number,
-  duration: number
+  duration: number,
 ) => {
   const svgElements: string[] = [];
   const styles = [
@@ -51,7 +51,7 @@ export const createStack = (
         width: (ts.length * m + 0.6).toFixed(1),
         x,
         y,
-      })
+      }),
     );
 
     styles.push(
@@ -68,7 +68,7 @@ export const createStack = (
         ].map(({ scale, t }) => ({
           t,
           style: `transform:scale(${scale.toFixed(3)},1)`,
-        }))
+        })),
       ),
 
       `.u.${id} {
@@ -76,7 +76,7 @@ export const createStack = (
         animation-name: ${animationName};
         transform-origin: ${x}px 0
       }
-      `
+      `,
     );
   }
 

@@ -15,7 +15,7 @@ const stepSpringOne = (
     maxVelocity = Infinity,
   }: { tension: number; friction: number; maxVelocity?: number },
   target: number,
-  dt = 1 / 60
+  dt = 1 / 60,
 ) => {
   const a = -tension * (s.x - target) - friction * s.v;
 
@@ -31,13 +31,13 @@ const stepSpringOne = (
 export const isStable = (
   s: { x: number; v: number },
   target: number,
-  dt = 1 / 60
+  dt = 1 / 60,
 ) => Math.abs(s.x - target) < epsilon && Math.abs(s.v * dt) < epsilon;
 
 export const isStableAndBound = (
   s: { x: number; v: number },
   target: number,
-  dt?: number
+  dt?: number,
 ) => {
   const stable = isStable(s, target, dt);
   if (stable) {
@@ -51,7 +51,7 @@ export const stepSpring = (
   s: { x: number; v: number },
   params: { tension: number; friction: number; maxVelocity?: number },
   target: number,
-  dt = 1 / 60
+  dt = 1 / 60,
 ) => {
   const interval = 1 / 60;
 

@@ -15,7 +15,7 @@ const lerp = (k: number, a: number, b: number) => (1 - k) * a + k * b;
 export const createSnake = (
   chain: Snake[],
   { sizeCell, sizeDot }: Options,
-  duration: number
+  duration: number,
 ) => {
   const snakeN = chain[0] ? getSnakeLength(chain[0]) : 0;
 
@@ -64,7 +64,7 @@ export const createSnake = (
       const animationName = id;
 
       const keyframes = removeInterpolatedPositions(
-        positions.map((tr, i, { length }) => ({ ...tr, t: i / length }))
+        positions.map((tr, i, { length }) => ({ ...tr, t: i / length })),
       ).map(({ t, ...p }) => ({ t, style: transform(p) }));
 
       return [

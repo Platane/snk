@@ -26,7 +26,7 @@ const tunnels = ones.map(({ x, y }) => ({
     x,
     y,
     3 as Color,
-    getSnakeLength(snake)
+    getSnakeLength(snake),
   ),
 }));
 

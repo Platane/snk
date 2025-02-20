@@ -76,7 +76,7 @@ export const createCanvas = ({
     snake0: Snake,
     snake1: Snake,
     stack: Color[],
-    k: number
+    k: number,
   ) => {
     ctx.clearRect(0, 0, 9999, 9999);
     drawLerpWorld(ctx, grid, null, snake0, snake1, stack, k, drawOptions);

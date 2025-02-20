@@ -20,7 +20,7 @@ export const clearResidualColoredLayer = (
   grid: Grid,
   outside: Outside,
   snake0: Snake,
-  color: Color
+  color: Color,
 ) => {
   const snakeN = getSnakeLength(snake0);
 
@@ -99,7 +99,7 @@ export const getTunnellablePoints = (
   grid: Grid,
   outside: Outside,
   snakeN: number,
-  color: Color
+  color: Color,
 ) => {
   const points: T[] = [];
 

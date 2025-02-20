@@ -41,5 +41,5 @@ it(
     fs.writeFileSync(outputs[1]!.filename, results[1]!);
     fs.writeFileSync(outputs[2]!.filename, results[2]!);
   }),
-  { timeout: 2 * 60 * 1000 }
+  { timeout: 2 * 60 * 1000 },
 );

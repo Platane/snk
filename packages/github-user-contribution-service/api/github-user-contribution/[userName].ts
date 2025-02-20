@@ -13,7 +13,7 @@ export default async (req: VercelRequest, res: VercelResponse) => {
       ];
 
       const allowedOrigin = allowedOrigins.find(
-        (o) => o === req.headers.origin
+        (o) => o === req.headers.origin,
       );
       if (allowedOrigin)
         res.setHeader("Access-Control-Allow-Origin", allowedOrigin);
@@ -23,7 +23,7 @@ export default async (req: VercelRequest, res: VercelResponse) => {
     res.json(
       await getGithubUserContribution(userName as string, {
         githubToken: process.env.GITHUB_TOKEN!,
-      })
+      }),
     );
   } catch (err) {
     console.error(err);

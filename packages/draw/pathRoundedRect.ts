@@ -2,7 +2,7 @@ export const pathRoundedRect = (
   ctx: CanvasRenderingContext2D,
   width: number,
   height: number,
-  borderRadius: number
+  borderRadius: number,
 ) => {
   ctx.moveTo(borderRadius, 0);
   ctx.arcTo(width, 0, width, height, borderRadius);

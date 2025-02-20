@@ -17,7 +17,7 @@ import gifsicle from "gifsicle";
 import GIFEncoder from "gif-encoder-2";
 
 const withTmpDir = async <T>(
-  handler: (dir: string) => Promise<T>
+  handler: (dir: string) => Promise<T>,
 ): Promise<T> => {
   const { name: dir, removeCallback: cleanUp } = tmp.dirSync({
     unsafeCleanup: true,
@@ -37,7 +37,7 @@ export const createGif = async (
   cells: Point[] | null,
   chain: Snake[],
   drawOptions: DrawOptions,
-  animationOptions: AnimationOptions
+  animationOptions: AnimationOptions,
 ) =>
   withTmpDir(async (dir) => {
     const { width, height } = getCanvasWorldSize(grid0, drawOptions);
@@ -70,7 +70,7 @@ export const createGif = async (
           snake1,
           stack,
           k / animationOptions.step,
-          drawOptions
+          drawOptions,
         );
 
         encoder.addFrame(ctx);
@@ -92,7 +92,7 @@ export const createGif = async (
         "--colors=18",
         outFileName,
         ["--output", optimizedFileName],
-      ].flat()
+      ].flat(),
     );
 
     return new Uint8Array(fs.readFileSync(optimizedFileName));

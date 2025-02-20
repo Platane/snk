@@ -30,7 +30,7 @@ it("should return next snake", () => {
   ];
 
   expect(snakeToCells(nextSnake(createSnakeFromCells(snk0), 1, 0))).toEqual(
-    snk1
+    snk1,
   );
 });
 

@@ -16,7 +16,7 @@ export const drawGrid = (
   ctx: CanvasRenderingContext2D,
   grid: Grid,
   cells: Point[] | null,
-  o: Options
+  o: Options,
 ) => {
   for (let x = grid.width; x--; )
     for (let y = grid.height; y--; ) {
@@ -27,7 +27,7 @@ export const drawGrid = (
         ctx.save();
         ctx.translate(
           x * o.sizeCell + (o.sizeCell - o.sizeDot) / 2,
-          y * o.sizeCell + (o.sizeCell - o.sizeDot) / 2
+          y * o.sizeCell + (o.sizeCell - o.sizeDot) / 2,
         );
 
         ctx.fillStyle = color;

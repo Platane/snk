@@ -18,13 +18,13 @@ const webpackDevServerConfiguration: WebpackDevServerConfiguration = {
     ...ms,
     (async (req, res, next) => {
       const userName = req.url.match(
-        /\/api\/github-user-contribution\/(\w+)/
+        /\/api\/github-user-contribution\/(\w+)/,
       )?.[1];
       if (userName)
         res.send(
           await getGithubUserContribution(userName, {
             githubToken: process.env.GITHUB_TOKEN!,
-          })
+          }),
         );
       else next();
     }) as ExpressRequestHandler,
@@ -34,7 +34,7 @@ const webpackDevServerConfiguration: WebpackDevServerConfiguration = {
 const webpackConfiguration: WebpackConfiguration = {
   mode: "development",
   entry: Object.fromEntries(
-    demos.map((demo: string) => [demo, `./demo.${demo}`])
+    demos.map((demo: string) => [demo, `./demo.${demo}`]),
   ),
   target: ["web", "es2019"],
   resolve: { extensions: [".ts", ".js"] },
@@ -65,7 +65,7 @@ const webpackConfiguration: WebpackConfiguration = {
           title: "snk - " + demo,
           filename: `${demo}.html`,
           chunks: [demo],
-        })
+        }),
     ),
     new HtmlWebpackPlugin({
       title: "snk - " + demos[0],

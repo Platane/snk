@@ -8,7 +8,7 @@ import { getPathToPose } from "@snk/solver/getPathToPose";
 import type { Options as DrawOptions } from "@snk/draw/drawWorld";
 
 let snake = createSnakeFromCells(
-  Array.from({ length: 4 }, (_, i) => ({ x: i, y: -1 }))
+  Array.from({ length: 4 }, (_, i) => ({ x: i, y: -1 })),
 );
 
 // const chain = [snake];
@@ -55,7 +55,7 @@ const animationOptions: AnimationOptions = { frameDuration: 100, step: 1 };
         null,
         chainL,
         drawOptions,
-        animationOptions
+        animationOptions,
       );
       stats.push(performance.now() - s);
     }
@@ -73,12 +73,12 @@ const animationOptions: AnimationOptions = { frameDuration: 100, step: 1 };
         })}ms`,
         "",
       ].join("\n"),
-      stats
+      stats,
     );
 
     fs.writeFileSync(
       `__tests__/__snapshots__/benchmark-output-${length}.gif`,
-      buffer!
+      buffer!,
     );
   }
 })();

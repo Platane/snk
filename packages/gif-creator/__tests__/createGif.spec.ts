@@ -46,14 +46,14 @@ for (const key of [
         null,
         chain,
         drawOptions,
-        animationOptions
+        animationOptions,
       );
 
       expect(gif).toBeDefined();
 
       fs.writeFileSync(path.resolve(dir, key + ".gif"), gif);
     },
-    { timeout: 20 * 1000 }
+    { timeout: 20 * 1000 },
   );
 
 it(
@@ -61,7 +61,7 @@ it(
   async () => {
     const grid = grids.smallFull;
     let snk = createSnakeFromCells(
-      Array.from({ length: 6 }, (_, i) => ({ x: i, y: -1 }))
+      Array.from({ length: 6 }, (_, i) => ({ x: i, y: -1 })),
     );
 
     const chain = [snk];
@@ -80,12 +80,12 @@ it(
       null,
       chain,
       drawOptions,
-      animationOptions
+      animationOptions,
     );
 
     expect(gif).toBeDefined();
 
     fs.writeFileSync(path.resolve(dir, "swipper.gif"), gif);
   },
-  { timeout: 20 * 1000 }
+  { timeout: 20 * 1000 },
 );

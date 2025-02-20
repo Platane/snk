@@ -24,7 +24,7 @@ export const createOutside = (grid: Grid, color: Color = 0 as Color) => {
 export const fillOutside = (
   outside: Outside,
   grid: Grid,
-  color: Color = 0 as Color
+  color: Color = 0 as Color,
 ) => {
   let changed = true;
   while (changed) {

@@ -10,7 +10,7 @@ type Options = {
 export const drawSnake = (
   ctx: CanvasRenderingContext2D,
   snake: Snake,
-  o: Options
+  o: Options,
 ) => {
   const cells = snakeToCells(snake);
 
@@ -25,7 +25,7 @@ export const drawSnake = (
       ctx,
       o.sizeCell - u * 2,
       o.sizeCell - u * 2,
-      (o.sizeCell - u * 2) * 0.25
+      (o.sizeCell - u * 2) * 0.25,
     );
     ctx.fill();
     ctx.restore();
@@ -40,7 +40,7 @@ export const drawSnakeLerp = (
   snake0: Snake,
   snake1: Snake,
   k: number,
-  o: Options
+  o: Options,
 ) => {
   const m = 0.8;
   const n = snake0.length / 2;
@@ -61,7 +61,7 @@ export const drawSnakeLerp = (
       ctx,
       o.sizeCell - u * 2,
       o.sizeCell - u * 2,
-      (o.sizeCell - u * 2) * 0.25
+      (o.sizeCell - u * 2) * 0.25,
     );
     ctx.fill();
     ctx.restore();

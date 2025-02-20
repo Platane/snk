@@ -16,7 +16,7 @@ const mergeKeyFrames = (keyframes: { t: number; style: string }[]) => {
  */
 export const createAnimation = (
   name: string,
-  keyframes: { t: number; style: string }[]
+  keyframes: { t: number; style: string }[],
 ) =>
   `@keyframes ${name}{` +
   mergeKeyFrames(keyframes)

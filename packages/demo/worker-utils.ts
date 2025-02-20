@@ -54,6 +54,6 @@ export const createRpcClient = <API_ extends API>(worker: Worker) => {
             worker.addEventListener("terminate", onTerminate);
             worker.postMessage({ symbol, key, methodName, args });
           }),
-    }
+    },
   );
 };

@@ -37,7 +37,7 @@ const getSnakeEscapePath = (
   grid: Grid,
   outside: Outside,
   snake0: Snake,
-  color: Color
+  color: Color,
 ) => {
   const openList: M[] = [{ snake: snake0, w: 0 } as any];
   const closeList: Snake[] = [];
@@ -79,7 +79,7 @@ export const getBestTunnel = (
   x: number,
   y: number,
   color: Color,
-  snakeN: number
+  snakeN: number,
 ) => {
   const c = { x, y };
   const snake0 = createSnakeFromCells(Array.from({ length: snakeN }, () => c));

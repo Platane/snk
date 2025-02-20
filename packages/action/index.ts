@@ -10,7 +10,7 @@ import { parseOutputsOption } from "./outputsOptions";
       core.getMultilineInput("outputs") ?? [
         core.getInput("gif_out_path"),
         core.getInput("svg_out_path"),
-      ]
+      ],
     );
     const githubToken =
       process.env.GITHUB_TOKEN ?? core.getInput("github_token");

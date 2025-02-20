@@ -8,7 +8,7 @@ it("should minify css", () => {
         color  : red    ;
     }
 
-    `)
+    `),
   ).toBe(".c{color:red}");
 
   expect(
@@ -22,6 +22,6 @@ it("should minify css", () => {
         animation: linear     10;
     }
 
-    `)
+    `),
   ).toBe(".c{top:0;color:red}#{animation:linear 10}");
 });

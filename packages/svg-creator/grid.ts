@@ -15,7 +15,7 @@ export type Options = {
 export const createGrid = (
   cells: (Point & { t: number | null; color: Color | Empty })[],
   { sizeDotBorderRadius, sizeDot, sizeCell }: Options,
-  duration: number
+  duration: number,
 ) => {
   const svgElements: string[] = [];
   const styles = [
@@ -48,7 +48,7 @@ export const createGrid = (
         `.c.${id}{
           fill: var(--c${color});
           animation-name: ${animationName}
-        }`
+        }`,
       );
     }
 
@@ -59,7 +59,7 @@ export const createGrid = (
         y: y * sizeCell + m,
         rx: sizeDotBorderRadius,
         ry: sizeDotBorderRadius,
-      })
+      }),
     );
   }
 

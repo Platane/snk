@@ -38,7 +38,7 @@ for (const [key, grid] of Object.entries(grids))
       null,
       chain,
       drawOptions,
-      animationOptions
+      animationOptions,
     );
 
     expect(svg).toBeDefined();

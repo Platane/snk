@@ -24,7 +24,7 @@ export const clearCleanColoredLayer = (
   grid: Grid,
   outside: Outside,
   snake0: Snake,
-  color: Color
+  color: Color,
 ) => {
   const snakeN = getSnakeLength(snake0);
 
@@ -55,7 +55,7 @@ const getPathToNextPoint = (
   grid: Grid,
   snake0: Snake,
   color: Color,
-  points: Point[]
+  points: Point[],
 ) => {
   const closeList: Snake[] = [];
   const openList: M[] = [{ snake: snake0 } as any];
@@ -96,7 +96,7 @@ export const getTunnellablePoints = (
   grid: Grid,
   outside: Outside,
   snakeN: number,
-  color: Color
+  color: Color,
 ) => {
   const points: Point[] = [];
 

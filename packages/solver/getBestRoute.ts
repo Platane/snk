@@ -13,7 +13,7 @@ export const getBestRoute = (grid0: Grid, snake0: Snake) => {
   for (const color of extractColors(grid)) {
     if (color > 1)
       chain.unshift(
-        ...clearResidualColoredLayer(grid, outside, chain[0], color)
+        ...clearResidualColoredLayer(grid, outside, chain[0], color),
       );
     chain.unshift(...clearCleanColoredLayer(grid, outside, chain[0], color));
   }
