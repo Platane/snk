@@ -1,17 +1,15 @@
 "use strict";
-exports.id = 407;
-exports.ids = [407];
+exports.id = 324;
+exports.ids = [324];
 exports.modules = {
 
-/***/ 407:
+/***/ 324:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-// ESM COMPAT FLAG
-__webpack_require__.r(__webpack_exports__);
 
 // EXPORTS
 __webpack_require__.d(__webpack_exports__, {
-  "generateContributionSnake": () => (/* binding */ generateContributionSnake)
+  generateContributionSnake: () => (/* binding */ generateContributionSnake)
 });
 
 ;// CONCATENATED MODULE: ../github-user-contribution/index.ts
@@ -55,12 +53,13 @@ const getGithubUserContribution = async (userName, o) => {
         headers: {
             Authorization: `bearer ${o.githubToken}`,
             "Content-Type": "application/json",
+            "User-Agent": "me@platane.me",
         },
         method: "POST",
         body: JSON.stringify({ variables, query }),
     });
     if (!res.ok)
-        throw new Error(res.statusText);
+        throw new Error(await res.text().catch(() => res.statusText));
     const { data, errors } = (await res.json());
     if (errors?.[0])
         throw errors[0];
@@ -78,18 +77,18 @@ const getGithubUserContribution = async (userName, o) => {
 };
 
 // EXTERNAL MODULE: ../types/grid.ts
-var types_grid = __webpack_require__(2881);
+var types_grid = __webpack_require__(105);
 ;// CONCATENATED MODULE: ./userContributionToGrid.ts
 
 const userContributionToGrid = (cells) => {
     const width = Math.max(0, ...cells.map((c) => c.x)) + 1;
     const height = Math.max(0, ...cells.map((c) => c.y)) + 1;
-    const grid = (0,types_grid/* createEmptyGrid */.u1)(width, height);
+    const grid = (0,types_grid/* createEmptyGrid */.Kb)(width, height);
     for (const c of cells) {
         if (c.level > 0)
-            (0,types_grid/* setColor */.vk)(grid, c.x, c.y, c.level);
+            (0,types_grid/* setColor */.wW)(grid, c.x, c.y, c.level);
         else
-            (0,types_grid/* setColorEmpty */.Dy)(grid, c.x, c.y);
+            (0,types_grid/* setColorEmpty */.l$)(grid, c.x, c.y);
     }
     return grid;
 };
@@ -107,10 +106,10 @@ const pointEquals = (a, b) => a.x === b.x && a.y === b.y;
 
 
 const createOutside = (grid, color = 0) => {
-    const outside = (0,types_grid/* createEmptyGrid */.u1)(grid.width, grid.height);
+    const outside = (0,types_grid/* createEmptyGrid */.Kb)(grid.width, grid.height);
     for (let x = outside.width; x--;)
         for (let y = outside.height; y--;)
-            (0,types_grid/* setColor */.vk)(outside, x, y, 1);
+            (0,types_grid/* setColor */.wW)(outside, x, y, 1);
     fillOutside(outside, grid, color);
     return outside;
 };
@@ -120,19 +119,19 @@ const fillOutside = (outside, grid, color = 0) => {
         changed = false;
         for (let x = outside.width; x--;)
             for (let y = outside.height; y--;)
-                if ((0,types_grid/* getColor */.Lq)(grid, x, y) <= color &&
+                if ((0,types_grid/* getColor */.oU)(grid, x, y) <= color &&
                     !isOutside(outside, x, y) &&
                     around4.some((a) => isOutside(outside, x + a.x, y + a.y))) {
                     changed = true;
-                    (0,types_grid/* setColorEmpty */.Dy)(outside, x, y);
+                    (0,types_grid/* setColorEmpty */.l$)(outside, x, y);
                 }
     }
     return outside;
 };
-const isOutside = (outside, x, y) => !(0,types_grid/* isInside */.V0)(outside, x, y) || (0,types_grid/* isEmpty */.xb)((0,types_grid/* getColor */.Lq)(outside, x, y));
+const isOutside = (outside, x, y) => !(0,types_grid/* isInside */.FK)(outside, x, y) || (0,types_grid/* isEmpty */.Im)((0,types_grid/* getColor */.oU)(outside, x, y));
 
 // EXTERNAL MODULE: ../types/snake.ts
-var types_snake = __webpack_require__(9347);
+var types_snake = __webpack_require__(777);
 ;// CONCATENATED MODULE: ../solver/utils/sortPush.ts
 const sortPush = (arr, x, sortFn) => {
     let a = 0;
@@ -165,9 +164,9 @@ const getTunnelPath = (snake0, tunnel) => {
     const chain = [];
     let snake = snake0;
     for (let i = 1; i < tunnel.length; i++) {
-        const dx = tunnel[i].x - (0,types_snake/* getHeadX */.If)(snake);
-        const dy = tunnel[i].y - (0,types_snake/* getHeadY */.IP)(snake);
-        snake = (0,types_snake/* nextSnake */.kv)(snake, dx, dy);
+        const dx = tunnel[i].x - (0,types_snake/* getHeadX */.tN)(snake);
+        const dy = tunnel[i].y - (0,types_snake/* getHeadY */.Ap)(snake);
+        snake = (0,types_snake/* nextSnake */.Sc)(snake, dx, dy);
         chain.unshift(snake);
     }
     return chain;
@@ -195,7 +194,7 @@ const updateTunnel = (grid, tunnel, toDelete) => {
             break;
     }
 };
-const isEmptySafe = (grid, x, y) => !(0,types_grid/* isInside */.V0)(grid, x, y) || (0,types_grid/* isEmpty */.xb)((0,types_grid/* getColor */.Lq)(grid, x, y));
+const isEmptySafe = (grid, x, y) => !(0,types_grid/* isInside */.FK)(grid, x, y) || (0,types_grid/* isEmpty */.Im)((0,types_grid/* getColor */.oU)(grid, x, y));
 /**
  * remove empty cell from start
  */
@@ -230,14 +229,14 @@ const trimTunnelEnd = (grid, tunnel) => {
 
 
 
-const getColorSafe = (grid, x, y) => (0,types_grid/* isInside */.V0)(grid, x, y) ? (0,types_grid/* getColor */.Lq)(grid, x, y) : 0;
+const getColorSafe = (grid, x, y) => (0,types_grid/* isInside */.FK)(grid, x, y) ? (0,types_grid/* getColor */.oU)(grid, x, y) : 0;
 const setEmptySafe = (grid, x, y) => {
-    if ((0,types_grid/* isInside */.V0)(grid, x, y))
-        (0,types_grid/* setColorEmpty */.Dy)(grid, x, y);
+    if ((0,types_grid/* isInside */.FK)(grid, x, y))
+        (0,types_grid/* setColorEmpty */.l$)(grid, x, y);
 };
 const unwrap = (m) => !m
     ? []
-    : [...unwrap(m.parent), { x: (0,types_snake/* getHeadX */.If)(m.snake), y: (0,types_snake/* getHeadY */.IP)(m.snake) }];
+    : [...unwrap(m.parent), { x: (0,types_snake/* getHeadX */.tN)(m.snake), y: (0,types_snake/* getHeadY */.Ap)(m.snake) }];
 /**
  * returns the path to reach the outside which contains the least color cell
  */
@@ -246,15 +245,15 @@ const getSnakeEscapePath = (grid, outside, snake0, color) => {
     const closeList = [];
     while (openList[0]) {
         const o = openList.shift();
-        const x = (0,types_snake/* getHeadX */.If)(o.snake);
-        const y = (0,types_snake/* getHeadY */.IP)(o.snake);
+        const x = (0,types_snake/* getHeadX */.tN)(o.snake);
+        const y = (0,types_snake/* getHeadY */.Ap)(o.snake);
         if (isOutside(outside, x, y))
             return unwrap(o);
         for (const a of around4) {
             const c = getColorSafe(grid, x + a.x, y + a.y);
-            if (c <= color && !(0,types_snake/* snakeWillSelfCollide */.nJ)(o.snake, a.x, a.y)) {
-                const snake = (0,types_snake/* nextSnake */.kv)(o.snake, a.x, a.y);
-                if (!closeList.some((s0) => (0,types_snake/* snakeEquals */.kE)(s0, snake))) {
+            if (c <= color && !(0,types_snake/* snakeWillSelfCollide */.J)(o.snake, a.x, a.y)) {
+                const snake = (0,types_snake/* nextSnake */.Sc)(o.snake, a.x, a.y);
+                if (!closeList.some((s0) => (0,types_snake/* snakeEquals */.sW)(s0, snake))) {
                     const w = o.w + 1 + +(c === color) * 1000;
                     sortPush(openList, { snake, w, parent: o }, (a, b) => a.w - b.w);
                     closeList.push(snake);
@@ -271,7 +270,7 @@ const getSnakeEscapePath = (grid, outside, snake0, color) => {
  */
 const getBestTunnel = (grid, outside, x, y, color, snakeN) => {
     const c = { x, y };
-    const snake0 = (0,types_snake/* createSnakeFromCells */.xG)(Array.from({ length: snakeN }, () => c));
+    const snake0 = (0,types_snake/* createSnakeFromCells */.yS)(Array.from({ length: snakeN }, () => c));
     const one = getSnakeEscapePath(grid, outside, snake0, color);
     if (!one)
         return null;
@@ -279,9 +278,9 @@ const getBestTunnel = (grid, outside, x, y, color, snakeN) => {
     const snakeICells = one.slice(0, snakeN);
     while (snakeICells.length < snakeN)
         snakeICells.push(snakeICells[snakeICells.length - 1]);
-    const snakeI = (0,types_snake/* createSnakeFromCells */.xG)(snakeICells);
+    const snakeI = (0,types_snake/* createSnakeFromCells */.yS)(snakeICells);
     // remove from the grid the colors that one eat
-    const gridI = (0,types_grid/* copyGrid */.VJ)(grid);
+    const gridI = (0,types_grid/* copyGrid */.mi)(grid);
     for (const { x, y } of one)
         setEmptySafe(gridI, x, y);
     const two = getSnakeEscapePath(gridI, outside, snakeI, color);
@@ -309,15 +308,15 @@ const getPathTo = (grid, snake0, x, y) => {
     const closeList = [];
     while (openList.length) {
         const c = openList.shift();
-        const cx = (0,types_snake/* getHeadX */.If)(c.snake);
-        const cy = (0,types_snake/* getHeadY */.IP)(c.snake);
+        const cx = (0,types_snake/* getHeadX */.tN)(c.snake);
+        const cy = (0,types_snake/* getHeadY */.Ap)(c.snake);
         for (let i = 0; i < around4.length; i++) {
             const { x: dx, y: dy } = around4[i];
             const nx = cx + dx;
             const ny = cy + dy;
             if (nx === x && ny === y) {
                 // unwrap
-                const path = [(0,types_snake/* nextSnake */.kv)(c.snake, dx, dy)];
+                const path = [(0,types_snake/* nextSnake */.Sc)(c.snake, dx, dy)];
                 let e = c;
                 while (e.parent) {
                     path.push(e.snake);
@@ -325,11 +324,11 @@ const getPathTo = (grid, snake0, x, y) => {
                 }
                 return path;
             }
-            if ((0,types_grid/* isInsideLarge */.HJ)(grid, 2, nx, ny) &&
-                !(0,types_snake/* snakeWillSelfCollide */.nJ)(c.snake, dx, dy) &&
-                (!(0,types_grid/* isInside */.V0)(grid, nx, ny) || (0,types_grid/* isEmpty */.xb)((0,types_grid/* getColor */.Lq)(grid, nx, ny)))) {
-                const nsnake = (0,types_snake/* nextSnake */.kv)(c.snake, dx, dy);
-                if (!closeList.some((s) => (0,types_snake/* snakeEquals */.kE)(nsnake, s))) {
+            if ((0,types_grid/* isInsideLarge */.Yd)(grid, 2, nx, ny) &&
+                !(0,types_snake/* snakeWillSelfCollide */.J)(c.snake, dx, dy) &&
+                (!(0,types_grid/* isInside */.FK)(grid, nx, ny) || (0,types_grid/* isEmpty */.Im)((0,types_grid/* getColor */.oU)(grid, nx, ny)))) {
+                const nsnake = (0,types_snake/* nextSnake */.Sc)(c.snake, dx, dy);
+                if (!closeList.some((s) => (0,types_snake/* snakeEquals */.sW)(nsnake, s))) {
                     const w = c.w + 1;
                     const h = Math.abs(nx - x) + Math.abs(ny - y);
                     const f = w + h;
@@ -350,7 +349,7 @@ const getPathTo = (grid, snake0, x, y) => {
 
 
 const clearResidualColoredLayer = (grid, outside, snake0, color) => {
-    const snakeN = (0,types_snake/* getSnakeLength */.JJ)(snake0);
+    const snakeN = (0,types_snake/* getSnakeLength */.T$)(snake0);
     const tunnels = getTunnellablePoints(grid, outside, snakeN, color);
     // sort
     tunnels.sort((a, b) => b.priority - a.priority);
@@ -369,7 +368,7 @@ const clearResidualColoredLayer = (grid, outside, snake0, color) => {
         fillOutside(outside, grid);
         // update tunnels
         for (let i = tunnels.length; i--;)
-            if ((0,types_grid/* isEmpty */.xb)((0,types_grid/* getColor */.Lq)(grid, tunnels[i].x, tunnels[i].y)))
+            if ((0,types_grid/* isEmpty */.Im)((0,types_grid/* getColor */.oU)(grid, tunnels[i].x, tunnels[i].y)))
                 tunnels.splice(i, 1);
             else {
                 const t = tunnels[i];
@@ -390,8 +389,8 @@ const clearResidualColoredLayer = (grid, outside, snake0, color) => {
 const getNextTunnel = (ts, snake) => {
     let minDistance = Infinity;
     let closestTunnel = null;
-    const x = (0,types_snake/* getHeadX */.If)(snake);
-    const y = (0,types_snake/* getHeadY */.IP)(snake);
+    const x = (0,types_snake/* getHeadX */.tN)(snake);
+    const y = (0,types_snake/* getHeadY */.Ap)(snake);
     const priority = ts[0].priority;
     for (let i = 0; ts[i] && ts[i].priority === priority; i++) {
         const t = ts[i].tunnel;
@@ -410,8 +409,8 @@ const getTunnellablePoints = (grid, outside, snakeN, color) => {
     const points = [];
     for (let x = grid.width; x--;)
         for (let y = grid.height; y--;) {
-            const c = (0,types_grid/* getColor */.Lq)(grid, x, y);
-            if (!(0,types_grid/* isEmpty */.xb)(c) && c < color) {
+            const c = (0,types_grid/* getColor */.oU)(grid, x, y);
+            if (!(0,types_grid/* isEmpty */.Im)(c) && c < color) {
                 const tunnel = getBestTunnel(grid, outside, x, y, color, snakeN);
                 if (tunnel) {
                     const priority = getPriority(grid, color, tunnel);
@@ -432,7 +431,7 @@ const getPriority = (grid, color, tunnel) => {
     for (let i = 0; i < tunnel.length; i++) {
         const { x, y } = tunnel[i];
         const c = clearResidualColoredLayer_getColorSafe(grid, x, y);
-        if (!(0,types_grid/* isEmpty */.xb)(c) && i === tunnel.findIndex((p) => p.x === x && p.y === y)) {
+        if (!(0,types_grid/* isEmpty */.Im)(c) && i === tunnel.findIndex((p) => p.x === x && p.y === y)) {
             if (c === color)
                 nColor += 1;
             else
@@ -444,10 +443,10 @@ const getPriority = (grid, color, tunnel) => {
     return nLess / nColor;
 };
 const distanceSq = (ax, ay, bx, by) => (ax - bx) ** 2 + (ay - by) ** 2;
-const clearResidualColoredLayer_getColorSafe = (grid, x, y) => (0,types_grid/* isInside */.V0)(grid, x, y) ? (0,types_grid/* getColor */.Lq)(grid, x, y) : 0;
+const clearResidualColoredLayer_getColorSafe = (grid, x, y) => (0,types_grid/* isInside */.FK)(grid, x, y) ? (0,types_grid/* getColor */.oU)(grid, x, y) : 0;
 const clearResidualColoredLayer_setEmptySafe = (grid, x, y) => {
-    if ((0,types_grid/* isInside */.V0)(grid, x, y))
-        (0,types_grid/* setColorEmpty */.Dy)(grid, x, y);
+    if ((0,types_grid/* isInside */.FK)(grid, x, y))
+        (0,types_grid/* setColorEmpty */.l$)(grid, x, y);
 };
 
 ;// CONCATENATED MODULE: ../solver/clearCleanColoredLayer.ts
@@ -457,14 +456,14 @@ const clearResidualColoredLayer_setEmptySafe = (grid, x, y) => {
 
 
 const clearCleanColoredLayer = (grid, outside, snake0, color) => {
-    const snakeN = (0,types_snake/* getSnakeLength */.JJ)(snake0);
+    const snakeN = (0,types_snake/* getSnakeLength */.T$)(snake0);
     const points = clearCleanColoredLayer_getTunnellablePoints(grid, outside, snakeN, color);
     const chain = [snake0];
     while (points.length) {
         const path = getPathToNextPoint(grid, chain[0], color, points);
         path.pop();
         for (const snake of path)
-            clearCleanColoredLayer_setEmptySafe(grid, (0,types_snake/* getHeadX */.If)(snake), (0,types_snake/* getHeadY */.IP)(snake));
+            clearCleanColoredLayer_setEmptySafe(grid, (0,types_snake/* getHeadX */.tN)(snake), (0,types_snake/* getHeadY */.Ap)(snake));
         chain.unshift(...path);
     }
     fillOutside(outside, grid);
@@ -477,19 +476,19 @@ const getPathToNextPoint = (grid, snake0, color, points) => {
     const openList = [{ snake: snake0 }];
     while (openList.length) {
         const o = openList.shift();
-        const x = (0,types_snake/* getHeadX */.If)(o.snake);
-        const y = (0,types_snake/* getHeadY */.IP)(o.snake);
+        const x = (0,types_snake/* getHeadX */.tN)(o.snake);
+        const y = (0,types_snake/* getHeadY */.Ap)(o.snake);
         const i = points.findIndex((p) => p.x === x && p.y === y);
         if (i >= 0) {
             points.splice(i, 1);
             return clearCleanColoredLayer_unwrap(o);
         }
         for (const { x: dx, y: dy } of around4) {
-            if ((0,types_grid/* isInsideLarge */.HJ)(grid, 2, x + dx, y + dy) &&
-                !(0,types_snake/* snakeWillSelfCollide */.nJ)(o.snake, dx, dy) &&
+            if ((0,types_grid/* isInsideLarge */.Yd)(grid, 2, x + dx, y + dy) &&
+                !(0,types_snake/* snakeWillSelfCollide */.J)(o.snake, dx, dy) &&
                 clearCleanColoredLayer_getColorSafe(grid, x + dx, y + dy) <= color) {
-                const snake = (0,types_snake/* nextSnake */.kv)(o.snake, dx, dy);
-                if (!closeList.some((s0) => (0,types_snake/* snakeEquals */.kE)(s0, snake))) {
+                const snake = (0,types_snake/* nextSnake */.Sc)(o.snake, dx, dy);
+                if (!closeList.some((s0) => (0,types_snake/* snakeEquals */.sW)(s0, snake))) {
                     closeList.push(snake);
                     openList.push({ snake, parent: o });
                 }
@@ -504,8 +503,8 @@ const clearCleanColoredLayer_getTunnellablePoints = (grid, outside, snakeN, colo
     const points = [];
     for (let x = grid.width; x--;)
         for (let y = grid.height; y--;) {
-            const c = (0,types_grid/* getColor */.Lq)(grid, x, y);
-            if (!(0,types_grid/* isEmpty */.xb)(c) &&
+            const c = (0,types_grid/* getColor */.oU)(grid, x, y);
+            if (!(0,types_grid/* isEmpty */.Im)(c) &&
                 c <= color &&
                 !points.some((p) => p.x === x && p.y === y)) {
                 const tunnel = getBestTunnel(grid, outside, x, y, color, snakeN);
@@ -517,12 +516,12 @@ const clearCleanColoredLayer_getTunnellablePoints = (grid, outside, snakeN, colo
         }
     return points;
 };
-const clearCleanColoredLayer_getColorSafe = (grid, x, y) => (0,types_grid/* isInside */.V0)(grid, x, y) ? (0,types_grid/* getColor */.Lq)(grid, x, y) : 0;
+const clearCleanColoredLayer_getColorSafe = (grid, x, y) => (0,types_grid/* isInside */.FK)(grid, x, y) ? (0,types_grid/* getColor */.oU)(grid, x, y) : 0;
 const clearCleanColoredLayer_setEmptySafe = (grid, x, y) => {
-    if ((0,types_grid/* isInside */.V0)(grid, x, y))
-        (0,types_grid/* setColorEmpty */.Dy)(grid, x, y);
+    if ((0,types_grid/* isInside */.FK)(grid, x, y))
+        (0,types_grid/* setColorEmpty */.l$)(grid, x, y);
 };
-const clearCleanColoredLayer_isEmptySafe = (grid, x, y) => !(0,types_grid/* isInside */.V0)(grid, x, y) && (0,types_grid/* isEmpty */.xb)((0,types_grid/* getColor */.Lq)(grid, x, y));
+const clearCleanColoredLayer_isEmptySafe = (grid, x, y) => !(0,types_grid/* isInside */.FK)(grid, x, y) && (0,types_grid/* isEmpty */.Im)((0,types_grid/* getColor */.oU)(grid, x, y));
 
 ;// CONCATENATED MODULE: ../solver/getBestRoute.ts
 
@@ -530,7 +529,7 @@ const clearCleanColoredLayer_isEmptySafe = (grid, x, y) => !(0,types_grid/* isIn
 
 
 const getBestRoute = (grid0, snake0) => {
-    const grid = (0,types_grid/* copyGrid */.VJ)(grid0);
+    const grid = (0,types_grid/* copyGrid */.mi)(grid0);
     const outside = createOutside(grid);
     const chain = [snake0];
     for (const color of extractColors(grid)) {
@@ -548,7 +547,7 @@ const extractColors = (grid) => {
 
 ;// CONCATENATED MODULE: ../types/__fixtures__/snake.ts
 
-const create = (length) => (0,types_snake/* createSnakeFromCells */.xG)(Array.from({ length }, (_, i) => ({ x: i, y: -1 })));
+const create = (length) => (0,types_snake/* createSnakeFromCells */.yS)(Array.from({ length }, (_, i) => ({ x: i, y: -1 })));
 const snake1 = create(1);
 const snake3 = create(3);
 const snake4 = create(4);
@@ -561,20 +560,20 @@ const snake9 = create(9);
 
 
 
-const getPathToPose_isEmptySafe = (grid, x, y) => !(0,types_grid/* isInside */.V0)(grid, x, y) || (0,types_grid/* isEmpty */.xb)((0,types_grid/* getColor */.Lq)(grid, x, y));
+const getPathToPose_isEmptySafe = (grid, x, y) => !(0,types_grid/* isInside */.FK)(grid, x, y) || (0,types_grid/* isEmpty */.Im)((0,types_grid/* getColor */.oU)(grid, x, y));
 const getPathToPose = (snake0, target, grid) => {
-    if ((0,types_snake/* snakeEquals */.kE)(snake0, target))
+    if ((0,types_snake/* snakeEquals */.sW)(snake0, target))
         return [];
-    const targetCells = (0,types_snake/* snakeToCells */.Ks)(target).reverse();
-    const snakeN = (0,types_snake/* getSnakeLength */.JJ)(snake0);
+    const targetCells = (0,types_snake/* snakeToCells */.HU)(target).reverse();
+    const snakeN = (0,types_snake/* getSnakeLength */.T$)(snake0);
     const box = {
         min: {
-            x: Math.min((0,types_snake/* getHeadX */.If)(snake0), (0,types_snake/* getHeadX */.If)(target)) - snakeN - 1,
-            y: Math.min((0,types_snake/* getHeadY */.IP)(snake0), (0,types_snake/* getHeadY */.IP)(target)) - snakeN - 1,
+            x: Math.min((0,types_snake/* getHeadX */.tN)(snake0), (0,types_snake/* getHeadX */.tN)(target)) - snakeN - 1,
+            y: Math.min((0,types_snake/* getHeadY */.Ap)(snake0), (0,types_snake/* getHeadY */.Ap)(target)) - snakeN - 1,
         },
         max: {
-            x: Math.max((0,types_snake/* getHeadX */.If)(snake0), (0,types_snake/* getHeadX */.If)(target)) + snakeN + 1,
-            y: Math.max((0,types_snake/* getHeadY */.IP)(snake0), (0,types_snake/* getHeadY */.IP)(target)) + snakeN + 1,
+            x: Math.max((0,types_snake/* getHeadX */.tN)(snake0), (0,types_snake/* getHeadX */.tN)(target)) + snakeN + 1,
+            y: Math.max((0,types_snake/* getHeadY */.Ap)(snake0), (0,types_snake/* getHeadY */.Ap)(target)) + snakeN + 1,
         },
     };
     const [t0, ...forbidden] = targetCells;
@@ -583,8 +582,8 @@ const getPathToPose = (snake0, target, grid) => {
     const closeList = [];
     while (openList.length) {
         const o = openList.shift();
-        const x = (0,types_snake/* getHeadX */.If)(o.snake);
-        const y = (0,types_snake/* getHeadY */.IP)(o.snake);
+        const x = (0,types_snake/* getHeadX */.tN)(o.snake);
+        const y = (0,types_snake/* getHeadY */.Ap)(o.snake);
         if (x === t0.x && y === t0.y) {
             const path = [];
             let e = o;
@@ -601,17 +600,17 @@ const getPathToPose = (snake0, target, grid) => {
             const { x: dx, y: dy } = around4[i];
             const nx = x + dx;
             const ny = y + dy;
-            if (!(0,types_snake/* snakeWillSelfCollide */.nJ)(o.snake, dx, dy) &&
+            if (!(0,types_snake/* snakeWillSelfCollide */.J)(o.snake, dx, dy) &&
                 (!grid || getPathToPose_isEmptySafe(grid, nx, ny)) &&
                 (grid
-                    ? (0,types_grid/* isInsideLarge */.HJ)(grid, 2, nx, ny)
+                    ? (0,types_grid/* isInsideLarge */.Yd)(grid, 2, nx, ny)
                     : box.min.x <= nx &&
                         nx <= box.max.x &&
                         box.min.y <= ny &&
                         ny <= box.max.y) &&
                 !forbidden.some((p) => p.x === nx && p.y === ny)) {
-                const snake = (0,types_snake/* nextSnake */.kv)(o.snake, dx, dy);
-                if (!closeList.some((s) => (0,types_snake/* snakeEquals */.kE)(snake, s))) {
+                const snake = (0,types_snake/* nextSnake */.Sc)(o.snake, dx, dy);
+                if (!closeList.some((s) => (0,types_snake/* snakeEquals */.sW)(snake, s))) {
                     const w = o.w + 1;
                     const h = Math.abs(nx - x) + Math.abs(ny - y);
                     const f = w + h;
@@ -644,12 +643,12 @@ const generateContributionSnake = async (userName, outputs, options) => {
         switch (format) {
             case "svg": {
                 console.log(`🖌 creating svg (outputs[${i}])`);
-                const { createSvg } = await __webpack_require__.e(/* import() */ 340).then(__webpack_require__.bind(__webpack_require__, 8340));
+                const { createSvg } = await __webpack_require__.e(/* import() */ 578).then(__webpack_require__.bind(__webpack_require__, 4578));
                 return createSvg(grid, cells, chain, drawOptions, animationOptions);
             }
             case "gif": {
                 console.log(`📹 creating gif (outputs[${i}])`);
-                const { createGif } = await Promise.all(/* import() */[__webpack_require__.e(371), __webpack_require__.e(142)]).then(__webpack_require__.bind(__webpack_require__, 7142));
+                const { createGif } = await Promise.all(/* import() */[__webpack_require__.e(155), __webpack_require__.e(642)]).then(__webpack_require__.bind(__webpack_require__, 3642));
                 return await createGif(grid, cells, chain, drawOptions, animationOptions);
             }
         }
@@ -659,18 +658,18 @@ const generateContributionSnake = async (userName, outputs, options) => {
 
 /***/ }),
 
-/***/ 2881:
+/***/ 105:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "Dy": () => (/* binding */ setColorEmpty),
-/* harmony export */   "HJ": () => (/* binding */ isInsideLarge),
-/* harmony export */   "Lq": () => (/* binding */ getColor),
-/* harmony export */   "V0": () => (/* binding */ isInside),
-/* harmony export */   "VJ": () => (/* binding */ copyGrid),
-/* harmony export */   "u1": () => (/* binding */ createEmptyGrid),
-/* harmony export */   "vk": () => (/* binding */ setColor),
-/* harmony export */   "xb": () => (/* binding */ isEmpty)
+/* harmony export */   FK: () => (/* binding */ isInside),
+/* harmony export */   Im: () => (/* binding */ isEmpty),
+/* harmony export */   Kb: () => (/* binding */ createEmptyGrid),
+/* harmony export */   Yd: () => (/* binding */ isInsideLarge),
+/* harmony export */   l$: () => (/* binding */ setColorEmpty),
+/* harmony export */   mi: () => (/* binding */ copyGrid),
+/* harmony export */   oU: () => (/* binding */ getColor),
+/* harmony export */   wW: () => (/* binding */ setColor)
 /* harmony export */ });
 /* unused harmony exports isGridEmpty, gridEquals */
 const isInside = (grid, x, y) => x >= 0 && y >= 0 && x < grid.width && y < grid.height;
@@ -703,18 +702,18 @@ const createEmptyGrid = (width, height) => ({
 
 /***/ }),
 
-/***/ 9347:
+/***/ 777:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "IP": () => (/* binding */ getHeadY),
-/* harmony export */   "If": () => (/* binding */ getHeadX),
-/* harmony export */   "JJ": () => (/* binding */ getSnakeLength),
-/* harmony export */   "Ks": () => (/* binding */ snakeToCells),
-/* harmony export */   "kE": () => (/* binding */ snakeEquals),
-/* harmony export */   "kv": () => (/* binding */ nextSnake),
-/* harmony export */   "nJ": () => (/* binding */ snakeWillSelfCollide),
-/* harmony export */   "xG": () => (/* binding */ createSnakeFromCells)
+/* harmony export */   Ap: () => (/* binding */ getHeadY),
+/* harmony export */   HU: () => (/* binding */ snakeToCells),
+/* harmony export */   J: () => (/* binding */ snakeWillSelfCollide),
+/* harmony export */   Sc: () => (/* binding */ nextSnake),
+/* harmony export */   T$: () => (/* binding */ getSnakeLength),
+/* harmony export */   sW: () => (/* binding */ snakeEquals),
+/* harmony export */   tN: () => (/* binding */ getHeadX),
+/* harmony export */   yS: () => (/* binding */ createSnakeFromCells)
 /* harmony export */ });
 /* unused harmony export copySnake */
 const getHeadX = (snake) => snake[0] - 2;

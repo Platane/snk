@@ -1,23 +1,21 @@
 "use strict";
-exports.id = 340;
-exports.ids = [340];
+exports.id = 578;
+exports.ids = [578];
 exports.modules = {
 
-/***/ 8340:
+/***/ 4578:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-// ESM COMPAT FLAG
-__webpack_require__.r(__webpack_exports__);
 
 // EXPORTS
 __webpack_require__.d(__webpack_exports__, {
-  "createSvg": () => (/* binding */ createSvg)
+  createSvg: () => (/* binding */ createSvg)
 });
 
 // EXTERNAL MODULE: ../types/grid.ts
-var types_grid = __webpack_require__(2881);
+var types_grid = __webpack_require__(105);
 // EXTERNAL MODULE: ../types/snake.ts
-var types_snake = __webpack_require__(9347);
+var types_snake = __webpack_require__(777);
 ;// CONCATENATED MODULE: ../svg-creator/xml-utils.ts
 const h = (element, attributes) => `<${element} ${toAttribute(attributes)}/>`;
 const toAttribute = (o) => Object.entries(o)
@@ -62,10 +60,10 @@ const minifyCss = (css) => css
 
 const lerp = (k, a, b) => (1 - k) * a + k * b;
 const createSnake = (chain, { sizeCell, sizeDot }, duration) => {
-    const snakeN = chain[0] ? (0,types_snake/* getSnakeLength */.JJ)(chain[0]) : 0;
+    const snakeN = chain[0] ? (0,types_snake/* getSnakeLength */.T$)(chain[0]) : 0;
     const snakeParts = Array.from({ length: snakeN }, () => []);
     for (const snake of chain) {
-        const cells = (0,types_snake/* snakeToCells */.Ks)(snake);
+        const cells = (0,types_snake/* snakeToCells */.HU)(snake);
         for (let i = cells.length; i--;)
             snakeParts[i].push(cells[i]);
     }
@@ -237,15 +235,15 @@ const createLivingCells = (grid0, chain, cells) => {
         x,
         y,
         t: null,
-        color: (0,types_grid/* getColor */.Lq)(grid0, x, y),
+        color: (0,types_grid/* getColor */.oU)(grid0, x, y),
     }));
-    const grid = (0,types_grid/* copyGrid */.VJ)(grid0);
+    const grid = (0,types_grid/* copyGrid */.mi)(grid0);
     for (let i = 0; i < chain.length; i++) {
         const snake = chain[i];
-        const x = (0,types_snake/* getHeadX */.If)(snake);
-        const y = (0,types_snake/* getHeadY */.IP)(snake);
-        if ((0,types_grid/* isInside */.V0)(grid, x, y) && !(0,types_grid/* isEmpty */.xb)((0,types_grid/* getColor */.Lq)(grid, x, y))) {
-            (0,types_grid/* setColorEmpty */.Dy)(grid, x, y);
+        const x = (0,types_snake/* getHeadX */.tN)(snake);
+        const y = (0,types_snake/* getHeadY */.Ap)(snake);
+        if ((0,types_grid/* isInside */.FK)(grid, x, y) && !(0,types_grid/* isEmpty */.Im)((0,types_grid/* getColor */.oU)(grid, x, y))) {
+            (0,types_grid/* setColorEmpty */.l$)(grid, x, y);
             const cell = livingCells.find((c) => c.x === x && c.y === y);
             cell.t = i / chain.length;
         }

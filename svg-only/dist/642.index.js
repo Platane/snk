@@ -1,31 +1,29 @@
 "use strict";
-exports.id = 142;
-exports.ids = [142];
+exports.id = 642;
+exports.ids = [642];
 exports.modules = {
 
-/***/ 7142:
+/***/ 3642:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-// ESM COMPAT FLAG
-__webpack_require__.r(__webpack_exports__);
 
 // EXPORTS
 __webpack_require__.d(__webpack_exports__, {
-  "createGif": () => (/* binding */ createGif)
+  createGif: () => (/* binding */ createGif)
 });
 
 // EXTERNAL MODULE: external "fs"
-var external_fs_ = __webpack_require__(7147);
+var external_fs_ = __webpack_require__(9896);
 var external_fs_default = /*#__PURE__*/__webpack_require__.n(external_fs_);
 // EXTERNAL MODULE: external "path"
-var external_path_ = __webpack_require__(1017);
+var external_path_ = __webpack_require__(6928);
 var external_path_default = /*#__PURE__*/__webpack_require__.n(external_path_);
 // EXTERNAL MODULE: external "child_process"
-var external_child_process_ = __webpack_require__(2081);
+var external_child_process_ = __webpack_require__(5317);
 // EXTERNAL MODULE: external "canvas"
-var external_canvas_ = __webpack_require__(1813);
+var external_canvas_ = __webpack_require__(9919);
 // EXTERNAL MODULE: ../types/grid.ts
-var types_grid = __webpack_require__(2881);
+var types_grid = __webpack_require__(105);
 ;// CONCATENATED MODULE: ../draw/pathRoundedRect.ts
 const pathRoundedRect_pathRoundedRect = (ctx, width, height, borderRadius) => {
     ctx.moveTo(borderRadius, 0);
@@ -42,7 +40,7 @@ const drawGrid_drawGrid = (ctx, grid, cells, o) => {
     for (let x = grid.width; x--;)
         for (let y = grid.height; y--;) {
             if (!cells || cells.some((c) => c.x === x && c.y === y)) {
-                const c = (0,types_grid/* getColor */.Lq)(grid, x, y);
+                const c = (0,types_grid/* getColor */.oU)(grid, x, y);
                 // @ts-ignore
                 const color = !c ? o.colorEmpty : o.colorDots[c];
                 ctx.save();
@@ -144,27 +142,27 @@ const getCanvasWorldSize = (grid, o) => {
 };
 
 // EXTERNAL MODULE: ../types/snake.ts
-var types_snake = __webpack_require__(9347);
+var types_snake = __webpack_require__(777);
 ;// CONCATENATED MODULE: ../solver/step.ts
 
 
 const step = (grid, stack, snake) => {
-    const x = (0,types_snake/* getHeadX */.If)(snake);
-    const y = (0,types_snake/* getHeadY */.IP)(snake);
-    const color = (0,types_grid/* getColor */.Lq)(grid, x, y);
-    if ((0,types_grid/* isInside */.V0)(grid, x, y) && !(0,types_grid/* isEmpty */.xb)(color)) {
+    const x = (0,types_snake/* getHeadX */.tN)(snake);
+    const y = (0,types_snake/* getHeadY */.Ap)(snake);
+    const color = (0,types_grid/* getColor */.oU)(grid, x, y);
+    if ((0,types_grid/* isInside */.FK)(grid, x, y) && !(0,types_grid/* isEmpty */.Im)(color)) {
         stack.push(color);
-        (0,types_grid/* setColorEmpty */.Dy)(grid, x, y);
+        (0,types_grid/* setColorEmpty */.l$)(grid, x, y);
     }
 };
 
 // EXTERNAL MODULE: ../../node_modules/tmp/lib/tmp.js
-var tmp = __webpack_require__(6382);
+var tmp = __webpack_require__(2644);
 // EXTERNAL MODULE: external "gifsicle"
-var external_gifsicle_ = __webpack_require__(542);
+var external_gifsicle_ = __webpack_require__(5667);
 var external_gifsicle_default = /*#__PURE__*/__webpack_require__.n(external_gifsicle_);
 // EXTERNAL MODULE: ../../node_modules/gif-encoder-2/index.js
-var gif_encoder_2 = __webpack_require__(3561);
+var gif_encoder_2 = __webpack_require__(1680);
 var gif_encoder_2_default = /*#__PURE__*/__webpack_require__.n(gif_encoder_2);
 ;// CONCATENATED MODULE: ../gif-creator/index.ts
 
@@ -193,7 +191,7 @@ const createGif = async (grid0, cells, chain, drawOptions, animationOptions) => 
     const { width, height } = getCanvasWorldSize(grid0, drawOptions);
     const canvas = (0,external_canvas_.createCanvas)(width, height);
     const ctx = canvas.getContext("2d");
-    const grid = (0,types_grid/* copyGrid */.VJ)(grid0);
+    const grid = (0,types_grid/* copyGrid */.mi)(grid0);
     const stack = [];
     const encoder = new (gif_encoder_2_default())(width, height, "neuquant", true);
     encoder.setRepeat(0);
@@ -223,7 +221,7 @@ const createGif = async (grid0, cells, chain, drawOptions, animationOptions) => 
         outFileName,
         ["--output", optimizedFileName],
     ].flat());
-    return external_fs_default().readFileSync(optimizedFileName);
+    return new Uint8Array(external_fs_default().readFileSync(optimizedFileName));
 });
 
 

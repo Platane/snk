@@ -1,23 +1,23 @@
-exports.id = 371;
-exports.ids = [371];
+exports.id = 155;
+exports.ids = [155];
 exports.modules = {
 
-/***/ 3561:
+/***/ 1680:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-module.exports = __webpack_require__(9244)
+module.exports = __webpack_require__(7739)
 
 
 /***/ }),
 
-/***/ 9244:
+/***/ 7739:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const stream = __webpack_require__(2781)
-const EventEmitter = __webpack_require__(2361)
-const LZWEncoder = __webpack_require__(4348)
-const NeuQuant = __webpack_require__(3829)
-const { OctreeQuant, Color } = __webpack_require__(9328)
+const stream = __webpack_require__(2203)
+const EventEmitter = __webpack_require__(4434)
+const LZWEncoder = __webpack_require__(3500)
+const NeuQuant = __webpack_require__(222)
+const { OctreeQuant, Color } = __webpack_require__(2756)
 
 class ByteArray {
   constructor() {
@@ -417,7 +417,7 @@ module.exports = GIFEncoder
 
 /***/ }),
 
-/***/ 4348:
+/***/ 3500:
 /***/ ((module) => {
 
 /*
@@ -651,7 +651,7 @@ module.exports = LZWEncoder
 
 /***/ }),
 
-/***/ 9328:
+/***/ 2756:
 /***/ ((module) => {
 
 /*
@@ -878,7 +878,7 @@ module.exports = { OctreeQuant, Node, Color }
 
 /***/ }),
 
-/***/ 3829:
+/***/ 222:
 /***/ ((module) => {
 
 /* NeuQuant Neural-Net Quantization Algorithm
@@ -1334,7 +1334,7 @@ module.exports = NeuQuant
 
 /***/ }),
 
-/***/ 6382:
+/***/ 2644:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 /*!
@@ -1348,10 +1348,10 @@ module.exports = NeuQuant
 /*
  * Module dependencies.
  */
-const fs = __webpack_require__(7147);
-const os = __webpack_require__(2037);
-const path = __webpack_require__(1017);
-const crypto = __webpack_require__(6113);
+const fs = __webpack_require__(9896);
+const os = __webpack_require__(857);
+const path = __webpack_require__(6928);
+const crypto = __webpack_require__(6982);
 const _c = { fs: fs.constants, os: os.constants };
 
 /*
