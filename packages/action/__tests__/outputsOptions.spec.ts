@@ -1,4 +1,5 @@
 import { parseEntry } from "../outputsOptions";
+import { it, expect } from "bun:test";
 
 it("should parse options as json", () => {
   expect(

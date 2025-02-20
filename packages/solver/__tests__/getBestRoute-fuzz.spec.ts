@@ -1,3 +1,4 @@
+import { it, expect } from "bun:test";
 import { getBestRoute } from "../getBestRoute";
 import { snake3, snake4 } from "@snk/types/__fixtures__/snake";
 import {

@@ -1,11 +1,8 @@
 import * as fs from "fs";
 import * as path from "path";
+import { it, expect } from "bun:test";
 import { generateContributionSnake } from "../generateContributionSnake";
 import { parseOutputsOption } from "../outputsOptions";
-import { config } from "dotenv";
-config({ path: __dirname + "/../../../.env" });
-
-jest.setTimeout(2 * 60 * 1000);
 
 const silent = (handler: () => void | Promise<void>) => async () => {
   const originalConsoleLog = console.log;
@@ -43,5 +40,6 @@ it(
     fs.writeFileSync(outputs[0]!.filename, results[0]!);
     fs.writeFileSync(outputs[1]!.filename, results[1]!);
     fs.writeFileSync(outputs[2]!.filename, results[2]!);
-  })
+  }),
+  { timeout: 2 * 60 * 1000 }
 );

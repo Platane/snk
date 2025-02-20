@@ -1,3 +1,4 @@
+import { it, expect } from "bun:test";
 import * as fs from "fs";
 import * as path from "path";
 import { createSvg, DrawOptions as DrawOptions } from "..";

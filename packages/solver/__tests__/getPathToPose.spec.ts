@@ -1,3 +1,4 @@
+import { it, expect } from "bun:test";
 import { createSnakeFromCells } from "@snk/types/snake";
 import { getPathToPose } from "../getPathToPose";
 

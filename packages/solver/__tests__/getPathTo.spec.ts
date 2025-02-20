@@ -1,3 +1,4 @@
+import { it, expect } from "bun:test";
 import { createEmptyGrid } from "@snk/types/grid";
 import { getHeadX, getHeadY } from "@snk/types/snake";
 import { snake3 } from "@snk/types/__fixtures__/snake";
