@@ -17,6 +17,7 @@ jobs:
           outputs: |
             dist/only-svg/github-contribution-grid-snake.svg
             dist/only-svg/github-contribution-grid-snake-dark.svg?palette=github-dark
+            dist/only-svg/github-contribution-grid-snake-blue.svg?color_snake=orange&color_dots=#bfd6f6,#8dbdff,#64a1f4,#4b91f1,#3c7dd9
 
       - uses: Platane/snk@v3
         with:
@@ -31,6 +32,7 @@ jobs:
           ls dist
           test -f dist/only-svg/github-contribution-grid-snake.svg
           test -f dist/only-svg/github-contribution-grid-snake-dark.svg
+          test -f dist/only-svg/github-contribution-grid-snake-blue.svg
 
           test -f dist/docker/github-contribution-grid-snake.svg
           test -f dist/docker/github-contribution-grid-snake-dark.svg
