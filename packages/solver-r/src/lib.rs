@@ -1,3 +1,4 @@
+use js_sys;
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
@@ -18,32 +19,52 @@ pub struct Point {
 
 #[wasm_bindgen]
 #[derive(Copy, Clone)]
+#[repr(u8)]
 pub enum Cell {
-    Empty,
-    Color1,
-    Color2,
-    Color3,
-    Color4,
-    Color5,
+    Empty = 0,
+    Color1 = 1,
+    Color2 = 2,
+    Color3 = 3,
+    Color4 = 4,
+    Color5 = 5,
 }
 
 #[wasm_bindgen]
+#[derive(Clone)]
 pub struct Grid {
-    width: i8,
-    height: i8,
+    pub width: i8,
+    pub height: i8,
     cells: Vec<Cell>,
 }
 
 #[wasm_bindgen]
 impl Grid {
-    pub fn create(width: i8, height: i8) -> Grid {
-        let cells = (0..width * height).map(|_| Cell::Empty).collect();
+    pub fn create(width: i8, height: i8, data: js_sys::Uint8Array) -> Grid {
+        let cells = data
+            .to_vec()
+            .iter()
+            .map(|u| match u {
+                0 => Cell::Empty,
+                1 => Cell::Color1,
+                2 => Cell::Color2,
+                3 => Cell::Color3,
+                4 => Cell::Color4,
+                5 => Cell::Color5,
+                _ => panic!("unknown cell"),
+            })
+            .collect();
 
         Grid {
             width,
             height,
             cells,
         }
+    }
+
+    #[wasm_bindgen(getter)]
+    pub fn cells(&self) -> js_sys::Uint8Array {
+        let o: Vec<u8> = self.cells.iter().map(|u| *u as u8).collect();
+        js_sys::Uint8Array::from(&o[..])
     }
 }
 
@@ -53,12 +74,9 @@ pub fn get_index(grid: &Grid, x: i8, y: i8) -> usize {
     return (x * grid.height + y) as usize;
 }
 
-// pub fn setCell(grid:&Grid,x:i8,y:i8,c:Cell) {
-//     // grid.data[getIndex(grid,x,y)]=c;
-// }
-
-pub fn get_cell(grid: &Grid, p: &Point) -> Cell {
-    let i = get_index(grid, p.x, p.y);
+#[wasm_bindgen]
+pub fn get_cell(grid: &Grid, x: i8, y: i8) -> Cell {
+    let i = get_index(grid, x, y);
 
     return grid.cells[i];
 }
