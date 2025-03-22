@@ -18,5 +18,8 @@
     "dev:demo": "( cd packages/demo ; npm run dev )",
     "build:demo": "( cd packages/demo ; npm run build )",
     "build:action": "( cd packages/action ; npm run build )"
-  }
+  },
+  "trustedDependencies": [
+    "wasm-pack"
+  ]
 }

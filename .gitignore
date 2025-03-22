@@ -6,3 +6,4 @@ build
 .env
 .wrangler
 .dev.vars
+target

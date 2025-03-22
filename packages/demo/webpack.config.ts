@@ -42,6 +42,9 @@ const webpackConfiguration: WebpackConfiguration = {
     path: path.join(__dirname, "dist"),
     filename: "[contenthash].js",
   },
+  experiments: {
+    asyncWebAssembly: true,
+  },
   module: {
     rules: [
       {
