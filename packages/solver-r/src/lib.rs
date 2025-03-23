@@ -71,7 +71,7 @@ impl From<IGrid> for Grid {
 pub fn iget_free_cell(grid: &IGrid) -> js_sys::Uint8Array {
     let g = Grid::from(grid.clone());
 
-    let out = get_free_cell(&g, Cell::Color1);
+    let (_, out) = get_free_cell(&g, Cell::Color1);
 
     let o: Vec<u8> = out.iter().flat_map(|p| [p.x as u8, p.y as u8]).collect();
 

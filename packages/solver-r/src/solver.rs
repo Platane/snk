@@ -2,8 +2,9 @@ use std::collections::HashSet;
 
 use crate::grid::{Cell, Grid, Point};
 
-pub fn get_free_cell(grid: &Grid, walkable: Cell) -> HashSet<Point> {
-    let mut free: HashSet<Point> = HashSet::new();
+pub fn get_free_cell(grid: &Grid, walkable: Cell) -> (HashSet<Point>, HashSet<Point>) {
+    let mut free_cells: HashSet<Point> = HashSet::new();
+    let mut one_way_cells: HashSet<Point> = HashSet::new();
     let mut open_list: HashSet<Point> = HashSet::new();
 
     for x in 0..(grid.width as i8) {
@@ -43,7 +44,7 @@ pub fn get_free_cell(grid: &Grid, walkable: Cell) -> HashSet<Point> {
                 };
 
                 if !visited.contains(&neighbour)
-                    && (free.contains(&neighbour) || !grid.is_inside(&neighbour))
+                    && (free_cells.contains(&neighbour) || !grid.is_inside(&neighbour))
                 {
                     visited.insert(neighbour);
                     exit_count += 1;
@@ -67,7 +68,7 @@ pub fn get_free_cell(grid: &Grid, walkable: Cell) -> HashSet<Point> {
 
                         if !visited.contains(&neighbour)
                             && !visited.contains(&corner)
-                            && (free.contains(&corner) || !grid.is_inside(&corner))
+                            && (free_cells.contains(&corner) || !grid.is_inside(&corner))
                         {
                             visited.insert(neighbour);
                             visited.insert(corner);
@@ -81,7 +82,7 @@ pub fn get_free_cell(grid: &Grid, walkable: Cell) -> HashSet<Point> {
         };
 
         if has_enough_free_exits {
-            free.insert(p);
+            free_cells.insert(p);
 
             for dir in directions {
                 let neighbour = Point {
@@ -89,17 +90,21 @@ pub fn get_free_cell(grid: &Grid, walkable: Cell) -> HashSet<Point> {
                     y: p.y + dir.y,
                 };
 
-                if !free.contains(&neighbour)
+                if !free_cells.contains(&neighbour)
                     && grid.is_inside(&neighbour)
                     && grid.get_cell(&neighbour) <= walkable
                 {
                     open_list.insert(neighbour);
                 }
             }
+        } else {
+            one_way_cells.insert(p);
         }
     }
 
-    free
+    one_way_cells.retain(|p| !free_cells.contains(&p));
+
+    (free_cells, one_way_cells)
 }
 
 #[test]
@@ -108,7 +113,7 @@ fn it_should_collect_free_cell() {
 
     grid.set_cell(&Point { x: 1, y: 1 }, Cell::Color2);
 
-    let free_cells = get_free_cell(&grid, Cell::Color1);
+    let (free_cells, _) = get_free_cell(&grid, Cell::Color1);
 
     assert_eq!(
         free_cells,
