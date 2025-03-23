@@ -18,7 +18,7 @@ pub struct Point {
 }
 
 #[wasm_bindgen]
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Debug, PartialEq)]
 #[repr(u8)]
 pub enum Cell {
     Empty = 0,
@@ -39,6 +39,16 @@ pub struct Grid {
 
 #[wasm_bindgen]
 impl Grid {
+    pub fn create_empty(width: i8, height: i8) -> Grid {
+        let n = (width as usize) * (height as usize);
+        let cells = (0..n).map(|_| Cell::Empty).collect();
+
+        Grid {
+            width,
+            height,
+            cells,
+        }
+    }
     pub fn create(width: i8, height: i8, data: js_sys::Uint8Array) -> Grid {
         let cells = data
             .to_vec()
@@ -71,17 +81,31 @@ impl Grid {
 type Snake = [Point; 5];
 
 pub fn get_index(grid: &Grid, x: i8, y: i8) -> usize {
-    return (x * grid.height + y) as usize;
+    return (x as usize) * (grid.height as usize) + (y as usize);
 }
 
-#[wasm_bindgen]
-pub fn get_cell(grid: &Grid, x: i8, y: i8) -> Cell {
-    let i = get_index(grid, x, y);
-
+pub fn get_cell(grid: &Grid, p: &Point) -> Cell {
+    let i = get_index(grid, p.x, p.y);
     return grid.cells[i];
+}
+pub fn set_cell(grid: &mut Grid, p: &Point, value: Cell) -> () {
+    let i = get_index(&grid, p.x, p.y);
+    grid.cells[i] = value;
 }
 
 #[test]
-fn it_works() {
-    assert_eq!(2 + 2, 4);
+fn grid_create() {
+    let grid = Grid::create_empty(30, 10);
+
+    assert_eq!(grid.width, 30);
+    assert_eq!(grid.height, 10);
+    assert_eq!(get_cell(&grid, &Point { x: 2, y: 3 }), Cell::Empty);
+}
+#[test]
+fn grid_setter() {
+    let mut grid = Grid::create_empty(20, 10);
+
+    set_cell(&mut grid, &Point { x: 12, y: 3 }, Cell::Color1);
+
+    assert_eq!(get_cell(&grid, &Point { x: 12, y: 3 }), Cell::Color1);
 }

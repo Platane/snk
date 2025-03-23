@@ -9,14 +9,22 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: oven-sh/setup-bun@v1
+      - uses: dtolnay/rust-toolchain@stable
 
       - run: bun install --frozen-lockfile
 
+      - run: bun run build
+        working-directory: packages/solver-r
+
       - run: npm run type
-      - run: npm run lint
+
       - run: bun test
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - run: cargo test
+        working-directory: packages/solver-r
+
+      - run: npm run lint
 
   test-action:
     runs-on: ubuntu-latest
