@@ -1,10 +1,10 @@
 #[derive(Copy, Clone, Hash, Eq, PartialEq, Debug)]
 pub struct Point {
-    pub x: u8,
-    pub y: u8,
+    pub x: i8,
+    pub y: i8,
 }
 
-#[derive(Copy, Clone, Debug, PartialEq)]
+#[derive(Copy, Clone, Debug, PartialEq, PartialOrd)]
 #[repr(u8)]
 pub enum Cell {
     Empty = 0,
@@ -32,7 +32,7 @@ impl Grid {
         }
     }
 
-    pub fn get_index(&self, x: u8, y: u8) -> usize {
+    pub fn get_index(&self, x: i8, y: i8) -> usize {
         return (x as usize) * (self.height as usize) + (y as usize);
     }
     pub fn get_cell(&self, p: &Point) -> Cell {
@@ -43,8 +43,18 @@ impl Grid {
         let i = self.get_index(p.x, p.y);
         self.cells[i] = value;
     }
+    pub fn is_inside(&self, p: &Point) -> bool {
+        p.x >= 0 && p.x < (self.width as i8) && p.y >= 0 && p.y < (self.height as i8)
+    }
 }
 
+#[test]
+fn it_should_sort_cell() {
+    assert_eq!(Cell::Empty < Cell::Color1, true);
+    assert_eq!(Cell::Color1 < Cell::Color2, true);
+    assert_eq!(Cell::Color2 < Cell::Color3, true);
+    assert_eq!(Cell::Color3 < Cell::Color4, true);
+}
 #[test]
 fn it_should_grid_create() {
     let grid = Grid::create_empty(30, 10);
