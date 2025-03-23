@@ -6,6 +6,9 @@ use js_sys;
 use solver::get_free_cell;
 use wasm_bindgen::prelude::*;
 
+use log::info;
+use log::Level;
+
 #[wasm_bindgen]
 extern "C" {
     fn alert(s: &str);

@@ -9,8 +9,6 @@ import { grid } from "./sample";
 
 	const freeCells = api.iget_free_cell(g);
 
-	console.log(freeCells);
-
 	{
 		const { canvas, draw, highlightCell } = createCanvas(g);
 		document.body.appendChild(canvas);
