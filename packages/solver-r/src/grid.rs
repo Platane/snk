@@ -48,6 +48,13 @@ impl Grid {
     }
 }
 
+pub const DIRECTIONS: [Point; 4] = [
+    Point { x: 1, y: 0 },
+    Point { x: -1, y: 0 },
+    Point { x: 0, y: 1 },
+    Point { x: 0, y: -1 },
+];
+
 #[test]
 fn it_should_sort_cell() {
     assert_eq!(Cell::Empty < Cell::Color1, true);

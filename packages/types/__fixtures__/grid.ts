@@ -84,6 +84,12 @@ export const tunnels = createFromAscii(`
   #.#   #.#   #.#
   #.#   ###   # #
 `);
+export const line = createFromAscii(`
+
+  #######  
+     .. #
+  ##### #
+`);
 
 const createRandom = (width: number, height: number, emptyP: number) => {
   const grid = createEmptyGrid(width, height);
