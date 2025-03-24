@@ -11,7 +11,7 @@ pub fn move_snake(s: &mut Snake, dir: &Point) -> () {
     e.y = s[0].y + dir.y;
     s.insert(0, e);
 }
-pub fn will_self_collide(s: &Snake, dir: &Point) -> bool {
+pub fn snake_will_self_collide(s: &Snake, dir: &Point) -> bool {
     let next_head = Point {
         x: s[0].x + dir.x,
         y: s[0].y + dir.y,
@@ -19,7 +19,27 @@ pub fn will_self_collide(s: &Snake, dir: &Point) -> bool {
 
     (&s[0..(s.len() - 1)]).contains(&next_head)
 }
+pub fn get_snake_head(s: &Snake) -> Point {
+    s[0]
+}
+pub fn get_next_snake_head(s: &Snake, dir: &Point) -> Point {
+    Point {
+        x: s[0].x + dir.x,
+        y: s[0].y + dir.y,
+    }
+}
 
+#[test]
+fn it_should_return_head() {
+    let s = vec![
+        //
+        Point { x: 3, y: 0 },
+        Point { x: 2, y: 0 },
+        Point { x: 1, y: 0 },
+    ];
+
+    assert_eq!(get_snake_head(&s), Point { x: 3, y: 0 });
+}
 #[test]
 fn it_should_detect_self_collide() {
     let mut s = vec![
@@ -35,11 +55,22 @@ fn it_should_detect_self_collide() {
     move_snake(&mut s, &DIRECTION_UP);
     move_snake(&mut s, &DIRECTION_LEFT);
 
-    assert_eq!(will_self_collide(&s, &DIRECTION_DOWN), true);
+    assert_eq!(snake_will_self_collide(&s, &DIRECTION_DOWN), true);
 
     move_snake(&mut s, &DIRECTION_LEFT);
 
-    assert_eq!(will_self_collide(&s, &DIRECTION_DOWN), false);
+    assert_eq!(snake_will_self_collide(&s, &DIRECTION_DOWN), false);
+}
+#[test]
+fn it_should_detect_self_collide_2() {
+    let s = vec![
+        //
+        Point { x: 3, y: 0 },
+        Point { x: 2, y: 0 },
+        Point { x: 1, y: 0 },
+    ];
+
+    assert_eq!(snake_will_self_collide(&s, &DIRECTION_LEFT), true);
 }
 #[test]
 fn it_should_move_snake() {
