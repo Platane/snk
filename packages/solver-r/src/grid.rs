@@ -48,11 +48,15 @@ impl Grid {
     }
 }
 
+pub const DIRECTION_RIGHT: Point = Point { x: 1, y: 0 };
+pub const DIRECTION_LEFT: Point = Point { x: -1, y: 0 };
+pub const DIRECTION_UP: Point = Point { x: 0, y: 1 };
+pub const DIRECTION_DOWN: Point = Point { x: 0, y: -1 };
 pub const DIRECTIONS: [Point; 4] = [
-    Point { x: 1, y: 0 },
-    Point { x: -1, y: 0 },
-    Point { x: 0, y: 1 },
-    Point { x: 0, y: -1 },
+    DIRECTION_RIGHT,
+    DIRECTION_LEFT,
+    DIRECTION_UP,
+    DIRECTION_DOWN,
 ];
 
 #[test]

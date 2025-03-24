@@ -1,5 +1,6 @@
 mod grid;
 mod snake;
+mod snake_compact;
 mod snake_walk;
 mod solver;
 
