@@ -1,9 +1,17 @@
 use std::collections::HashSet;
 
+use crate::astar::get_path;
 use crate::grid::{Cell, Grid, Point, DIRECTIONS};
 use crate::snake::{
     get_next_snake_head, get_snake_head, move_snake, snake_will_self_collide, Snake,
 };
+
+struct Node {
+    point: Point,
+    weight: u8,
+    h: u8,
+    parent: Option<Point>,
+}
 
 pub fn get_route_to_eat_all(
     grid: &Grid,
@@ -12,6 +20,8 @@ pub fn get_route_to_eat_all(
     cells_to_eat: HashSet<Point>,
 ) -> Vec<Point> {
     // let mut targets: Vec<Point> = cells_to_eat.iter().map(|p| p.clone()).collect();
+
+    // let open_list = get_path(|p|);
 
     let mut targets: Vec<&Point> = cells_to_eat.iter().collect();
 

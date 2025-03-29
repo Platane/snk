@@ -1,10 +1,11 @@
 [
-  "interactive",
-  "getBestRoute",
-  "getBestTunnel",
-  "outside",
-  "getPathToPose",
-  "getPathTo",
-  "svg",
-  "rust"
+	"interactive",
+	"getBestRoute",
+	"getBestTunnel",
+	"outside",
+	"getPathToPose",
+	"getPathTo",
+	"svg",
+	"rust",
+	"astar"
 ]
