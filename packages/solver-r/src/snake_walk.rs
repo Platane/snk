@@ -54,7 +54,7 @@ pub fn can_snake_reach_outside(grid: &WalkableGrid, snake: &Snake) -> bool {
 pub fn get_path_to_eat_all(
     grid: &WalkableGrid,
     snake: &[Point],
-    cells_to_eat: HashSet<Point>,
+    cells_to_eat: &HashSet<Point>,
 ) -> Vec<Point> {
     let snake_length = snake.len();
 
@@ -78,12 +78,12 @@ pub fn get_path_to_eat_all(
             }
 
             let snake = &path[0..snake_length];
-            let w = match best_route.as_ref() {
+            let max_weight = match best_route.as_ref() {
                 None => usize::MAX,
                 Some(path) => path.len() - snake_length,
             };
 
-            let res = get_snake_path(|c| grid.is_cell_walkable(c), snake, p, w);
+            let res = get_snake_path(|c| grid.is_cell_walkable(c), snake, p, max_weight);
 
             if let Some(sub_path) = res {
                 if match best_route.as_ref() {
@@ -96,15 +96,19 @@ pub fn get_path_to_eat_all(
         }
 
         if let Some(mut sub_path) = best_route {
-            path.append(&mut sub_path);
+            let eaten = sub_path[0];
 
-            let eaten = sub_path.last().unwrap();
-            cells_to_eat.retain(|p| p != eaten);
+            cells_to_eat.retain(|p| **p != eaten);
+
+            sub_path.truncate(sub_path.len() - snake_length);
+            sub_path.append(&mut path);
+            path = sub_path;
         } else {
-            assert!(false);
+            panic!("impossible to path to cell to eat");
         }
     }
 
+    path.reverse();
     path
 }
 

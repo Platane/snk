@@ -6,13 +6,21 @@ mod snake_compact;
 mod snake_walk;
 mod solver;
 
+use std::collections::HashSet;
+
 use astar::get_path;
 use astar_snake::get_snake_path;
 use grid::{Cell, Grid, Point, WalkableGrid};
 use js_sys;
+use log::info;
 use snake_walk::get_path_to_eat_all;
 use solver::get_free_cells;
 use wasm_bindgen::prelude::*;
+
+#[wasm_bindgen]
+pub fn init_panic_hook() {
+    console_error_panic_hook::set_once();
+}
 
 #[wasm_bindgen]
 extern "C" {
@@ -21,7 +29,11 @@ extern "C" {
 
 #[wasm_bindgen]
 pub fn greet() {
-    alert("Hello, wasm-game-of-life!");
+    init_panic_hook();
+    console_log::init_with_level(log::Level::Debug).unwrap();
+
+    info!("It works!");
+    // alert("Hello, wasm-game-of-life!");
 }
 
 #[wasm_bindgen]
@@ -122,7 +134,7 @@ type ISnake = Vec<IPoint>;
 pub fn iget_free_cells(grid: &IGrid) -> js_sys::Uint8Array {
     let g = Grid::from(grid.clone());
 
-    let (_, out) = get_free_cells(&g, Cell::Color1);
+    let (out, _) = get_free_cells(&g, Cell::Color1);
 
     let o: Vec<u8> = out.iter().flat_map(|p| [p.x as u8, p.y as u8]).collect();
 
@@ -172,9 +184,14 @@ pub fn ieat_free_cells(grid: &IGrid, snake: ISnake) -> Vec<IPoint> {
     let grid = WalkableGrid::create(Grid::from(grid.clone()), Cell::Color1);
     let snake: Vec<Point> = snake.iter().map(Point::from).collect();
 
-    let (free_cells, out) = get_free_cells(&grid.grid, Cell::Color1);
+    let (free_cells, _) = get_free_cells(&grid.grid, Cell::Color1);
 
-    let path = get_path_to_eat_all(&grid, &snake, free_cells);
+    let mut to_eat: HashSet<Point> = HashSet::new();
+    to_eat.insert(Point { x: 6, y: 6 });
+    to_eat.insert(Point { x: 5, y: 0 });
+
+    let path = get_path_to_eat_all(&grid, &snake, &to_eat);
+    // let path = get_path_to_eat_all(&grid, &snake, &free_cells);
 
     path.iter().map(IPoint::from).collect()
 }
