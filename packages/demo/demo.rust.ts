@@ -7,7 +7,7 @@ import { grid } from "./sample";
 
 	const g = api.IGrid.create(grid.width, grid.height, grid.data);
 
-	const freeCells = api.iget_free_cell(g);
+	const freeCells = api.iget_free_cells(g);
 
 	{
 		const { canvas, draw, highlightCell } = createCanvas(g);

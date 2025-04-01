@@ -1,4 +1,4 @@
-use crate::grid::{Point, DIRECTIONS};
+use crate::grid::{get_distance, Point, DIRECTIONS};
 use std::cmp::Reverse;
 use std::collections::{BinaryHeap, HashMap};
 
@@ -29,7 +29,7 @@ impl PartialOrd for Node {
 }
 
 fn get_heuristic(a: &Point, b: &Point) -> u8 {
-    (a.x - b.x).abs() as u8 + (a.y - b.y).abs() as u8
+    get_distance(a, b)
 }
 
 pub fn get_path<F>(mut walkable: F, start: &Point, end: &Point) -> Option<Vec<Point>>

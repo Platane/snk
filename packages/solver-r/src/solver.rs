@@ -2,7 +2,7 @@ use std::collections::HashSet;
 
 use crate::grid::{Cell, Grid, Point};
 
-pub fn get_free_cell(grid: &Grid, walkable: Cell) -> (HashSet<Point>, HashSet<Point>) {
+pub fn get_free_cells(grid: &Grid, walkable: Cell) -> (HashSet<Point>, HashSet<Point>) {
     let mut free_cells: HashSet<Point> = HashSet::new();
     let mut one_way_cells: HashSet<Point> = HashSet::new();
     let mut open_list: HashSet<Point> = HashSet::new();
@@ -113,7 +113,7 @@ fn it_should_collect_free_cell() {
 
     grid.set_cell(&Point { x: 1, y: 1 }, Cell::Color2);
 
-    let (free_cells, _) = get_free_cell(&grid, Cell::Color1);
+    let (free_cells, _) = get_free_cells(&grid, Cell::Color1);
 
     assert_eq!(
         free_cells,

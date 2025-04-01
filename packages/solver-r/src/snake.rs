@@ -11,18 +11,15 @@ pub fn move_snake(s: &mut Snake, dir: &Point) -> () {
     e.y = s[0].y + dir.y;
     s.insert(0, e);
 }
-pub fn snake_will_self_collide(s: &Snake, dir: &Point) -> bool {
-    let next_head = Point {
-        x: s[0].x + dir.x,
-        y: s[0].y + dir.y,
-    };
+pub fn snake_will_self_collide(s: &[Point], dir: &Point) -> bool {
+    let next_head = get_next_snake_head(s, dir);
 
     (&s[0..(s.len() - 1)]).contains(&next_head)
 }
-pub fn get_snake_head(s: &Snake) -> Point {
+pub fn get_snake_head(s: &[Point]) -> Point {
     s[0]
 }
-pub fn get_next_snake_head(s: &Snake, dir: &Point) -> Point {
+pub fn get_next_snake_head(s: &[Point], dir: &Point) -> Point {
     Point {
         x: s[0].x + dir.x,
         y: s[0].y + dir.y,

@@ -7,5 +7,6 @@
 	"getPathTo",
 	"svg",
 	"rust",
-	"astar"
+	"rust_astar",
+	"rust_astar_snake"
 ]

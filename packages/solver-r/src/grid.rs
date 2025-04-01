@@ -3,6 +3,9 @@ pub struct Point {
     pub x: i8,
     pub y: i8,
 }
+pub fn get_distance(a: &Point, b: &Point) -> u8 {
+    (a.x - b.x).abs() as u8 + (a.y - b.y).abs() as u8
+}
 
 #[derive(Copy, Clone, Debug, PartialEq, PartialOrd)]
 #[repr(u8)]
@@ -32,7 +35,7 @@ impl Grid {
         }
     }
 
-    pub fn get_index(&self, x: i8, y: i8) -> usize {
+    fn get_index(&self, x: i8, y: i8) -> usize {
         return (x as usize) * (self.height as usize) + (y as usize);
     }
     pub fn get_cell(&self, p: &Point) -> Cell {
@@ -45,6 +48,25 @@ impl Grid {
     }
     pub fn is_inside(&self, p: &Point) -> bool {
         p.x >= 0 && p.x < (self.width as i8) && p.y >= 0 && p.y < (self.height as i8)
+    }
+}
+
+pub struct WalkableGrid {
+    grid: Grid,
+    wall: Cell,
+}
+impl WalkableGrid {
+    pub fn create(grid: Grid, wall: Cell) -> WalkableGrid {
+        WalkableGrid { grid, wall }
+    }
+    pub fn is_cell_walkable(&self, p: &Point) -> bool {
+        !self.grid.is_inside(p) || self.grid.get_cell(p) < self.wall
+    }
+    pub fn set_wall(&mut self, wall: Cell) -> () {
+        self.wall = wall;
+    }
+    pub fn is_inside(&self, p: &Point) -> bool {
+        self.grid.is_inside(p)
     }
 }
 
