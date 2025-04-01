@@ -8,8 +8,9 @@ mod solver;
 
 use astar::get_path;
 use astar_snake::get_snake_path;
-use grid::{Cell, Grid, Point};
+use grid::{Cell, Grid, Point, WalkableGrid};
 use js_sys;
+use snake_walk::get_path_to_eat_all;
 use solver::get_free_cells;
 use wasm_bindgen::prelude::*;
 
@@ -90,6 +91,14 @@ impl From<Point> for IPoint {
         }
     }
 }
+impl From<&Point> for IPoint {
+    fn from(value: &Point) -> Self {
+        Self {
+            x: value.x,
+            y: value.y,
+        }
+    }
+}
 impl From<IPoint> for Point {
     fn from(value: IPoint) -> Self {
         Self {
@@ -141,6 +150,7 @@ pub fn iastar(grid: &IGrid, start: IPoint, end: IPoint) -> Option<js_sys::Array>
 #[wasm_bindgen]
 pub fn iastar_snake(grid: &IGrid, start: ISnake, end: IPoint) -> Option<js_sys::Array> {
     let g = Grid::from(grid.clone());
+    let snake: Vec<Point> = start.iter().map(Point::from).collect();
     let res = get_snake_path(
         |p| {
             (!g.is_inside(p) || g.get_cell(p) <= Cell::Color1)
@@ -149,9 +159,22 @@ pub fn iastar_snake(grid: &IGrid, start: ISnake, end: IPoint) -> Option<js_sys::
                     && -3 <= p.y
                     && p.y <= grid.height as i8 + 4)
         },
-        &start.iter().map(Point::from).collect(),
+        &snake,
         &Point::from(end),
+        200,
     );
 
     res.map(|l| l.into_iter().map(IPoint::from).map(JsValue::from).collect())
+}
+
+#[wasm_bindgen]
+pub fn ieat_free_cells(grid: &IGrid, snake: ISnake) -> Vec<IPoint> {
+    let grid = WalkableGrid::create(Grid::from(grid.clone()), Cell::Color1);
+    let snake: Vec<Point> = snake.iter().map(Point::from).collect();
+
+    let (free_cells, out) = get_free_cells(&grid.grid, Cell::Color1);
+
+    let path = get_path_to_eat_all(&grid, &snake, free_cells);
+
+    path.iter().map(IPoint::from).collect()
 }

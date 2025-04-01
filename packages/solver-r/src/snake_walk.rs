@@ -1,44 +1,42 @@
 use std::collections::HashSet;
 
-use crate::astar::get_path;
-use crate::grid::{get_distance, Cell, Grid, Point, WalkableGrid, DIRECTIONS};
-use crate::snake::{
-    get_next_snake_head, get_snake_head, move_snake, snake_will_self_collide, Snake,
-};
+use crate::astar_snake::get_snake_path;
+use crate::grid::{get_distance, Point, WalkableGrid, DIRECTIONS};
+use crate::snake::Snake;
 
-struct Node {
-    cells_eaten: u8,
-    path: Vec<Point>,
-}
-
-pub fn can_snake_reach_outside(
-    grid: &WalkableGrid,
-    free_cells: &HashSet<Point>,
-    snake: &Snake,
-) -> bool {
+pub fn can_snake_reach_outside(grid: &WalkableGrid, snake: &Snake) -> bool {
     let mut open_list: Vec<Snake> = Vec::new();
     open_list.push(snake.clone());
 
     let mut close_list: HashSet<Snake> = HashSet::new();
 
-    while let Some(s) = open_list.pop() {
+    while let Some(snake) = open_list.pop() {
         for dir in DIRECTIONS {
-            if snake_will_self_collide(&s, &dir) {
+            let next_head = Point {
+                x: snake[0].x + dir.x,
+                y: snake[0].y + dir.y,
+            };
+
+            let head_collide_with_body = snake.contains(&next_head);
+
+            if head_collide_with_body {
                 continue;
             }
-
-            let next_head = get_next_snake_head(&s, &dir);
 
             if !grid.is_inside(&next_head) {
                 return true;
             }
 
-            if !free_cells.contains(&next_head) {
+            if !grid.is_cell_walkable(&next_head) {
                 continue;
             }
 
-            let mut next_snake = s.clone();
-            move_snake(&mut next_snake, &dir);
+            let next_snake = {
+                let mut s = snake.clone();
+                s.truncate(s.len() - 1);
+                s.insert(0, next_head);
+                s
+            };
 
             if close_list.contains(&next_snake) {
                 continue;
@@ -47,92 +45,113 @@ pub fn can_snake_reach_outside(
             open_list.push(next_snake);
         }
 
-        close_list.insert(s);
+        close_list.insert(snake);
     }
 
     false
 }
 
-pub fn get_route_to_eat_all(
+pub fn get_path_to_eat_all(
     grid: &WalkableGrid,
-    free_cells: &HashSet<Point>,
-    initial_snake: &Snake,
-    cells_to_eat: Vec<Point>,
+    snake: &[Point],
+    cells_to_eat: HashSet<Point>,
 ) -> Vec<Point> {
+    let snake_length = snake.len();
+
     // element 0 is the snake head
     let mut path: Vec<Point> = Vec::new();
 
-    // path.append(&mut initial_snake.clone());
+    let mut cells_to_eat: Vec<_> = cells_to_eat.into_iter().collect();
 
-    // while true {
-    //     let head = path[0];
+    path.append(&mut snake.to_vec());
 
-    //     let forbidden_direction = Point {
-    //         x: path[1].x - head.x,
-    //         y: path[1].y - head.y,
-    //     };
+    while !cells_to_eat.is_empty() {
+        let head = path[0];
 
-    //     // get best route to best target
-    //     let route = vec![];
-    // }
+        let mut best_route: Option<Vec<Point>> = None;
 
-    path
-}
+        cells_to_eat.sort_by(|a, b| get_distance(a, &head).cmp(&get_distance(b, &head)));
 
-/*
-* snake astar
-*/
-
-pub fn get_route_to_cell(grid: &WalkableGrid, snake: &Snake, target: &Point) -> Vec<Point> {
-    let mut open_list: Vec<Node> = Vec::new();
-
-    vec![]
-}
-
-pub fn get_route_to_eat_all_2(
-    grid: &WalkableGrid,
-    free_cells: &HashSet<Point>,
-    initial_snake: &Snake,
-    cells_to_eat: Vec<Point>,
-) -> Vec<Point> {
-    let mut open_list: Vec<Node> = Vec::new();
-
-    let mut path: Vec<Point> = Vec::new();
-
-    let mut initial_snake = initial_snake.clone();
-
-    open_list.push(Node {
-        cells_eaten: 0,
-        path: {
-            let mut initial_path = initial_snake.clone();
-            initial_path.reverse();
-            initial_path
-        },
-    });
-
-    while let Some(n) = open_list.pop() {
-        // determine next target
-
-        let mut best_target = None;
-        let mut min_score: u8 = 200;
-        for t in cells_to_eat.iter() {
-            // if already visited ignore
-            if n.path.contains(t) {
+        for p in cells_to_eat.iter() {
+            if path.contains(&p) {
                 continue;
             }
 
-            let head = n.path.last().unwrap();
+            let snake = &path[0..snake_length];
+            let w = match best_route.as_ref() {
+                None => usize::MAX,
+                Some(path) => path.len() - snake_length,
+            };
 
-            let distance = get_distance(head, t);
+            let res = get_snake_path(|c| grid.is_cell_walkable(c), snake, p, w);
 
-            let score = distance;
-
-            if score < min_score {
-                min_score = score;
-                best_target = Some(t);
+            if let Some(sub_path) = res {
+                if match best_route.as_ref() {
+                    None => true,
+                    Some(r) => sub_path.len() < r.len(),
+                } {
+                    best_route = Some(sub_path);
+                }
             }
+        }
+
+        if let Some(mut sub_path) = best_route {
+            path.append(&mut sub_path);
+
+            let eaten = sub_path.last().unwrap();
+            cells_to_eat.retain(|p| p != eaten);
+        } else {
+            assert!(false);
         }
     }
 
     path
 }
+
+// pub fn get_route_to_eat_all_2(
+//     grid: &WalkableGrid,
+//     free_cells: &HashSet<Point>,
+//     initial_snake: &Snake,
+//     cells_to_eat: Vec<Point>,
+// ) -> Vec<Point> {
+//     let mut open_list: Vec<Node> = Vec::new();
+
+//     let mut path: Vec<Point> = Vec::new();
+
+//     let mut initial_snake = initial_snake.clone();
+
+//     open_list.push(Node {
+//         cells_eaten: 0,
+//         path: {
+//             let mut initial_path = initial_snake.clone();
+//             initial_path.reverse();
+//             initial_path
+//         },
+//     });
+
+//     while let Some(n) = open_list.pop() {
+//         // determine next target
+
+//         let mut best_target = None;
+//         let mut min_score: u8 = 200;
+//         for t in cells_to_eat.iter() {
+//             // if already visited ignore
+//             if n.path.contains(t) {
+//                 continue;
+//             }
+
+//             let head = n.path.last().unwrap();
+
+//             let distance = get_distance(head, t);
+
+//             let score = distance;
+
+//             if score < min_score {
+//                 min_score = score;
+//                 best_target = Some(t);
+//             }
+//         }
+//     }
+
+//     path
+// }

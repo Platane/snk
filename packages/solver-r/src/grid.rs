@@ -52,18 +52,18 @@ impl Grid {
 }
 
 pub struct WalkableGrid {
-    grid: Grid,
-    wall: Cell,
+    pub grid: Grid,
+    walkable: Cell,
 }
 impl WalkableGrid {
-    pub fn create(grid: Grid, wall: Cell) -> WalkableGrid {
-        WalkableGrid { grid, wall }
+    pub fn create(grid: Grid, walkable: Cell) -> WalkableGrid {
+        WalkableGrid { grid, walkable }
     }
     pub fn is_cell_walkable(&self, p: &Point) -> bool {
-        !self.grid.is_inside(p) || self.grid.get_cell(p) < self.wall
+        !self.grid.is_inside(p) || self.grid.get_cell(p) <= self.walkable
     }
-    pub fn set_wall(&mut self, wall: Cell) -> () {
-        self.wall = wall;
+    pub fn set_walkable(&mut self, walkable: Cell) -> () {
+        self.walkable = walkable;
     }
     pub fn is_inside(&self, p: &Point) -> bool {
         self.grid.is_inside(p)
