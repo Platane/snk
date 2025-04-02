@@ -1,5 +1,7 @@
 use std::collections::HashSet;
 
+use log::info;
+
 use crate::astar_snake::get_snake_path;
 use crate::grid::{get_distance, Point, WalkableGrid, DIRECTIONS};
 use crate::snake::Snake;
@@ -104,6 +106,9 @@ pub fn get_snake_path_to_outside(grid: &WalkableGrid, snake: &[Point]) -> Option
     None
 }
 
+// const MAX_ROUTE_LENGTH: usize = usize::MAX;
+const MAX_ROUTE_LENGTH: usize = 160;
+
 pub fn get_path_to_eat_all(
     grid: &WalkableGrid,
     snake: &[Point],
@@ -130,7 +135,7 @@ pub fn get_path_to_eat_all(
 
         for p in cells_to_eat.iter() {
             let max_weight = match best_route.as_ref() {
-                None => usize::MAX,
+                None => MAX_ROUTE_LENGTH,
                 Some(path) => path.len() - snake_length,
             };
 
@@ -158,6 +163,52 @@ pub fn get_path_to_eat_all(
             }
         }
 
+        if best_route.is_none() {
+            if let Some(p) = best_target_unescapable {
+                // let's got to the outside
+                // and check again
+
+                let mut path_to_outside = get_snake_path_to_outside(grid, snake).unwrap();
+                let outside_direction = {
+                    if path_to_outside[0].y < 0 {
+                        Point { x: 0, y: -1 }
+                    } else if path_to_outside[0].y >= grid.grid.height as i8 {
+                        Point { x: 0, y: 1 }
+                    } else if path_to_outside[0].x < 0 {
+                        Point { x: -1, y: 0 }
+                    } else if path_to_outside[0].x >= grid.grid.width as i8 {
+                        Point { x: 1, y: 0 }
+                    } else {
+                        panic!("not outside");
+                    }
+                };
+                for _ in 0..((snake_length + 1) / 2) {
+                    let p = Point {
+                        x: path_to_outside[0].x + outside_direction.x,
+                        y: path_to_outside[0].y + outside_direction.y,
+                    };
+                    path_to_outside.insert(0, p);
+                }
+
+                let snake_outside = &path_to_outside[0..snake_length];
+                let res = get_snake_path(
+                    |c| grid.is_cell_walkable(c),
+                    snake_outside,
+                    &p,
+                    MAX_ROUTE_LENGTH,
+                );
+
+                if let Some(mut sub_path) = res {
+                    let next_snake = &sub_path[0..snake_length];
+                    if can_snake_reach_outside(grid, next_snake) {
+                        sub_path.truncate(sub_path.len() - snake_length);
+                        sub_path.append(&mut path_to_outside);
+                        best_route = Some(sub_path);
+                    }
+                }
+            }
+        }
+
         if let Some(mut sub_path) = best_route {
             let eaten = sub_path[0];
 
@@ -166,35 +217,6 @@ pub fn get_path_to_eat_all(
             sub_path.truncate(sub_path.len() - snake_length);
             sub_path.append(&mut path);
             path = sub_path;
-        } else if let Some(p) = best_target_unescapable {
-            // let's got to the outside
-            // and check again
-
-            let mut path_to_outside = get_snake_path_to_outside(grid, snake).unwrap();
-            let outside_direction = {
-                if path_to_outside[0].y < 0 {
-                    Point { x: 0, y: -1 }
-                } else if path_to_outside[0].y >= grid.grid.height as i8 {
-                    Point { x: 0, y: 1 }
-                } else if path_to_outside[0].x < 0 {
-                    Point { x: -1, y: 0 }
-                } else if path_to_outside[0].x >= grid.grid.width as i8 {
-                    Point { x: 1, y: 0 }
-                } else {
-                    panic!("not outside");
-                }
-            };
-            for _ in 0..snake_length {
-                let p = Point {
-                    x: path_to_outside[0].x + outside_direction.x,
-                    y: path_to_outside[0].y + outside_direction.y,
-                };
-                path_to_outside.insert(0, p);
-            }
-
-            log::info!("unescapable {:?} ", p);
-            panic!("impossible to path to cell to eat");
-            //
         } else {
             panic!("impossible to path to cell to eat");
         }
