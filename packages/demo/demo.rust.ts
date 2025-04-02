@@ -29,11 +29,15 @@ import { grid, snake } from "./sample";
 
 			draw({ width: g.width, height: g.height, data: g.data }, s, []);
 
-			// for (let i = freeCells.length / 2; i--; ) {
-			// 	const x = freeCells[i * 2 + 0];
-			// 	const y = freeCells[i * 2 + 1];
-			// 	highlightCell(x, y);
-			// }
+			for (let i = freeCells.length / 2; i--; ) {
+				const x = freeCells[i * 2 + 0];
+				const y = freeCells[i * 2 + 1];
+				highlightCell(x, y);
+			}
+
+			for (let j = i + snakeLength; j--; ) {
+				highlightCell(path[j].x, path[j].y, "#123bde");
+			}
 		};
 
 		const input = document.createElement("input") as any;

@@ -186,12 +186,18 @@ pub fn ieat_free_cells(grid: &IGrid, snake: ISnake) -> Vec<IPoint> {
 
     let (free_cells, _) = get_free_cells(&grid.grid, Cell::Color1);
 
-    let mut to_eat: HashSet<Point> = HashSet::new();
-    to_eat.insert(Point { x: 6, y: 6 });
-    to_eat.insert(Point { x: 5, y: 0 });
+    let cells_to_eat = {
+        let mut cells = free_cells.clone();
+        cells.retain(|p| grid.get_cell(p) == Cell::Color1);
+        cells
+    };
 
-    let path = get_path_to_eat_all(&grid, &snake, &to_eat);
-    // let path = get_path_to_eat_all(&grid, &snake, &free_cells);
+    // let mut to_eat: HashSet<Point> = HashSet::new();
+    // to_eat.insert(Point { x: 6, y: 6 });
+    // to_eat.insert(Point { x: 5, y: 0 });
+
+    // let path = get_path_to_eat_all(&grid, &snake, &to_eat);
+    let path = get_path_to_eat_all(&grid, &snake, &cells_to_eat);
 
     path.iter().map(IPoint::from).collect()
 }

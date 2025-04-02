@@ -80,15 +80,20 @@ export const closedO = createFromAscii(`
 `);
 export const tunnels = createFromAscii(`
 
-  ###   ###   ###    
-  #.#   #.#   #.#
-  #.#   ###   # #
+  ###   ###   ###  ####   
+  #.#   #.#   #.#  #..#
+  #.#   ###   # #  #  #
 `);
 export const line = createFromAscii(`
 
   #######  
      .. #
   ##### #
+`);
+export const trap = createFromAscii(`
+ .# 
+###  
+
 `);
 
 const createRandom = (width: number, height: number, emptyP: number) => {

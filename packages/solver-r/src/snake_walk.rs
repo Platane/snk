@@ -4,9 +4,9 @@ use crate::astar_snake::get_snake_path;
 use crate::grid::{get_distance, Point, WalkableGrid, DIRECTIONS};
 use crate::snake::Snake;
 
-pub fn can_snake_reach_outside(grid: &WalkableGrid, snake: &Snake) -> bool {
+pub fn can_snake_reach_outside(grid: &WalkableGrid, snake: &[Point]) -> bool {
     let mut open_list: Vec<Snake> = Vec::new();
-    open_list.push(snake.clone());
+    open_list.push(snake.to_vec());
 
     let mut close_list: HashSet<Snake> = HashSet::new();
 
@@ -51,6 +51,59 @@ pub fn can_snake_reach_outside(grid: &WalkableGrid, snake: &Snake) -> bool {
     false
 }
 
+pub fn get_snake_path_to_outside(grid: &WalkableGrid, snake: &[Point]) -> Option<Vec<Point>> {
+    let snake_length = snake.len();
+
+    let mut open_list: Vec<Snake> = Vec::new();
+    open_list.push(snake.to_vec());
+
+    let mut close_list: HashSet<Snake> = HashSet::new();
+
+    while let Some(path) = open_list.pop() {
+        for dir in DIRECTIONS {
+            let next_head = Point {
+                x: path[0].x + dir.x,
+                y: path[0].y + dir.y,
+            };
+
+            let head_collide_with_body = (0..snake_length).any(|i| path[i] == next_head);
+
+            if head_collide_with_body {
+                continue;
+            }
+
+            if !grid.is_inside(&next_head) {
+                let mut path = path.clone();
+                path.insert(0, next_head);
+                return Some(path);
+            }
+
+            if !grid.is_cell_walkable(&next_head) {
+                continue;
+            }
+
+            let next_path = {
+                let mut path = path.clone();
+                path.insert(0, next_head);
+                path
+            };
+
+            let next_snake = &next_path[0..snake_length];
+
+            if close_list.contains(next_snake) {
+                continue;
+            }
+
+            open_list.push(next_path);
+        }
+
+        let snake = &path[0..snake_length];
+        close_list.insert(snake.to_vec());
+    }
+
+    None
+}
+
 pub fn get_path_to_eat_all(
     grid: &WalkableGrid,
     snake: &[Point],
@@ -69,15 +122,13 @@ pub fn get_path_to_eat_all(
         let head = path[0];
 
         let mut best_route: Option<Vec<Point>> = None;
+        let mut best_target_unescapable: Option<Point> = None;
 
         cells_to_eat.sort_by(|a, b| get_distance(a, &head).cmp(&get_distance(b, &head)));
 
-        for p in cells_to_eat.iter() {
-            if path.contains(&p) {
-                continue;
-            }
+        let snake = &path[0..snake_length];
 
-            let snake = &path[0..snake_length];
+        for p in cells_to_eat.iter() {
             let max_weight = match best_route.as_ref() {
                 None => usize::MAX,
                 Some(path) => path.len() - snake_length,
@@ -86,11 +137,23 @@ pub fn get_path_to_eat_all(
             let res = get_snake_path(|c| grid.is_cell_walkable(c), snake, p, max_weight);
 
             if let Some(sub_path) = res {
-                if match best_route.as_ref() {
-                    None => true,
-                    Some(r) => sub_path.len() < r.len(),
-                } {
-                    best_route = Some(sub_path);
+                //
+                // is it the route better yet ?
+                let sub_path_is_better =
+                    best_route.as_ref().is_none_or(|r| sub_path.len() < r.len());
+                if sub_path_is_better {
+                    //
+                    // ensure this does not lead to a position where the snake is stuck
+                    let next_snake = &sub_path[0..snake_length];
+                    if can_snake_reach_outside(grid, next_snake) {
+                        best_route = Some(sub_path);
+                    } else {
+                        // let's retain only the first target unescapable
+                        // as the cells_to_eat list is sorted by distance, it should be the closest
+                        if best_target_unescapable.is_none() {
+                            best_target_unescapable = Some(**p);
+                        }
+                    }
                 }
             }
         }
@@ -103,6 +166,35 @@ pub fn get_path_to_eat_all(
             sub_path.truncate(sub_path.len() - snake_length);
             sub_path.append(&mut path);
             path = sub_path;
+        } else if let Some(p) = best_target_unescapable {
+            // let's got to the outside
+            // and check again
+
+            let mut path_to_outside = get_snake_path_to_outside(grid, snake).unwrap();
+            let outside_direction = {
+                if path_to_outside[0].y < 0 {
+                    Point { x: 0, y: -1 }
+                } else if path_to_outside[0].y >= grid.grid.height as i8 {
+                    Point { x: 0, y: 1 }
+                } else if path_to_outside[0].x < 0 {
+                    Point { x: -1, y: 0 }
+                } else if path_to_outside[0].x >= grid.grid.width as i8 {
+                    Point { x: 1, y: 0 }
+                } else {
+                    panic!("not outside");
+                }
+            };
+            for _ in 0..snake_length {
+                let p = Point {
+                    x: path_to_outside[0].x + outside_direction.x,
+                    y: path_to_outside[0].y + outside_direction.y,
+                };
+                path_to_outside.insert(0, p);
+            }
+
+            log::info!("unescapable {:?} ", p);
+            panic!("impossible to path to cell to eat");
+            //
         } else {
             panic!("impossible to path to cell to eat");
         }

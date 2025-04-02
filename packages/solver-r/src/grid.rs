@@ -68,6 +68,9 @@ impl WalkableGrid {
     pub fn is_inside(&self, p: &Point) -> bool {
         self.grid.is_inside(p)
     }
+    pub fn get_cell(&self, p: &Point) -> Cell {
+        self.grid.get_cell(p)
+    }
 }
 
 pub const DIRECTION_RIGHT: Point = Point { x: 1, y: 0 };
