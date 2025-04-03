@@ -1,7 +1,5 @@
 use std::collections::HashSet;
 
-use log::info;
-
 use crate::astar_snake::get_snake_path;
 use crate::grid::{get_distance, Point, WalkableGrid, DIRECTIONS};
 use crate::snake::Snake;
@@ -107,68 +105,90 @@ pub fn get_snake_path_to_outside(grid: &WalkableGrid, snake: &[Point]) -> Option
 }
 
 // const MAX_ROUTE_LENGTH: usize = usize::MAX;
-const MAX_ROUTE_LENGTH: usize = 160;
+const MAX_ROUTE_LENGTH: usize = 260;
 
+/**
+* return a path that make the snake traverse all the cells to eat
+* except the cells that the snake could reach, but not exit freely without hitting a wall
+* those "unexitable" cell will be returned too
+*
+* ensure that all the cells to eat are at least "reachable" by the snake (ie not inside a hull) or the get_snake_path will take a while (and will panic)
+*
+*/
 pub fn get_path_to_eat_all(
     grid: &WalkableGrid,
     snake: &[Point],
     cells_to_eat: &HashSet<Point>,
-) -> Vec<Point> {
+) -> (Vec<Point>, HashSet<Point>) {
     let snake_length = snake.len();
 
     // element 0 is the snake head
     let mut path: Vec<Point> = Vec::new();
 
     let mut cells_to_eat: Vec<_> = cells_to_eat.into_iter().collect();
+    let mut cells_unexitable: HashSet<Point> = HashSet::new();
 
     path.append(&mut snake.to_vec());
 
     while !cells_to_eat.is_empty() {
+        let snake = &path[0..snake_length];
         let head = path[0];
 
         let mut best_route: Option<Vec<Point>> = None;
-        let mut best_target_unescapable: Option<Point> = None;
 
+        // sort the list of cells to eat by distance to the current head of the snake
         cells_to_eat.sort_by(|a, b| get_distance(a, &head).cmp(&get_distance(b, &head)));
 
-        let snake = &path[0..snake_length];
+        // to speed up the pathfinding, forbid the snake to go too far outside the grid
+        // it should still be able to maneuver so let's give it some margin depending on its length
+        let grid_margin = (snake_length as i8 + 1) / 2;
 
         for p in cells_to_eat.iter() {
+            // limit the maximal length of an accepted solution
+            // if a path as already been found for another target, not need to find a worse one
             let max_weight = match best_route.as_ref() {
                 None => MAX_ROUTE_LENGTH,
                 Some(path) => path.len() - snake_length,
             };
 
-            let res = get_snake_path(|c| grid.is_cell_walkable(c), snake, p, max_weight);
+            let res_sub_path = get_snake_path(
+                |c| grid.is_cell_walkable(c) && grid.is_inside_margin(c, grid_margin),
+                snake,
+                p,
+                max_weight,
+            );
 
-            if let Some(sub_path) = res {
+            if let Some(sub_path) = res_sub_path {
                 //
                 // is it the route better yet ?
                 let sub_path_is_better =
                     best_route.as_ref().is_none_or(|r| sub_path.len() < r.len());
+
                 if sub_path_is_better {
                     //
                     // ensure this does not lead to a position where the snake is stuck
                     let next_snake = &sub_path[0..snake_length];
                     if can_snake_reach_outside(grid, next_snake) {
                         best_route = Some(sub_path);
-                    } else {
-                        // let's retain only the first target unescapable
-                        // as the cells_to_eat list is sorted by distance, it should be the closest
-                        if best_target_unescapable.is_none() {
-                            best_target_unescapable = Some(**p);
-                        }
                     }
                 }
             }
         }
 
+        // at this stage if best_route is still none,
+        // it's because all the remaining cells_to_eat are reachable (or we would have panic) but not exitable when starting from the current snake
+        // let's move the snake and try again
+        // NOTE: we could do that as part of the previous loop, but I am afraid it's way more costly
         if best_route.is_none() {
-            if let Some(p) = best_target_unescapable {
+            // for p in cells_to_eat.iter() {
+            for i in (0..cells_to_eat.len()).rev() {
+                let p = cells_to_eat[i];
+
                 // let's got to the outside
                 // and check again
 
-                let mut path_to_outside = get_snake_path_to_outside(grid, snake).unwrap();
+                let mut path_to_outside = get_snake_path_to_outside(grid, snake)
+                    .expect("Snake could not reach the outside");
                 let outside_direction = {
                     if path_to_outside[0].y < 0 {
                         Point { x: 0, y: -1 }
@@ -179,7 +199,7 @@ pub fn get_path_to_eat_all(
                     } else if path_to_outside[0].x >= grid.grid.width as i8 {
                         Point { x: 1, y: 0 }
                     } else {
-                        panic!("not outside");
+                        panic!("get_snake_path_to_outside did not lead to outside");
                     }
                 };
                 for _ in 0..((snake_length + 1) / 2) {
@@ -191,85 +211,42 @@ pub fn get_path_to_eat_all(
                 }
 
                 let snake_outside = &path_to_outside[0..snake_length];
-                let res = get_snake_path(
+                let mut sub_path = get_snake_path(
                     |c| grid.is_cell_walkable(c),
                     snake_outside,
                     &p,
                     MAX_ROUTE_LENGTH,
-                );
+                )
+                .expect("Some cell is not reachable, again");
 
-                if let Some(mut sub_path) = res {
-                    let next_snake = &sub_path[0..snake_length];
-                    if can_snake_reach_outside(grid, next_snake) {
-                        sub_path.truncate(sub_path.len() - snake_length);
-                        sub_path.append(&mut path_to_outside);
-                        best_route = Some(sub_path);
-                    }
+                let next_snake = &sub_path[0..snake_length];
+                if can_snake_reach_outside(grid, next_snake) {
+                    sub_path.truncate(sub_path.len() - snake_length);
+                    sub_path.append(&mut path_to_outside);
+                    best_route = Some(sub_path);
+                    break;
+                } else {
+                    let p = cells_to_eat.remove(i);
+                    cells_unexitable.insert(*p);
                 }
             }
         }
 
         if let Some(mut sub_path) = best_route {
             let eaten = sub_path[0];
-
             cells_to_eat.retain(|p| **p != eaten);
+
+            // remove the cell traversed
+            // it should only be the first one (unless the pathfinding fucked up?)
+            // cells_to_eat.retain(|p| !sub_path.contains(p));
 
             sub_path.truncate(sub_path.len() - snake_length);
             sub_path.append(&mut path);
             path = sub_path;
-        } else {
-            panic!("impossible to path to cell to eat");
         }
     }
 
     path.reverse();
-    path
+
+    (path, cells_unexitable)
 }
-
-// pub fn get_route_to_eat_all_2(
-//     grid: &WalkableGrid,
-//     free_cells: &HashSet<Point>,
-//     initial_snake: &Snake,
-//     cells_to_eat: Vec<Point>,
-// ) -> Vec<Point> {
-//     let mut open_list: Vec<Node> = Vec::new();
-
-//     let mut path: Vec<Point> = Vec::new();
-
-//     let mut initial_snake = initial_snake.clone();
-
-//     open_list.push(Node {
-//         cells_eaten: 0,
-//         path: {
-//             let mut initial_path = initial_snake.clone();
-//             initial_path.reverse();
-//             initial_path
-//         },
-//     });
-
-//     while let Some(n) = open_list.pop() {
-//         // determine next target
-
-//         let mut best_target = None;
-//         let mut min_score: u8 = 200;
-//         for t in cells_to_eat.iter() {
-//             // if already visited ignore
-//             if n.path.contains(t) {
-//                 continue;
-//             }
-
-//             let head = n.path.last().unwrap();
-
-//             let distance = get_distance(head, t);
-
-//             let score = distance;
-
-//             if score < min_score {
-//                 min_score = score;
-//                 best_target = Some(t);
-//             }
-//         }
-//     }
-
-//     path
-// }

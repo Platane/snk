@@ -1,3 +1,16 @@
+use std::collections::HashSet;
+
+pub const DIRECTION_RIGHT: Point = Point { x: 1, y: 0 };
+pub const DIRECTION_LEFT: Point = Point { x: -1, y: 0 };
+pub const DIRECTION_UP: Point = Point { x: 0, y: 1 };
+pub const DIRECTION_DOWN: Point = Point { x: 0, y: -1 };
+pub const DIRECTIONS: [Point; 4] = [
+    DIRECTION_RIGHT,
+    DIRECTION_LEFT,
+    DIRECTION_UP,
+    DIRECTION_DOWN,
+];
+
 #[derive(Copy, Clone, Hash, Eq, PartialEq, Debug)]
 pub struct Point {
     pub x: i8,
@@ -47,7 +60,10 @@ impl Grid {
         self.cells[i] = value;
     }
     pub fn is_inside(&self, p: &Point) -> bool {
-        p.x >= 0 && p.x < (self.width as i8) && p.y >= 0 && p.y < (self.height as i8)
+        0 <= p.x && p.x < (self.width as i8) && 0 <= p.y && p.y < (self.height as i8)
+    }
+    pub fn is_inside_margin(&self, p: &Point, m: i8) -> bool {
+        -m <= p.x && p.x < (self.width as i8) + m && -m <= p.y && p.y < (self.height as i8) + m
     }
 }
 
@@ -68,21 +84,13 @@ impl WalkableGrid {
     pub fn is_inside(&self, p: &Point) -> bool {
         self.grid.is_inside(p)
     }
+    pub fn is_inside_margin(&self, p: &Point, margin: i8) -> bool {
+        self.grid.is_inside_margin(p, margin)
+    }
     pub fn get_cell(&self, p: &Point) -> Cell {
         self.grid.get_cell(p)
     }
 }
-
-pub const DIRECTION_RIGHT: Point = Point { x: 1, y: 0 };
-pub const DIRECTION_LEFT: Point = Point { x: -1, y: 0 };
-pub const DIRECTION_UP: Point = Point { x: 0, y: 1 };
-pub const DIRECTION_DOWN: Point = Point { x: 0, y: -1 };
-pub const DIRECTIONS: [Point; 4] = [
-    DIRECTION_RIGHT,
-    DIRECTION_LEFT,
-    DIRECTION_UP,
-    DIRECTION_DOWN,
-];
 
 #[test]
 fn it_should_sort_cell() {

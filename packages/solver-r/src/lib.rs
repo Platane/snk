@@ -1,5 +1,6 @@
 mod astar;
 mod astar_snake;
+mod exitable;
 mod grid;
 mod snake;
 mod snake_compact;
@@ -10,6 +11,7 @@ use std::collections::HashSet;
 
 use astar::get_path;
 use astar_snake::get_snake_path;
+use exitable::{initiate_exitable_with_border, propagate_exitable};
 use grid::{Cell, Grid, Point, WalkableGrid};
 use js_sys;
 use log::info;
@@ -161,16 +163,10 @@ pub fn iastar(grid: &IGrid, start: IPoint, end: IPoint) -> Option<js_sys::Array>
 
 #[wasm_bindgen]
 pub fn iastar_snake(grid: &IGrid, start: ISnake, end: IPoint) -> Option<js_sys::Array> {
-    let g = Grid::from(grid.clone());
+    let grid = WalkableGrid::create(Grid::from(grid.clone()), Cell::Color1);
     let snake: Vec<Point> = start.iter().map(Point::from).collect();
     let res = get_snake_path(
-        |p| {
-            (!g.is_inside(p) || g.get_cell(p) <= Cell::Color1)
-                && (-3 <= p.x
-                    && p.x <= grid.width as i8 + 4
-                    && -3 <= p.y
-                    && p.y <= grid.height as i8 + 4)
-        },
+        |p| grid.is_cell_walkable(p) && grid.is_inside_margin(p, 4),
         &snake,
         &Point::from(end),
         200,
@@ -184,10 +180,12 @@ pub fn ieat_free_cells(grid: &IGrid, snake: ISnake) -> Vec<IPoint> {
     let grid = WalkableGrid::create(Grid::from(grid.clone()), Cell::Color1);
     let snake: Vec<Point> = snake.iter().map(Point::from).collect();
 
-    let (free_cells, _) = get_free_cells(&grid.grid, Cell::Color1);
+    let mut exitable_cells = HashSet::new();
+    initiate_exitable_with_border(&mut exitable_cells, &grid);
+    propagate_exitable(&mut exitable_cells, &grid);
 
     let cells_to_eat = {
-        let mut cells = free_cells.clone();
+        let mut cells = exitable_cells.clone();
         cells.retain(|p| grid.get_cell(p) == Cell::Color1);
         cells
     };
@@ -196,8 +194,9 @@ pub fn ieat_free_cells(grid: &IGrid, snake: ISnake) -> Vec<IPoint> {
     // to_eat.insert(Point { x: 6, y: 6 });
     // to_eat.insert(Point { x: 5, y: 0 });
 
-    // let path = get_path_to_eat_all(&grid, &snake, &to_eat);
-    let path = get_path_to_eat_all(&grid, &snake, &cells_to_eat);
+    let (path, unreachable) = get_path_to_eat_all(&grid, &snake, &cells_to_eat);
+
+    log::info!("unreachable {:?}", unreachable);
 
     path.iter().map(IPoint::from).collect()
 }
