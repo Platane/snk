@@ -95,6 +95,12 @@ export const trap = createFromAscii(`
 ###  
 
 `);
+export const what = createFromAscii(`
+ #
+..#
+ .#
+ # 
+`);
 
 const createRandom = (width: number, height: number, emptyP: number) => {
   const grid = createEmptyGrid(width, height);

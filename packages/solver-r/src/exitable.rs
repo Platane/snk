@@ -2,10 +2,7 @@ use std::collections::HashSet;
 
 use crate::grid::{Point, WalkableGrid, DIRECTIONS};
 
-pub fn initiate_exitable_with_border(
-    exitable_cells: &mut HashSet<Point>,
-    grid: &WalkableGrid,
-) -> () {
+pub fn propagate_exitable(exitable_cells: &mut HashSet<Point>, grid: &WalkableGrid) -> () {
     for x in 0..(grid.grid.width as i8) {
         {
             let p = Point { x, y: 0 };
@@ -40,9 +37,7 @@ pub fn initiate_exitable_with_border(
             }
         }
     }
-}
 
-pub fn propagate_exitable(exitable_cells: &mut HashSet<Point>, grid: &WalkableGrid) -> () {
     let mut open_list: Vec<Point> = exitable_cells.iter().map(|p| p.clone()).collect();
 
     while let Some(p) = open_list.pop() {

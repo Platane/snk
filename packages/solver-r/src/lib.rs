@@ -1,6 +1,8 @@
+mod _test_grid_samples;
 mod astar;
 mod astar_snake;
 mod exitable;
+mod free_cells;
 mod grid;
 mod snake;
 mod snake_compact;
@@ -9,14 +11,15 @@ mod solver;
 
 use std::collections::HashSet;
 
+use _test_grid_samples::{get_grid_sample, SampleGrid};
 use astar::get_path;
 use astar_snake::get_snake_path;
-use exitable::{initiate_exitable_with_border, propagate_exitable};
+use exitable::propagate_exitable;
+use free_cells::get_free_cells;
 use grid::{Cell, Grid, Point, WalkableGrid};
 use js_sys;
 use log::info;
 use snake_walk::get_path_to_eat_all;
-use solver::get_free_cells;
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
@@ -181,7 +184,6 @@ pub fn ieat_free_cells(grid: &IGrid, snake: ISnake) -> Vec<IPoint> {
     let snake: Vec<Point> = snake.iter().map(Point::from).collect();
 
     let mut exitable_cells = HashSet::new();
-    initiate_exitable_with_border(&mut exitable_cells, &grid);
     propagate_exitable(&mut exitable_cells, &grid);
 
     let cells_to_eat = {
@@ -197,6 +199,7 @@ pub fn ieat_free_cells(grid: &IGrid, snake: ISnake) -> Vec<IPoint> {
     let (path, unreachable) = get_path_to_eat_all(&grid, &snake, &cells_to_eat);
 
     log::info!("unreachable {:?}", unreachable);
+    log::info!(" {:?}", get_grid_sample(SampleGrid::RandomPack).cells);
 
     path.iter().map(IPoint::from).collect()
 }

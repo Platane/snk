@@ -8,19 +8,20 @@ import { grid, snake } from "./sample";
 
 	const g = api.IGrid.create(grid.width, grid.height, grid.data);
 
-	const freeCells = api.iget_free_cells(g);
+	const { canvas, draw, highlightCell } = createCanvas(g);
+	document.body.appendChild(canvas);
+	draw({ width: g.width, height: g.height, data: g.data }, snake, []);
 
 	api.greet();
 
+	const a = performance.now();
 	const path = api.ieat_free_cells(
 		g,
 		snakeToCells(snake).map((p) => api.IPoint.create(p.x, p.y)),
 	);
+	console.log(performance.now() - a);
 
 	{
-		const { canvas, draw, highlightCell } = createCanvas(g);
-		document.body.appendChild(canvas);
-
 		const snakeLength = snake.length / 2;
 
 		const onChange = () => {
@@ -28,12 +29,6 @@ import { grid, snake } from "./sample";
 			const s = createSnakeFromCells(path.slice(i, i + snakeLength).reverse());
 
 			draw({ width: g.width, height: g.height, data: g.data }, s, []);
-
-			for (let i = freeCells.length / 2; i--; ) {
-				const x = freeCells[i * 2 + 0];
-				const y = freeCells[i * 2 + 1];
-				highlightCell(x, y);
-			}
 
 			for (let j = i + snakeLength; j--; ) {
 				highlightCell(path[j].x, path[j].y, "#123bde");

@@ -1,127 +1,37 @@
 use std::collections::HashSet;
 
-use crate::grid::{Cell, Grid, Point};
+use crate::exitable::propagate_exitable;
+use crate::grid::{Cell, Grid, Point, WalkableGrid, DIRECTIONS};
+use crate::snake_walk::get_path_to_eat_all;
 
-pub fn get_free_cells(grid: &Grid, walkable: Cell) -> (HashSet<Point>, HashSet<Point>) {
-    let mut free_cells: HashSet<Point> = HashSet::new();
-    let mut one_way_cells: HashSet<Point> = HashSet::new();
-    let mut open_list: HashSet<Point> = HashSet::new();
+pub fn get_path_to_eat_everything(grid: &Grid, snake: &[Point]) -> Vec<Point> {
+    let mut grid = WalkableGrid::create(grid.clone(), Cell::Color1);
 
-    for x in 0..(grid.width as i8) {
-        open_list.insert(Point { x, y: 0 });
-        open_list.insert(Point {
-            x,
-            y: (grid.height as i8) - 1,
-        });
-    }
-    for y in 0..(grid.height as i8) {
-        open_list.insert(Point { x: 0, y });
-        open_list.insert(Point {
-            x: (grid.width as i8) - 1,
-            y,
-        });
-    }
-    open_list.retain(|p| grid.get_cell(&p) <= walkable);
+    // cell from which the outside is reachable
+    let mut exitable_cells = HashSet::new();
 
-    let directions = [
-        Point { x: 1, y: 0 },
-        Point { x: -1, y: 0 },
-        Point { x: 0, y: 1 },
-        Point { x: 0, y: -1 },
-    ];
+    let snake_len = snake.len();
+    let mut path = snake.to_vec();
 
-    while let Some(p) = open_list.iter().next().cloned() {
-        open_list.remove(&p);
+    for walkable in [Cell::Color1] {
+        grid.set_walkable(walkable);
 
-        let has_enough_free_exits = {
-            let mut exit_count = 0;
-            let mut visited: HashSet<Point> = HashSet::new();
+        propagate_exitable(&mut exitable_cells, &grid);
 
-            for dir in directions {
-                let neighbour = Point {
-                    x: p.x + dir.x,
-                    y: p.y + dir.y,
-                };
+        //
+        // let's eat the one that don't require to traverse walls
+        let mut exitable_eatable = exitable_cells.clone();
+        exitable_eatable.retain(|p| grid.get_cell(p) == walkable);
 
-                if !visited.contains(&neighbour)
-                    && (free_cells.contains(&neighbour) || !grid.is_inside(&neighbour))
-                {
-                    visited.insert(neighbour);
-                    exit_count += 1;
-                }
+        let snake = &path[0..snake_len];
+        let (mut sub_path, cells_unexitable) = get_path_to_eat_all(&grid, snake, &exitable_eatable);
 
-                if grid.is_inside(&neighbour) && grid.get_cell(&neighbour) <= walkable {
-                    for alt in [-1, 1] {
-                        let corner = {
-                            if neighbour.x != 0 {
-                                Point {
-                                    x: neighbour.x,
-                                    y: neighbour.y + alt,
-                                }
-                            } else {
-                                Point {
-                                    x: neighbour.x + alt,
-                                    y: neighbour.y,
-                                }
-                            }
-                        };
+        sub_path.append(&mut path);
+        path = sub_path;
 
-                        if !visited.contains(&neighbour)
-                            && !visited.contains(&corner)
-                            && (free_cells.contains(&corner) || !grid.is_inside(&corner))
-                        {
-                            visited.insert(neighbour);
-                            visited.insert(corner);
-                            exit_count += 1;
-                        }
-                    }
-                }
-            }
-
-            exit_count >= 2
-        };
-
-        if has_enough_free_exits {
-            free_cells.insert(p);
-
-            for dir in directions {
-                let neighbour = Point {
-                    x: p.x + dir.x,
-                    y: p.y + dir.y,
-                };
-
-                if !free_cells.contains(&neighbour)
-                    && grid.is_inside(&neighbour)
-                    && grid.get_cell(&neighbour) <= walkable
-                {
-                    open_list.insert(neighbour);
-                }
-            }
-        } else {
-            one_way_cells.insert(p);
-        }
+        //
+        // let's eat the one that are reachable but not exitable
     }
 
-    one_way_cells.retain(|p| !free_cells.contains(&p));
-
-    (free_cells, one_way_cells)
-}
-
-#[test]
-fn it_should_collect_free_cell() {
-    let mut grid = Grid::create_empty(2, 2);
-
-    grid.set_cell(&Point { x: 1, y: 1 }, Cell::Color2);
-
-    let (free_cells, _) = get_free_cells(&grid, Cell::Color1);
-
-    assert_eq!(
-        free_cells,
-        HashSet::from([
-            //
-            Point { x: 0, y: 0 },
-            Point { x: 0, y: 1 },
-            Point { x: 1, y: 0 },
-        ])
-    );
+    path
 }

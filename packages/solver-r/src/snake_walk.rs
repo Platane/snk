@@ -246,7 +246,7 @@ pub fn get_path_to_eat_all(
         }
     }
 
-    path.reverse();
+    path.truncate(path.len() - snake_length);
 
     (path, cells_unexitable)
 }

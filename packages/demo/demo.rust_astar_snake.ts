@@ -10,10 +10,8 @@ import { grid, snake } from "./sample";
 	const path = api.iastar_snake(
 		g,
 		snakeToCells(snake).map((p) => api.IPoint.create(p.x, p.y)),
-		api.IPoint.create(7, 2),
+		api.IPoint.create(7, 0),
 	);
-
-	console.log(snakeToCells(snake).map((p) => api.IPoint.create(p.x, p.y)));
 
 	{
 		const { canvas, draw, highlightCell } = createCanvas(g);

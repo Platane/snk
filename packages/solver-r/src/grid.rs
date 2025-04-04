@@ -65,8 +65,28 @@ impl Grid {
     pub fn is_inside_margin(&self, p: &Point, m: i8) -> bool {
         -m <= p.x && p.x < (self.width as i8) + m && -m <= p.y && p.y < (self.height as i8) + m
     }
+    pub fn iter(&self) -> impl Iterator<Item = Point> {
+        let mut i = 0;
+        let width = self.width;
+        let height = self.height as usize;
+        std::iter::from_fn(move || {
+            let p = Point {
+                x: (i / height) as i8,
+                y: (i % height) as i8,
+            };
+
+            i += 1;
+
+            if p.x >= (width as i8) {
+                None
+            } else {
+                Some(p)
+            }
+        })
+    }
 }
 
+#[derive(Clone)]
 pub struct WalkableGrid {
     pub grid: Grid,
     walkable: Cell,
@@ -114,4 +134,18 @@ fn it_should_grid_setter() {
     grid.set_cell(&Point { x: 12, y: 3 }, Cell::Color1);
 
     assert_eq!(grid.get_cell(&Point { x: 12, y: 3 }), Cell::Color1);
+}
+#[test]
+fn it_should_iterate() {
+    let grid = Grid::create_empty(2, 2);
+
+    assert_eq!(
+        grid.iter().collect::<HashSet<_>>(),
+        HashSet::from([
+            Point { x: 0, y: 0 },
+            Point { x: 0, y: 1 },
+            Point { x: 1, y: 0 },
+            Point { x: 1, y: 1 },
+        ])
+    );
 }
