@@ -38,32 +38,59 @@ fn grid_from_ascii(ascii: &str) -> Grid {
     grid
 }
 
+fn randomly_fill_grid(grid: &mut Grid, probability: &[Cell], seed: u32) -> () {
+    // Pseudorandom number generator from the "Xorshift RNGs" paper by George Marsaglia.
+    // https://github.com/rust-lang/rust/blob/1.55.0/library/core/src/slice/sort.rs#L559-L573
+    fn random_numbers(seed: u32) -> impl Iterator<Item = u32> {
+        let mut random = seed;
+        std::iter::repeat_with(move || {
+            random ^= random << 13;
+            random ^= random >> 17;
+            random ^= random << 5;
+            random
+        })
+    }
+
+    let mut rng = random_numbers(seed);
+
+    for x in 0..(grid.width as i8) {
+        for y in 0..(grid.height as i8) {
+            let random = rng.next().unwrap();
+            let cell = probability[random as usize % probability.len()];
+            grid.set_cell(&Point { x, y }, cell);
+        }
+    }
+}
+
 pub enum SampleGrid {
     Empty,
     OneDot,
     Realistic,
     Labyrinthe,
+    RandomPack,
 }
 pub fn get_grid_sample(g: SampleGrid) -> Grid {
-    grid_from_ascii(match g {
-        SampleGrid::Empty => {
+    match g {
+        SampleGrid::Empty => grid_from_ascii(
             &r#"
            _
            _
            _
            _
-"#
-        }
-        SampleGrid::OneDot => {
+"#,
+        ),
+
+        SampleGrid::OneDot => grid_from_ascii(
             &r#"
            _
            _
     .      _
            _
            _
-"#
-        }
-        SampleGrid::Realistic => {
+"#,
+        ),
+
+        SampleGrid::Realistic => grid_from_ascii(
             &r#"
 231 412 12213  13  213  421  121131   32123112 332 _
 412  12 4   331213 12214431 412  413 42133123  23 21
@@ -72,9 +99,10 @@ pub fn get_grid_sample(g: SampleGrid) -> Grid {
 34122 3 2144 31 31234 212 2121 211 12 3 123  3123 12
 442 12122122 12331123  33443  3311121 111  223  333_
 31413 31231 2  213321 123  32123 3332 12312 3 33 2 3
-"#
-        }
-        SampleGrid::Labyrinthe => {
+"#,
+        ),
+
+        SampleGrid::Labyrinthe => grid_from_ascii(
             &r#"
 ################################################## #
 #                                                  #
@@ -83,7 +111,17 @@ pub fn get_grid_sample(g: SampleGrid) -> Grid {
 ################################################## #
 #.                                                 #
 ####################################################
-"#
+"#,
+        ),
+
+        SampleGrid::RandomPack => {
+            let mut grid = Grid::create_empty(52, 7);
+            randomly_fill_grid(
+                &mut grid,
+                &[Cell::Empty, Cell::Empty, Cell::Color1, Cell::Color4],
+                92u32,
+            );
+            grid
         }
-    })
+    }
 }
