@@ -1,38 +1,45 @@
 use std::collections::HashSet;
 
-use crate::grid::{Point, WalkableGrid, DIRECTIONS};
+use crate::grid::{Color, Grid, Point, DIRECTIONS};
 
-pub fn propagate_exitable(exitable_cells: &mut HashSet<Point>, grid: &WalkableGrid) -> () {
-    for x in 0..(grid.grid.width as i8) {
+/**
+* mark as exitable all the cells from which a path can be found to the outside
+*/
+pub fn propagate_exitable(
+    exitable_cells: &mut HashSet<Point>,
+    grid: &Grid<Color>,
+    walkable: Color,
+) -> () {
+    for x in 0..(grid.width as i8) {
         {
             let p = Point { x, y: 0 };
-            if grid.is_cell_walkable(&p) {
+            if grid.get(&p) <= walkable || !grid.is_inside(&p) {
                 exitable_cells.insert(p);
             }
         }
         {
             let p = Point {
                 x,
-                y: (grid.grid.height as i8) - 1,
+                y: (grid.height as i8) - 1,
             };
-            if grid.is_cell_walkable(&p) {
+            if grid.get(&p) <= walkable || !grid.is_inside(&p) {
                 exitable_cells.insert(p);
             }
         }
     }
-    for y in 0..(grid.grid.height as i8) {
+    for y in 0..(grid.height as i8) {
         {
             let p = Point { x: 0, y };
-            if grid.is_cell_walkable(&p) {
+            if grid.get(&p) <= walkable || !grid.is_inside(&p) {
                 exitable_cells.insert(p);
             }
         }
         {
             let p = Point {
-                x: (grid.grid.width as i8) - 1,
+                x: (grid.width as i8) - 1,
                 y,
             };
-            if grid.is_cell_walkable(&p) {
+            if grid.get(&p) <= walkable || !grid.is_inside(&p) {
                 exitable_cells.insert(p);
             }
         }
@@ -47,7 +54,7 @@ pub fn propagate_exitable(exitable_cells: &mut HashSet<Point>, grid: &WalkableGr
                 y: p.y + dir.y,
             };
 
-            if !exitable_cells.contains(&u) && grid.is_inside(&u) && grid.is_cell_walkable(&u) {
+            if !exitable_cells.contains(&u) && grid.is_inside(&u) && grid.get(&u) <= walkable {
                 open_list.push(u);
                 exitable_cells.insert(u);
             }

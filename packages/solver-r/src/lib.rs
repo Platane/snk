@@ -2,24 +2,16 @@ mod _test_grid_samples;
 mod astar;
 mod astar_snake;
 mod exitable;
-mod free_cells;
 mod grid;
 mod snake;
-mod snake_compact;
 mod snake_walk;
 mod solver;
 
-use std::collections::HashSet;
-
 use _test_grid_samples::{get_grid_sample, SampleGrid};
-use astar::get_path;
-use astar_snake::get_snake_path;
-use exitable::propagate_exitable;
-use free_cells::get_free_cells;
-use grid::{Cell, Grid, Point, WalkableGrid};
+use grid::{Color, Grid, Point};
 use js_sys;
 use log::info;
-use snake_walk::get_path_to_eat_all;
+use solver::get_path_to_eat_everything;
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
@@ -43,29 +35,29 @@ pub fn greet() {
 
 #[wasm_bindgen]
 #[derive(Clone)]
-pub struct IGrid {
+pub struct IColorGrid {
     pub width: u8,
     pub height: u8,
-    cells: Vec<Cell>,
+    cells: Vec<Color>,
 }
 
 #[wasm_bindgen]
-impl IGrid {
-    pub fn create(width: u8, height: u8, data: js_sys::Uint8Array) -> IGrid {
+impl IColorGrid {
+    pub fn create(width: u8, height: u8, data: js_sys::Uint8Array) -> IColorGrid {
         let cells = data
             .to_vec()
             .iter()
             .map(|u| match u {
-                0 => Cell::Empty,
-                1 => Cell::Color1,
-                2 => Cell::Color2,
-                3 => Cell::Color3,
-                4 => Cell::Color4,
+                0 => Color::Empty,
+                1 => Color::Color1,
+                2 => Color::Color2,
+                3 => Color::Color3,
+                4 => Color::Color4,
                 _ => panic!("unknown cell"),
             })
             .collect();
 
-        IGrid {
+        IColorGrid {
             width,
             height,
             cells,
@@ -79,8 +71,8 @@ impl IGrid {
     }
 }
 
-impl From<IGrid> for Grid {
-    fn from(value: IGrid) -> Self {
+impl From<IColorGrid> for Grid<Color> {
+    fn from(value: IColorGrid) -> Self {
         Self {
             width: value.width,
             height: value.height,
@@ -136,70 +128,23 @@ impl From<&IPoint> for Point {
 type ISnake = Vec<IPoint>;
 
 #[wasm_bindgen]
-pub fn iget_free_cells(grid: &IGrid) -> js_sys::Uint8Array {
-    let g = Grid::from(grid.clone());
-
-    let (out, _) = get_free_cells(&g, Cell::Color1);
-
-    let o: Vec<u8> = out.iter().flat_map(|p| [p.x as u8, p.y as u8]).collect();
-
-    js_sys::Uint8Array::from(&o[..])
+pub fn get_color_grid_sample(sample: SampleGrid) -> IColorGrid {
+    let g = get_grid_sample(sample);
+    IColorGrid {
+        width: g.width,
+        height: g.height,
+        cells: g.cells,
+    }
 }
 
 #[wasm_bindgen]
-pub fn iastar(grid: &IGrid, start: IPoint, end: IPoint) -> Option<js_sys::Array> {
-    let g = Grid::from(grid.clone());
-    let res = get_path(
-        |p| {
-            (!g.is_inside(p) || g.get_cell(p) <= Cell::Color1)
-                && (-3 <= p.x
-                    && p.x <= grid.width as i8 + 4
-                    && -3 <= p.y
-                    && p.y <= grid.height as i8 + 4)
-        },
-        &Point::from(start),
-        &Point::from(end),
-    );
-
-    res.map(|l| l.into_iter().map(IPoint::from).map(JsValue::from).collect())
-}
-
-#[wasm_bindgen]
-pub fn iastar_snake(grid: &IGrid, start: ISnake, end: IPoint) -> Option<js_sys::Array> {
-    let grid = WalkableGrid::create(Grid::from(grid.clone()), Cell::Color1);
-    let snake: Vec<Point> = start.iter().map(Point::from).collect();
-    let res = get_snake_path(
-        |p| grid.is_cell_walkable(p) && grid.is_inside_margin(p, 4),
-        &snake,
-        &Point::from(end),
-        200,
-    );
-
-    res.map(|l| l.into_iter().map(IPoint::from).map(JsValue::from).collect())
-}
-
-#[wasm_bindgen]
-pub fn ieat_free_cells(grid: &IGrid, snake: ISnake) -> Vec<IPoint> {
-    let grid = WalkableGrid::create(Grid::from(grid.clone()), Cell::Color1);
+pub fn solve(grid: &IColorGrid, snake: ISnake) -> Vec<IPoint> {
+    let grid = Grid::from(grid.clone());
     let snake: Vec<Point> = snake.iter().map(Point::from).collect();
 
-    let mut exitable_cells = HashSet::new();
-    propagate_exitable(&mut exitable_cells, &grid);
+    let path = get_path_to_eat_everything(&grid, &snake);
 
-    let cells_to_eat = {
-        let mut cells = exitable_cells.clone();
-        cells.retain(|p| grid.get_cell(p) == Cell::Color1);
-        cells
-    };
-
-    // let mut to_eat: HashSet<Point> = HashSet::new();
-    // to_eat.insert(Point { x: 6, y: 6 });
-    // to_eat.insert(Point { x: 5, y: 0 });
-
-    let (path, unreachable) = get_path_to_eat_all(&grid, &snake, &cells_to_eat);
-
-    log::info!("unreachable {:?}", unreachable);
-    log::info!(" {:?}", get_grid_sample(SampleGrid::RandomPack).cells);
+    log::info!("path {:?}", path);
 
     path.iter().map(IPoint::from).collect()
 }

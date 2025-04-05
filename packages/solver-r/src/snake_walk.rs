@@ -1,10 +1,10 @@
 use std::collections::HashSet;
 
 use crate::astar_snake::get_snake_path;
-use crate::grid::{get_distance, Point, WalkableGrid, DIRECTIONS};
+use crate::grid::{get_distance, Color, Grid, Point, DIRECTIONS};
 use crate::snake::Snake;
 
-pub fn can_snake_reach_outside(grid: &WalkableGrid, snake: &[Point]) -> bool {
+pub fn can_snake_reach_outside(color_grid: &Grid<Color>, walkable: Color, snake: &[Point]) -> bool {
     let mut open_list: Vec<Snake> = Vec::new();
     open_list.push(snake.to_vec());
 
@@ -23,11 +23,11 @@ pub fn can_snake_reach_outside(grid: &WalkableGrid, snake: &[Point]) -> bool {
                 continue;
             }
 
-            if !grid.is_inside(&next_head) {
+            if !color_grid.is_inside(&next_head) {
                 return true;
             }
 
-            if !grid.is_cell_walkable(&next_head) {
+            if color_grid.get(&next_head) <= walkable {
                 continue;
             }
 
@@ -51,7 +51,11 @@ pub fn can_snake_reach_outside(grid: &WalkableGrid, snake: &[Point]) -> bool {
     false
 }
 
-pub fn get_snake_path_to_outside(grid: &WalkableGrid, snake: &[Point]) -> Option<Vec<Point>> {
+pub fn get_snake_path_to_outside(
+    color_grid: &Grid<Color>,
+    walkable: Color,
+    snake: &[Point],
+) -> Option<Vec<Point>> {
     let snake_length = snake.len();
 
     let mut open_list: Vec<Snake> = Vec::new();
@@ -72,13 +76,13 @@ pub fn get_snake_path_to_outside(grid: &WalkableGrid, snake: &[Point]) -> Option
                 continue;
             }
 
-            if !grid.is_inside(&next_head) {
+            if !color_grid.is_inside(&next_head) {
                 let mut path = path.clone();
                 path.insert(0, next_head);
                 return Some(path);
             }
 
-            if !grid.is_cell_walkable(&next_head) {
+            if color_grid.get(&next_head) <= walkable {
                 continue;
             }
 
@@ -116,7 +120,8 @@ const MAX_ROUTE_LENGTH: usize = 260;
 *
 */
 pub fn get_path_to_eat_all(
-    grid: &WalkableGrid,
+    color_grid: &Grid<Color>,
+    walkable: Color,
     snake: &[Point],
     cells_to_eat: &HashSet<Point>,
 ) -> (Vec<Point>, HashSet<Point>) {
@@ -152,7 +157,10 @@ pub fn get_path_to_eat_all(
             };
 
             let res_sub_path = get_snake_path(
-                |c| grid.is_cell_walkable(c) && grid.is_inside_margin(c, grid_margin),
+                |c| {
+                    (!color_grid.is_inside(c) || color_grid.get(c) <= walkable)
+                        && color_grid.is_inside_margin(c, grid_margin)
+                },
                 snake,
                 p,
                 max_weight,
@@ -168,7 +176,8 @@ pub fn get_path_to_eat_all(
                     //
                     // ensure this does not lead to a position where the snake is stuck
                     let next_snake = &sub_path[0..snake_length];
-                    if can_snake_reach_outside(grid, next_snake) {
+
+                    if !can_snake_reach_outside(color_grid, walkable, next_snake) {
                         best_route = Some(sub_path);
                     }
                 }
@@ -187,16 +196,16 @@ pub fn get_path_to_eat_all(
                 // let's got to the outside
                 // and check again
 
-                let mut path_to_outside = get_snake_path_to_outside(grid, snake)
+                let mut path_to_outside = get_snake_path_to_outside(color_grid, walkable, snake)
                     .expect("Snake could not reach the outside");
                 let outside_direction = {
                     if path_to_outside[0].y < 0 {
                         Point { x: 0, y: -1 }
-                    } else if path_to_outside[0].y >= grid.grid.height as i8 {
+                    } else if path_to_outside[0].y >= color_grid.height as i8 {
                         Point { x: 0, y: 1 }
                     } else if path_to_outside[0].x < 0 {
                         Point { x: -1, y: 0 }
-                    } else if path_to_outside[0].x >= grid.grid.width as i8 {
+                    } else if path_to_outside[0].x >= color_grid.width as i8 {
                         Point { x: 1, y: 0 }
                     } else {
                         panic!("get_snake_path_to_outside did not lead to outside");
@@ -212,7 +221,7 @@ pub fn get_path_to_eat_all(
 
                 let snake_outside = &path_to_outside[0..snake_length];
                 let mut sub_path = get_snake_path(
-                    |c| grid.is_cell_walkable(c),
+                    |c| !color_grid.is_inside(c) || color_grid.get(c) <= walkable,
                     snake_outside,
                     &p,
                     MAX_ROUTE_LENGTH,
@@ -220,7 +229,7 @@ pub fn get_path_to_eat_all(
                 .expect("Some cell is not reachable, again");
 
                 let next_snake = &sub_path[0..snake_length];
-                if can_snake_reach_outside(grid, next_snake) {
+                if can_snake_reach_outside(color_grid, walkable, next_snake) {
                     sub_path.truncate(sub_path.len() - snake_length);
                     sub_path.append(&mut path_to_outside);
                     best_route = Some(sub_path);

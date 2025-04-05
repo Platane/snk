@@ -6,19 +6,19 @@ import { grid, snake } from "./sample";
 (async () => {
 	const api = await import("@snk/solver-r");
 
-	const g = api.IGrid.create(grid.width, grid.height, grid.data);
+	const iColorGrid = api.IColorGrid.create(grid.width, grid.height, grid.data);
+	const iSnake = snakeToCells(snake).map((p) => api.IPoint.create(p.x, p.y));
 
-	const { canvas, draw, highlightCell } = createCanvas(g);
+	// const colorGrid = api.get_color_grid_sample(api.SampleGrid.Labyrinthe);
+
+	const { canvas, draw, highlightCell } = createCanvas(iColorGrid);
 	document.body.appendChild(canvas);
-	draw({ width: g.width, height: g.height, data: g.data }, snake, []);
+	draw(iColorGrid, snake, []);
 
 	api.greet();
 
 	const a = performance.now();
-	const path = api.ieat_free_cells(
-		g,
-		snakeToCells(snake).map((p) => api.IPoint.create(p.x, p.y)),
-	);
+	const path = api.solve(iColorGrid, iSnake).reverse();
 	console.log(performance.now() - a);
 
 	{
@@ -28,7 +28,7 @@ import { grid, snake } from "./sample";
 			const i = +input.value;
 			const s = createSnakeFromCells(path.slice(i, i + snakeLength).reverse());
 
-			draw({ width: g.width, height: g.height, data: g.data }, s, []);
+			draw(iColorGrid, s, []);
 
 			for (let j = i + snakeLength; j--; ) {
 				highlightCell(path[j].x, path[j].y, "#123bde");

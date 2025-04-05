@@ -1,5 +1,4 @@
 use crate::grid::{get_distance, Point, DIRECTIONS};
-use crate::snake::Snake;
 use std::cmp::Reverse;
 use std::collections::{BinaryHeap, HashSet};
 
