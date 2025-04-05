@@ -30,16 +30,22 @@ pub enum Color {
     Color4 = 4,
 }
 
+impl Default for Color {
+    fn default() -> Self {
+        Color::Empty
+    }
+}
+
 #[derive(Clone)]
 pub struct Grid<T: Copy> {
     pub width: u8,
     pub height: u8,
     pub cells: Vec<T>,
 }
-impl<T: Copy> Grid<T> {
-    pub fn create(width: u8, height: u8, item: T) -> Grid<T> {
+impl<T: Copy + Default> Grid<T> {
+    pub fn create(width: u8, height: u8) -> Grid<T> {
         let n = (width as usize) * (height as usize);
-        let cells = (0..n).map(|_| item).collect();
+        let cells = (0..n).map(|_| T::default()).collect();
 
         Grid {
             width,
@@ -50,6 +56,13 @@ impl<T: Copy> Grid<T> {
 
     fn get_index(&self, x: i8, y: i8) -> usize {
         return (x as usize) * (self.height as usize) + (y as usize);
+    }
+
+    pub fn fill(&mut self, value: T) -> () {
+        let n = (self.width as usize) * (self.height as usize);
+        for i in (0..n) {
+            self.cells[i] = value;
+        }
     }
     pub fn get(&self, p: &Point) -> T {
         let i = self.get_index(p.x, p.y);
@@ -95,7 +108,7 @@ fn it_should_sort_cell() {
 }
 #[test]
 fn it_should_grid_create() {
-    let grid = Grid::create(30, 10, Color::Empty);
+    let grid = Grid::<Color>::create(30, 10);
 
     assert_eq!(grid.width, 30);
     assert_eq!(grid.height, 10);
@@ -103,7 +116,7 @@ fn it_should_grid_create() {
 }
 #[test]
 fn it_should_grid_setter() {
-    let mut grid = Grid::create(20, 10, Color::Empty);
+    let mut grid = Grid::<Color>::create(20, 10);
 
     grid.set(&Point { x: 12, y: 3 }, Color::Color1);
 
@@ -111,7 +124,7 @@ fn it_should_grid_setter() {
 }
 #[test]
 fn it_should_iterate() {
-    let grid = Grid::create(2, 2, Color::Empty);
+    let grid = Grid::<Color>::create(2, 2);
 
     assert_eq!(
         grid.iter().collect::<HashSet<_>>(),

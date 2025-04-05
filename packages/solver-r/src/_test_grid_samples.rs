@@ -8,7 +8,7 @@ fn grid_from_ascii(ascii: &str) -> Grid<Color> {
     let width = rows.iter().fold(0, |max_len, r| max_len.max(r.len()));
     let height = rows.len();
 
-    let mut grid = Grid::create(width as u8, height as u8, Color::Empty);
+    let mut grid = Grid::<Color>::create(width as u8, height as u8);
 
     for x in 0..width {
         for y in 0..height {
@@ -118,7 +118,7 @@ pub fn get_grid_sample(g: SampleGrid) -> Grid<Color> {
         ),
 
         SampleGrid::RandomPack => {
-            let mut grid = Grid::create(52, 7, Color::Empty);
+            let mut grid = Grid::<Color>::create(52, 7);
             randomly_fill_grid(
                 &mut grid,
                 &[Color::Empty, Color::Empty, Color::Color1, Color::Color4],

@@ -1,6 +1,7 @@
 mod _test_grid_samples;
 mod astar;
 mod astar_snake;
+mod exit_cost_grid;
 mod exitable;
 mod grid;
 mod snake;
