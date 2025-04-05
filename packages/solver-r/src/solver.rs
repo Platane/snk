@@ -1,7 +1,8 @@
 use std::collections::HashSet;
 
+use crate::exit_cost_grid::get_exit_cost_grid;
 use crate::exitable::propagate_exitable;
-use crate::grid::{Color, Grid, Point, DIRECTIONS};
+use crate::grid::{Color, Grid, Point};
 use crate::snake_walk::get_path_to_eat_all;
 
 pub fn get_path_to_eat_everything(color_grid: &Grid<Color>, snake: &[Point]) -> Vec<Point> {
@@ -25,11 +26,17 @@ pub fn get_path_to_eat_everything(color_grid: &Grid<Color>, snake: &[Point]) -> 
         let (mut sub_path, cells_unexitable) =
             get_path_to_eat_all(&color_grid, walkable, snake, &exitable_eatable);
 
+        for p in sub_path.iter() {
+            color_grid.set(&p, Color::Empty);
+        }
+
         sub_path.append(&mut path);
         path = sub_path;
 
         //
         // let's eat the one that are reachable but not exitable
+
+        let exit_cost_grid = get_exit_cost_grid(&color_grid);
     }
 
     path

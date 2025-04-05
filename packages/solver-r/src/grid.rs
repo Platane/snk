@@ -88,6 +88,15 @@ impl<T: Copy> Grid<T> {
     pub fn is_inside_margin(&self, p: &Point, m: i8) -> bool {
         -m <= p.x && p.x < (self.width as i8) + m && -m <= p.y && p.y < (self.height as i8) + m
     }
+
+    /**
+     * ⚠️ assuming the point is inside the grid
+     */
+    pub fn distance_from_outside(&self, p: &Point) -> u8 {
+        let x = p.x as u8;
+        let y = p.y as u8;
+        y.min(self.height - 1 - y).min(x).min(self.width - 1 - x)
+    }
     pub fn iter(&self) -> impl Iterator<Item = Point> {
         let mut i = 0;
         let width = self.width;
