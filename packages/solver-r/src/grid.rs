@@ -1,5 +1,7 @@
 use std::collections::HashSet;
 
+use crate::grid_ascii::{grid_from_ascii, grid_to_ascii};
+
 pub const DIRECTION_RIGHT: Point = Point { x: 1, y: 0 };
 pub const DIRECTION_LEFT: Point = Point { x: -1, y: 0 };
 pub const DIRECTION_UP: Point = Point { x: 0, y: 1 };
@@ -16,6 +18,26 @@ pub struct Point {
     pub x: i8,
     pub y: i8,
 }
+pub fn iter_neighbour4(p: &Point) -> impl Iterator<Item = Point> {
+    let mut i: usize = 0;
+    let px = p.x;
+    let py = p.y;
+    std::iter::from_fn(move || {
+        let out = DIRECTIONS.get(i).map(|dir| Point {
+            x: px + dir.x,
+            y: py + dir.y,
+        });
+
+        i += 1;
+        out
+    })
+}
+pub fn add(a: &Point, b: &Point) -> Point {
+    Point {
+        x: a.x + b.x,
+        y: a.y + b.y,
+    }
+}
 pub fn get_distance(a: &Point, b: &Point) -> u8 {
     (a.x - b.x).abs() as u8 + (a.y - b.y).abs() as u8
 }
@@ -29,38 +51,26 @@ pub enum Color {
     Color3 = 3,
     Color4 = 4,
 }
-
 impl Default for Color {
     fn default() -> Self {
         Color::Empty
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct Grid<T: Copy> {
     pub width: u8,
     pub height: u8,
     pub cells: Vec<T>,
 }
-impl<T: Copy + Default> Grid<T> {
-    pub fn create(width: u8, height: u8) -> Grid<T> {
-        let n = (width as usize) * (height as usize);
-        let cells = (0..n).map(|_| T::default()).collect();
-
-        Grid {
-            width,
-            height,
-            cells,
-        }
-    }
-
+impl<T: Copy> Grid<T> {
     fn get_index(&self, x: i8, y: i8) -> usize {
         return (x as usize) * (self.height as usize) + (y as usize);
     }
 
     pub fn fill(&mut self, value: T) -> () {
         let n = (self.width as usize) * (self.height as usize);
-        for i in (0..n) {
+        for i in 0..n {
             self.cells[i] = value;
         }
     }
@@ -96,6 +106,69 @@ impl<T: Copy + Default> Grid<T> {
                 Some(p)
             }
         })
+    }
+    pub fn iter_hull(&self) -> impl Iterator<Item = Point> {
+        let mut i: usize = 0;
+        let width = self.width as usize;
+        let height = self.height as usize;
+        std::iter::from_fn(move || {
+            let mut p = Point { x: 0, y: 0 };
+
+            let mut k = i;
+
+            if k < width {
+                p.x = k as i8;
+                p.y = 0;
+            } else {
+                k -= width;
+                if k < width {
+                    p.x = k as i8;
+                    p.y = (height - 1) as i8;
+                } else {
+                    k -= width;
+                    if k < height {
+                        p.x = 0;
+                        p.y = k as i8;
+                    } else {
+                        k -= height;
+                        if k < height {
+                            p.x = (width - 1) as i8;
+                            p.y = k as i8;
+                        } else {
+                            return None;
+                        }
+                    }
+                }
+            }
+
+            i += 1;
+
+            Some(p)
+        })
+    }
+}
+impl<T: Default + Copy> Grid<T> {
+    pub fn create(width: u8, height: u8) -> Grid<T> {
+        let n = (width as usize) * (height as usize);
+        let cells = (0..n).map(|_| T::default()).collect();
+
+        Grid {
+            width,
+            height,
+            cells,
+        }
+    }
+}
+impl<T: Copy> Grid<T> {
+    pub fn create_with(width: u8, height: u8, item: T) -> Grid<T> {
+        let n = (width as usize) * (height as usize);
+        let cells = (0..n).map(|_| item).collect();
+
+        Grid {
+            width,
+            height,
+            cells,
+        }
     }
 }
 
@@ -133,6 +206,28 @@ fn it_should_iterate() {
             Point { x: 0, y: 1 },
             Point { x: 1, y: 0 },
             Point { x: 1, y: 1 },
+        ])
+    );
+}
+#[test]
+fn it_should_iterate_hull() {
+    let grid = Grid::<Color>::create(3, 3);
+
+    assert_eq!(
+        grid.iter_hull().collect::<HashSet<_>>(),
+        HashSet::from([
+            Point { x: 0, y: 0 },
+            Point { x: 0, y: 1 },
+            Point { x: 0, y: 2 },
+            Point { x: 2, y: 0 },
+            Point { x: 2, y: 1 },
+            Point { x: 2, y: 2 },
+            Point { y: 0, x: 0 },
+            Point { y: 0, x: 1 },
+            Point { y: 0, x: 2 },
+            Point { y: 2, x: 0 },
+            Point { y: 2, x: 1 },
+            Point { y: 2, x: 2 },
         ])
     );
 }

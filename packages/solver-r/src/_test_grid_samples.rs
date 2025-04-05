@@ -2,45 +2,7 @@ use wasm_bindgen::prelude::wasm_bindgen;
 
 use crate::grid::{Color, Grid, Point};
 
-fn grid_from_ascii(ascii: &str) -> Grid<Color> {
-    let rows: Vec<_> = ascii.trim().split('\n').collect();
-
-    let width = rows.iter().fold(0, |max_len, r| max_len.max(r.len()));
-    let height = rows.len();
-
-    let mut grid = Grid::<Color>::create(width as u8, height as u8);
-
-    for x in 0..width {
-        for y in 0..height {
-            let c = rows[y].chars().nth(x).unwrap_or(' ');
-            let cell = match c {
-                ' ' => Color::Empty,
-                '_' => Color::Empty,
-                '1' => Color::Color1,
-                '2' => Color::Color2,
-                '3' => Color::Color3,
-                '4' => Color::Color4,
-
-                '.' => Color::Color1,
-                'o' => Color::Color2,
-                'O' => Color::Color3,
-                '#' => Color::Color4,
-                _ => panic!("unknow char \"{}\"", c),
-            };
-            grid.set(
-                &Point {
-                    x: x as i8,
-                    y: y as i8,
-                },
-                cell,
-            );
-        }
-    }
-
-    grid
-}
-
-fn randomly_fill_grid(grid: &mut Grid<Color>, probability: &[Color], seed: u32) -> () {
+fn randomly_fill_grid<T: Copy + Default>(grid: &mut Grid<T>, probability: &[T], seed: u32) -> () {
     // Pseudorandom number generator from the "Xorshift RNGs" paper by George Marsaglia.
     // https://github.com/rust-lang/rust/blob/1.55.0/library/core/src/slice/sort.rs#L559-L573
     fn random_numbers(seed: u32) -> impl Iterator<Item = u32> {
@@ -58,8 +20,8 @@ fn randomly_fill_grid(grid: &mut Grid<Color>, probability: &[Color], seed: u32) 
     for x in 0..(grid.width as i8) {
         for y in 0..(grid.height as i8) {
             let random = rng.next().unwrap();
-            let cell = probability[random as usize % probability.len()];
-            grid.set(&Point { x, y }, cell);
+            let value: T = probability[random as usize % probability.len()];
+            grid.set(&Point { x, y }, value);
         }
     }
 }
@@ -74,8 +36,8 @@ pub enum SampleGrid {
 }
 pub fn get_grid_sample(g: SampleGrid) -> Grid<Color> {
     match g {
-        SampleGrid::Empty => grid_from_ascii(
-            &r#"
+        SampleGrid::Empty => Grid::<_>::from(
+            r#"
            _
            _
            _
@@ -83,8 +45,8 @@ pub fn get_grid_sample(g: SampleGrid) -> Grid<Color> {
 "#,
         ),
 
-        SampleGrid::OneDot => grid_from_ascii(
-            &r#"
+        SampleGrid::OneDot => Grid::<_>::from(
+            r#"
            _
            _
     .      _
@@ -93,8 +55,8 @@ pub fn get_grid_sample(g: SampleGrid) -> Grid<Color> {
 "#,
         ),
 
-        SampleGrid::Realistic => grid_from_ascii(
-            &r#"
+        SampleGrid::Realistic => Grid::<_>::from(
+            r#"
 231 412 12213  13  213  421  121131   32123112 332 _
 412  12 4   331213 12214431 412  413 42133123  23 21
 123 2143 21211 2423    213 123 1233123432 223331233_
@@ -105,8 +67,8 @@ pub fn get_grid_sample(g: SampleGrid) -> Grid<Color> {
 "#,
         ),
 
-        SampleGrid::Labyrinthe => grid_from_ascii(
-            &r#"
+        SampleGrid::Labyrinthe => Grid::<_>::from(
+            r#"
 ################################################## #
 #                                                  #
 # ##################################################

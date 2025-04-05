@@ -26,13 +26,13 @@ impl PartialOrd for Node {
 }
 
 pub fn get_snake_path<F>(
-    mut walkable: F,
+    walkable: F,
     snake: &[Point],
     end: &Point,
     max_weight: usize,
 ) -> Option<Vec<Point>>
 where
-    F: FnMut(&Point) -> bool,
+    F: Fn(&Point) -> bool,
 {
     let snake_length = snake.len();
 

@@ -4,6 +4,7 @@ mod astar_snake;
 mod exit_cost_grid;
 mod exitable;
 mod grid;
+mod grid_ascii;
 mod snake;
 mod snake_walk;
 mod solver;
