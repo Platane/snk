@@ -1,0 +1,8 @@
+{
+  "color": "#00FF00",
+  "border": "#0000FF",
+  "background": "#FFFFFF",
+  "type": "level",  // 可选模式：classic/level
+  "contrast": 1.5,
+  "delay": 250
+}
