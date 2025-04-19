@@ -8,7 +8,7 @@ runs:
 
 inputs:
   github_user_name:
-    description: "github user name"
+    description: "Edmon02"
     required: true
   github_token:
     description: "github token used to fetch the contribution calendar. Default to the action token if empty."
