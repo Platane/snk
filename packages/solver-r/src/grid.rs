@@ -181,6 +181,12 @@ impl<T: Copy> Grid<T> {
     }
 }
 
+impl Grid<Color> {
+    pub fn is_walkable(&self, walkable: Color, p: &Point) -> bool {
+        !self.is_inside(p) || self.get(p) <= walkable
+    }
+}
+
 #[test]
 fn it_should_sort_cell() {
     assert_eq!(Color::Empty < Color::Color1, true);
