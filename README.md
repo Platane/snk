@@ -91,3 +91,30 @@ npm run dev:demo
 ## Implementation
 
 [solver algorithm](./packages/solver/README.md)
+# .github/workflows/generate-snake.yml
+
+name: Generate Snake
+
+on:
+  schedule:
+    - cron: "0 0 * * *" # every day
+  workflow_dispatch:
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: Platane/snk@v3
+        with:
+          github_user_name: jayaraj-r
+          outputs: |
+            dist/snake.svg
+
+      - name: Push to output branch
+        uses: crazy-max/ghaction-github-pages@v3
+        with:
+          target_branch: output
+          build_dir: dist
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
