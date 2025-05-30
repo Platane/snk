@@ -2,7 +2,7 @@ name: Generate Snake Animation
 
 on:
   schedule:
-    - cron: "0 0 * * *" # Runs every day at midnight
+    - cron: "0 0 * * *" 
   workflow_dispatch:
 
 jobs:
@@ -12,7 +12,7 @@ jobs:
       - name: Generate the snake
         uses: Platane/snk@v3
         with:
-          github_user_name: Shivi7757 # Make sure this is your GitHub username
+          github_user_name: Shivi7757 
           outputs: |
             dist/github-contribution-grid-snake.svg
             dist/github-contribution-grid-snake-dark.svg?palette=github-dark
@@ -21,6 +21,6 @@ jobs:
         uses: crazy-max/ghaction-github-pages@v3
         with:
           target_branch: output
-          build_dir: dist # <<< THIS LINE IS CRUCIAL - PUT IT BACK
+          build_dir: dist 
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # <<< THIS BLOCK IS CRUCIAL - PUT IT BACK
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
