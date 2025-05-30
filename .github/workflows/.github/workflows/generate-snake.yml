@@ -8,6 +8,8 @@ on:
 jobs:
   generate:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages  # <-- 👈 this line fixes the error
     steps:
       - name: Generate the snake
         uses: Platane/snk@v3
@@ -24,3 +26,4 @@ jobs:
           build_dir: dist
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
