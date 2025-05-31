@@ -21,6 +21,7 @@ export type DrawOptions = {
   colorEmpty: string;
   colorDotBorder: string;
   colorSnake: string;
+  colorProgress?: string;
   sizeCell: number;
   sizeDot: number;
   sizeDotBorderRadius: number;
@@ -29,6 +30,7 @@ export type DrawOptions = {
     colorEmpty: string;
     colorDotBorder?: string;
     colorSnake?: string;
+    colorProgress?: string;
   };
 };
 
@@ -86,7 +88,10 @@ export const createSvg = (
     createGrid(livingCells, drawOptions, duration),
     createStack(
       livingCells,
-      drawOptions,
+      {
+        sizeDot: drawOptions.sizeDot,
+        colorProgress: drawOptions.colorProgress,
+      },
       grid.width * drawOptions.sizeCell,
       (grid.height + 2) * drawOptions.sizeCell,
       duration,

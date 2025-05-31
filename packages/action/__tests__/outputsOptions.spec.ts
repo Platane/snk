@@ -22,6 +22,11 @@ it("should parse options as searchparams", () => {
     "yellow",
   );
 
+  expect(parseEntry(`/out.svg?color_progress=red`)?.drawOptions).toHaveProperty(
+    "colorProgress",
+    "red",
+  );
+
   expect(
     parseEntry(`/out.svg?color_dots=#000,#111,#222,#333,#444`)?.drawOptions
       .colorDots,

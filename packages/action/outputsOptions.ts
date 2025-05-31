@@ -53,6 +53,8 @@ export const parseEntry = (entry: string) => {
   }
 
   if (sp.has("color_snake")) drawOptions.colorSnake = sp.get("color_snake")!;
+  if (sp.has("color_progress"))
+    drawOptions.colorProgress = sp.get("color_progress")!;
   if (sp.has("color_dots")) {
     const colors = sp.get("color_dots")!.split(/[,;]/);
     drawOptions.colorDots = colors;
@@ -76,6 +78,8 @@ export const parseEntry = (entry: string) => {
     drawOptions.dark.colorDotBorder = sp.get("color_dot_border")!;
   if (sp.has("dark_color_snake") && drawOptions.dark)
     drawOptions.dark.colorSnake = sp.get("color_snake")!;
+  if (sp.has("dark_color_progress") && drawOptions.dark)
+    drawOptions.dark.colorProgress = sp.get("dark_color_progress")!;
 
   return {
     filename,

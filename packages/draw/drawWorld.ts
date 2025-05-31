@@ -9,6 +9,7 @@ export type Options = {
   colorEmpty: string;
   colorDotBorder: string;
   colorSnake: string;
+  colorProgress?: string;
   sizeCell: number;
   sizeDot: number;
   sizeDotBorderRadius: number;
@@ -19,15 +20,16 @@ export const drawStack = (
   stack: Color[],
   max: number,
   width: number,
-  o: { colorDots: Record<Color, string> },
+  o: { colorDots: Record<Color, string>; colorProgress?: string },
 ) => {
   ctx.save();
 
   const m = width / max;
 
   for (let i = 0; i < stack.length; i++) {
+    // Use custom stack color if provided, otherwise use the color from colorDots
     // @ts-ignore
-    ctx.fillStyle = o.colorDots[stack[i]];
+    ctx.fillStyle = o.colorProgress || o.colorDots[stack[i]];
     ctx.fillRect(i * m, 0, m + width * 0.005, 10);
   }
   ctx.restore();

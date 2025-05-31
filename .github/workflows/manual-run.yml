@@ -16,7 +16,7 @@ jobs:
           github_user_name: ${{ github.repository_owner }}
           outputs: |
             dist/only-svg/github-contribution-grid-snake.svg
-            dist/only-svg/github-contribution-grid-snake-dark.svg?palette=github-dark
+            dist/only-svg/github-contribution-grid-snake-dark.svg?palette=github-dark&color_progress=#FF5733
             dist/only-svg/github-contribution-grid-snake-blue.svg?color_snake=orange&color_dots=#bfd6f6,#8dbdff,#64a1f4,#4b91f1,#3c7dd9
 
       - uses: Platane/snk@v3
@@ -24,7 +24,7 @@ jobs:
           github_user_name: ${{ github.repository_owner }}
           outputs: |
             dist/docker/github-contribution-grid-snake.svg
-            dist/docker/github-contribution-grid-snake-dark.svg?palette=github-dark
+            dist/docker/github-contribution-grid-snake-dark.svg?palette=github-dark&color_progress=#FF5733
             dist/docker/github-contribution-grid-snake.gif?color_snake=orange&color_dots=#bfd6f6,#8dbdff,#64a1f4,#4b91f1,#3c7dd9
 
       - name: ensure the generated file exists

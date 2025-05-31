@@ -34,7 +34,7 @@ jobs:
           github_user_name: platane
           outputs: |
             dist/github-contribution-grid-snake.svg
-            dist/github-contribution-grid-snake-dark.svg?palette=github-dark
+            dist/github-contribution-grid-snake-dark.svg?palette=github-dark&color_progress=#FF5733
             dist/github-contribution-grid-snake.gif?color_snake=orange&color_dots=#bfd6f6,#8dbdff,#64a1f4,#4b91f1,#3c7dd9
 
       - name: ensure the generated file exists
@@ -72,7 +72,7 @@ jobs:
           github_user_name: platane
           outputs: |
             dist/github-contribution-grid-snake.svg
-            dist/github-contribution-grid-snake-dark.svg?palette=github-dark
+            dist/github-contribution-grid-snake-dark.svg?palette=github-dark&color_progress=#FF5733
             dist/github-contribution-grid-snake-blue.svg?color_snake=orange&color_dots=#bfd6f6,#8dbdff,#64a1f4,#4b91f1,#3c7dd9
 
       - name: ensure the generated file exists

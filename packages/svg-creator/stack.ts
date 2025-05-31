@@ -4,11 +4,12 @@ import { h } from "./xml-utils";
 
 export type Options = {
   sizeDot: number;
+  colorProgress?: string;
 };
 
 export const createStack = (
   cells: { t: number | null; color: Color | Empty }[],
-  { sizeDot }: Options,
+  { sizeDot, colorProgress }: Options,
   width: number,
   y: number,
   duration: number,
@@ -72,7 +73,7 @@ export const createStack = (
       ),
 
       `.u.${id} {
-        fill: var(--c${color});
+        fill: ${colorProgress ? colorProgress : `var(--c${color})`};
         animation-name: ${animationName};
         transform-origin: ${x}px 0
       }
