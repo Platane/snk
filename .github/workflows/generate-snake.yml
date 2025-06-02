@@ -24,3 +24,9 @@ jobs:
           build_dir: dist
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+
+// This workflow generates a snake animation based on the GitHub contributions of the user "wahyu120599".
+// It runs daily at midnight UTC and can also be triggered manually.
+// The generated snake animation is pushed to the "output" branch of the repository.
+// The snake animation is generated using the Platane/snk action, which creates SVG files for both light and dark themes.
