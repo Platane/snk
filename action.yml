@@ -23,7 +23,7 @@ inputs:
        supported query string options:
 
       - palette:      A preset of color, one of [github, github-dark, github-light]
-      - color_snake:  Color of the snake
+      - color_snake:  Color of the snake (or list of colors) e.g: orange,red,blue,green,yellow,purple
       - color_dots:   Coma separated list of dots color. 
                       The first one is 0 contribution, then it goes from the low contribution to the highest.
                       Exactly 5 colors are expected.
