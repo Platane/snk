@@ -14,7 +14,7 @@ const lerp = (k: number, a: number, b: number) => (1 - k) * a + k * b;
 
 export const createSnake = (
   chain: Snake[],
-  { sizeCell, sizeDot }: Options,
+  { sizeCell, sizeDot, colorSnake }: Options,
   duration: number,
 ) => {
   const snakeN = chain[0] ? getSnakeLength(chain[0]) : 0;
@@ -52,13 +52,21 @@ export const createSnake = (
   const transform = ({ x, y }: Point) =>
     `transform:translate(${x * sizeCell}px,${y * sizeCell}px)`;
 
-  const styles = [
+  const baseStyles = Array.isArray(colorSnake) ? [
+    `.s{ 
+      shape-rendering: geometricPrecision;
+      animation: none linear ${duration}ms infinite
+    }`,
+  ] : [
     `.s{ 
       shape-rendering: geometricPrecision;
       fill: var(--cs);
       animation: none linear ${duration}ms infinite
     }`,
+  ];
 
+  const styles = [
+    ...baseStyles,
     ...snakeParts.map((positions, i) => {
       const id = `s${i}`;
       const animationName = id;
@@ -67,9 +75,28 @@ export const createSnake = (
         positions.map((tr, i, { length }) => ({ ...tr, t: i / length })),
       ).map(({ t, ...p }) => ({ t, style: transform(p) }));
 
+      let colorAnimation = "";
+      if (Array.isArray(colorSnake)) {
+        const colorKeyframes = keyframes.map((frame, frameIndex) => {
+          const colorIndex = Math.floor((frameIndex / keyframes.length) * colorSnake.length) % colorSnake.length;
+          return { t: frame.t, style: `fill: ${colorSnake[colorIndex]}` };
+        });
+        
+        const colorAnimationName = `${id}_color`;
+        colorAnimation = createAnimation(colorAnimationName, colorKeyframes);
+        
+        return [
+          createAnimation(animationName, keyframes),
+          colorAnimation,
+          `.s.${id}{
+            ${transform(positions[0])};
+            animation: ${animationName} linear ${duration}ms infinite, ${colorAnimationName} linear ${duration}ms infinite
+          }`,
+        ];
+      }
+
       return [
         createAnimation(animationName, keyframes),
-
         `.s.${id}{
           ${transform(positions[0])};
           animation-name: ${animationName}
