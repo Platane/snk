@@ -52,7 +52,8 @@ export const parseEntry = (entry: string) => {
     }
   }
 
-  if (sp.has("color_snake")) drawOptions.colorSnake = sp.get("color_snake")!;
+  if (sp.has("color_snake"))
+    drawOptions.colorSnake = sp.get("color_snake")!.split(/[,;]/);
   if (sp.has("color_dots")) {
     const colors = sp.get("color_dots")!.split(/[,;]/);
     drawOptions.colorDots = colors;

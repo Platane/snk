@@ -20,7 +20,7 @@ export type DrawOptions = {
   colorDots: Record<Color, string>;
   colorEmpty: string;
   colorDotBorder: string;
-  colorSnake: string;
+  colorSnake: string | string[];
   sizeCell: number;
   sizeDot: number;
   sizeDotBorderRadius: number;
@@ -28,7 +28,7 @@ export type DrawOptions = {
     colorDots: Record<Color, string>;
     colorEmpty: string;
     colorDotBorder?: string;
-    colorSnake?: string;
+    colorSnake?: string | string[];
   };
 };
 

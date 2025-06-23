@@ -8,7 +8,7 @@ export type Options = {
   colorDots: Record<Color, string>;
   colorEmpty: string;
   colorDotBorder: string;
-  colorSnake: string;
+  colorSnake: string | string[];
   sizeCell: number;
   sizeDot: number;
   sizeDotBorderRadius: number;

@@ -5,7 +5,7 @@ import { h } from "./xml-utils";
 import { createAnimation } from "./css-utils";
 
 export type Options = {
-  colorSnake: string;
+  colorSnake: string | string[];
   sizeCell: number;
   sizeDot: number;
 };
