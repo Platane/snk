@@ -1,23 +1,41 @@
-use crate::grid::{get_distance, Point, DIRECTIONS};
-use crate::snake_self_locked::is_snake_self_locked;
+use crate::exit_cost_grid::ExitCostGrid;
+use crate::grid::{get_distance, Color, Grid, Point, DIRECTIONS};
 use std::cmp::Reverse;
 use std::collections::{BinaryHeap, HashSet};
 
 struct Node {
-    h: usize,
-    f: usize,
+    distance_to_end: usize,
+    weight_to_end: usize,
+    // eaten: bool,
     path: Vec<Point>,
 }
+impl Node {
+    pub fn f(&self) -> usize {
+        self.distance_to_end
+            + self.weight_to_end
+            + if self.distance_to_end == 0 {
+                // is already at the end
 
+                // depth first approach
+                let weight_after_end = self.path.len() - self.weight_to_end;
+
+                256 - weight_after_end
+            } else {
+                // penalty for not be at the end
+
+                512
+            }
+    }
+}
 impl Eq for Node {}
 impl PartialEq for Node {
     fn eq(&self, other: &Self) -> bool {
-        self.path == other.path
+        self.path == other.path && (self.distance_to_end == 0) == (other.distance_to_end == 0)
     }
 }
 impl Ord for Node {
     fn cmp(&self, other: &Self) -> std::cmp::Ordering {
-        self.f.cmp(&other.f)
+        self.f().cmp(&other.f())
     }
 }
 impl PartialOrd for Node {
@@ -26,33 +44,30 @@ impl PartialOrd for Node {
     }
 }
 
-pub fn get_snake_path<F>(
-    walkable: F,
+pub fn get_snake_tunnel<F>(
+    color_grid: &Grid<Color>,
+    exit_cost_grid: &ExitCostGrid,
+    walkable: Color,
     snake: &[Point],
     end: &Point,
     max_weight: usize,
-) -> Option<Vec<Point>>
-where
-    F: Fn(&Point) -> bool,
-{
+) -> Option<Vec<Point>> {
     let snake_length = snake.len();
 
-    let mut open_list = BinaryHeap::new();
-    let mut close_list: HashSet<Vec<Point>> = HashSet::new();
+    let mut open_list: BinaryHeap<Node> = BinaryHeap::new();
+    let mut close_list: HashSet<(&[Point], bool)> = HashSet::new();
 
-    open_list.push(Reverse({
+    open_list.push({
         let h = get_distance(&snake[0], &end) as usize;
         Node {
             path: snake.to_vec(),
-            h,
-            f: h,
+            distance_to_end: h,
+            weight_to_end: 0,
         }
-    }));
+    });
 
-    while let Some(n) = open_list.pop() {
-        let node = n.0;
-
-        if node.f > max_weight {
+    while let Some(node) = open_list.pop() {
+        if node.f() > max_weight {
             return None;
         }
 
@@ -68,9 +83,17 @@ where
                 continue;
             }
 
-            if !walkable(&next_head) {
+            if !color_grid.is_walkable(walkable, &next_head) {
                 continue;
             }
+
+            // if &next_head == end {
+            //     let mut path = node.path.clone();
+            //     path.insert(0, next_head);
+            //     return Some(path);
+            // }
+            //
+            let reach = node.distance_to_end == 0 || &next_head == end;
 
             let next_path = {
                 let mut path = node.path.clone();
@@ -80,18 +103,8 @@ where
 
             let next_snake = &next_path[0..snake_length];
 
-            if close_list.contains(next_snake) {
+            if close_list.contains(&(next_snake, reach)) {
                 continue;
-            }
-
-            if &next_head == end {
-                if is_snake_self_locked(|p| walkable(p), next_snake) {
-                    continue;
-                } else {
-                    let mut path = node.path.clone();
-                    path.insert(0, next_head);
-                    return Some(path);
-                }
             }
 
             open_list.push(Reverse({
@@ -99,7 +112,7 @@ where
                 let f = h + next_path.len() - snake_length;
                 Node {
                     path: next_path,
-                    h,
+                    distance_to_end: h,
                     f,
                 }
             }));

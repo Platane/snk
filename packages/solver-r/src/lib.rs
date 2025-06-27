@@ -1,13 +1,19 @@
 mod _test_grid_samples;
 mod astar;
 mod astar_snake;
+// mod astar_snake_tunnel;
+mod cave;
 mod exit_cost_grid;
 mod exitable;
 mod grid;
 mod grid_ascii;
+mod pocket;
 mod snake;
+mod snake_self_locked;
 mod snake_walk;
 mod solver;
+
+use std::usize;
 
 use _test_grid_samples::{get_grid_sample, SampleGrid};
 use grid::{Color, Grid, Point};
@@ -31,7 +37,7 @@ pub fn greet() {
     init_panic_hook();
     console_log::init_with_level(log::Level::Debug).unwrap();
 
-    info!("It works!");
+    log::info!("It works!");
     // alert("Hello, wasm-game-of-life!");
 }
 
@@ -146,7 +152,22 @@ pub fn solve(grid: &IColorGrid, snake: ISnake) -> Vec<IPoint> {
 
     let path = get_path_to_eat_everything(&grid, &snake);
 
-    log::info!("path {:?}", path);
-
     path.iter().map(IPoint::from).collect()
+}
+
+#[wasm_bindgen]
+pub fn get_snake_path(grid: &IColorGrid, snake: ISnake, end: IPoint) -> Option<Vec<IPoint>> {
+    let grid = Grid::from(grid.clone());
+    let snake: Vec<Point> = snake.iter().map(Point::from).collect();
+    let end = Point::from(end);
+
+    let margin = (snake.len() / 2) as i8;
+    let res = astar_snake::get_snake_path(
+        |p| grid.is_walkable(Color::Color1, &p) && grid.is_inside_margin(&p, margin),
+        &snake,
+        &end,
+        usize::MAX,
+    );
+
+    res.map(|path| path.into_iter().map(IPoint::from).collect())
 }

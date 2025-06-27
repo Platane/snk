@@ -1,9 +1,38 @@
 use crate::grid::{iter_neighbour4, Color, Grid, Point};
 
-pub fn get_exit_cost_grid(color_grid: &Grid<Color>) -> Grid<u32> {
+pub type ExitCostGrid = Grid<u32>;
+
+impl ExitCostGrid {
+    pub fn is_freely_exitable_with_walkable(&self, walkable: Color, p: &Point) -> bool {
+        self.get(p) <= get_color_weight(walkable) * (1 << 4)
+    }
+}
+
+pub fn is_freely_exitable_with_walkable(
+    exit_cost_grid: &ExitCostGrid,
+    walkable: Color,
+    p: &Point,
+) -> bool {
+    exit_cost_grid.get(p) <= get_color_weight(walkable) * (1 << 4)
+}
+
+fn get_color_weight(color: Color) -> u32 {
+    match color {
+        Color::Empty => 0,
+        Color::Color1 => 1 << 0,
+        Color::Color2 => 1 << 4,
+        Color::Color3 => 1 << 8,
+        Color::Color4 => 1 << 12,
+    }
+}
+
+pub fn create_empty_exit_cost_grid(color_grid: &Grid<Color>) -> ExitCostGrid {
     let mut exit_cost_grid = Grid::<u32>::create(color_grid.width, color_grid.height);
     exit_cost_grid.fill(u32::MAX);
+    exit_cost_grid
+}
 
+pub fn propagate_exit_cost_grid(exit_cost_grid: &mut ExitCostGrid, color_grid: &Grid<Color>) -> () {
     let mut open_list = color_grid.iter_hull().collect::<Vec<_>>();
 
     while let Some(p) = open_list.pop() {
@@ -18,11 +47,7 @@ pub fn get_exit_cost_grid(color_grid: &Grid<Color>) -> Grid<u32> {
             .min()
             .unwrap();
 
-        let self_cost = match color_grid.get(&p) {
-            Color::Empty => 0,
-            c => (256 as u32).pow((c as u32) - 1),
-        };
-        println!("color: {:?} cost:{}", color_grid.get(&p), self_cost);
+        let self_cost = get_color_weight(color_grid.get(&p));
 
         let cost = neighbour_cost_min + self_cost;
 
@@ -36,8 +61,6 @@ pub fn get_exit_cost_grid(color_grid: &Grid<Color>) -> Grid<u32> {
             );
         }
     }
-
-    exit_cost_grid
 }
 
 #[test]
@@ -47,7 +70,8 @@ fn it_should_compute_exist_cost_grid_1() {
 _._
 "#,
     );
-    let exit_grid = get_exit_cost_grid(&color_grid);
+    let mut exit_grid = create_empty_exit_cost_grid(&color_grid);
+    propagate_exit_cost_grid(&mut exit_grid, &color_grid);
 
     assert_eq!(
         exit_grid.to_string(),
@@ -68,7 +92,8 @@ _ ....      _
   ....
 "#,
     );
-    let exit_grid = get_exit_cost_grid(&color_grid);
+    let mut exit_grid = create_empty_exit_cost_grid(&color_grid);
+    propagate_exit_cost_grid(&mut exit_grid, &color_grid);
 
     assert_eq!(
         exit_grid.to_string(),
@@ -93,7 +118,8 @@ fn it_should_compute_exist_cost_grid_3() {
 #####
 "#,
     );
-    let exit_grid = get_exit_cost_grid(&color_grid);
+    let mut exit_grid = create_empty_exit_cost_grid(&color_grid);
+    propagate_exit_cost_grid(&mut exit_grid, &color_grid);
 
     assert_eq!(exit_grid.get(&Point { x: 2, y: 2 }), 256 * 256 * 256 * 2)
 }

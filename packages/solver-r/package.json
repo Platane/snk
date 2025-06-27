@@ -1,12 +1,12 @@
 {
-	"name": "@snk/solver-r",
-	"version": "1.0.0",
-	"devDependencies": {
-		"wasm-pack": "0.13.1"
-	},
-	"main": "./pkg/snk_solver_rust.js",
-	"scripts": {
-		"build": "wasm-pack build",
-		"dev": "bunx nodemon --watch src -e rs --exec wasm-pack build"
-	}
+  "name": "@snk/solver-r",
+  "version": "1.0.0",
+  "devDependencies": {
+    "wasm-pack": "0.13.1"
+  },
+  "main": "./pkg/snk_solver_rust.js",
+  "scripts": {
+    "build": "wasm-pack build",
+    "dev": "bunx nodemon --watch src -e rs --exec wasm-pack build"
+  }
 }

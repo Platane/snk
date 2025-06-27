@@ -4,26 +4,44 @@ import "./menu";
 import { grid, snake } from "./sample";
 
 (async () => {
-	const api = await import("@snk/solver-r");
+  const { IColorGrid, IPoint, get_snake_path,greet } = await import("@snk/solver-r");
 
-	const g = api.IGrid.create(grid.width, grid.height, grid.data);
-	const path = api.iastar_snake(
-		g,
-		snakeToCells(snake).map((p) => api.IPoint.create(p.x, p.y)),
-		api.IPoint.create(7, 0),
-	);
+  greet();
 
-	{
-		const { canvas, draw, highlightCell } = createCanvas(g);
-		document.body.appendChild(canvas);
+  const colorGrid = IColorGrid.create(grid.width, grid.height, grid.data);
 
-		draw({ width: g.width, height: g.height, data: g.data }, [] as any, []);
+  const { canvas, draw, getPointedCell, highlightCell } =
+    createCanvas(colorGrid);
+  document.body.appendChild(canvas);
 
-		console.log(path);
+  let end = { x: 5, y: -1 };
+  const onChange = () => {
+    const isnake = snakeToCells(snake).map((p) => IPoint.create(p.x, p.y));
 
-		if (path)
-			for (const p of path) {
-				highlightCell(p.x, p.y);
-			}
-	}
+    const path = get_snake_path(colorGrid, isnake, IPoint.create(end.x, end.y));
+
+
+    draw(
+      {
+        width: colorGrid.width,
+        height: colorGrid.height,
+        data: colorGrid.data,
+      },
+      snake,
+      [],
+    );
+
+    if (path)
+      for (const p of path) {
+        highlightCell(p.x, p.y);
+      }
+  };
+  canvas.addEventListener("mousemove", (e) => {
+    const p = getPointedCell(e);
+    if( p.x === end.x && p.y === end.y) return
+
+    end = p;
+    onChange();
+  });
+  onChange();
 })();

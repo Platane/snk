@@ -27,7 +27,7 @@ pub fn can_snake_reach_outside(color_grid: &Grid<Color>, walkable: Color, snake:
                 return true;
             }
 
-            if color_grid.get(&next_head) <= walkable {
+            if !(color_grid.is_walkable(walkable, &next_head)) {
                 continue;
             }
 
@@ -103,6 +103,77 @@ pub fn get_snake_path_to_outside(
 
         let snake = &path[0..snake_length];
         close_list.insert(snake.to_vec());
+    }
+
+    None
+}
+
+pub fn get_exitable_snake_path(
+    color_grid: &Grid<Color>,
+    walkable: Color,
+    snake: &[Point],
+    end: &Point,
+    max_weight: usize,
+    grid_margin: i8,
+) -> Option<Vec<Point>> {
+    let snake_len = snake.len();
+
+    let res_sub_path = get_snake_path(
+        |c| {
+            (!color_grid.is_inside(c) || color_grid.get(c) <= walkable)
+                && color_grid.is_inside_margin(c, grid_margin)
+        },
+        snake,
+        end,
+        max_weight,
+    );
+
+    if let Some(sub_path) = res_sub_path {
+        let next_snake = &sub_path[0..snake_len];
+
+        if can_snake_reach_outside(color_grid, walkable, next_snake) {
+            return Some(sub_path);
+        }
+    }
+
+    //
+    let mut path_to_outside = get_snake_path_to_outside(color_grid, walkable, snake)
+        .expect("Snake could not reach the outside");
+    let outside_direction = {
+        if path_to_outside[0].y < 0 {
+            Point { x: 0, y: -1 }
+        } else if path_to_outside[0].y >= color_grid.height as i8 {
+            Point { x: 0, y: 1 }
+        } else if path_to_outside[0].x < 0 {
+            Point { x: -1, y: 0 }
+        } else if path_to_outside[0].x >= color_grid.width as i8 {
+            Point { x: 1, y: 0 }
+        } else {
+            panic!("get_snake_path_to_outside did not lead to outside");
+        }
+    };
+    for _ in 0..((snake_len + 1) / 2) {
+        let p = Point {
+            x: path_to_outside[0].x + outside_direction.x,
+            y: path_to_outside[0].y + outside_direction.y,
+        };
+        path_to_outside.insert(0, p);
+    }
+
+    let snake_outside = &path_to_outside[0..snake_len];
+    let mut sub_path = get_snake_path(
+        |c| !color_grid.is_inside(c) || color_grid.get(c) <= walkable,
+        snake_outside,
+        &end,
+        max_weight,
+    )
+    .expect("Some cell is not reachable, again");
+
+    let next_snake = &sub_path[0..snake_len];
+    if can_snake_reach_outside(color_grid, walkable, next_snake) {
+        sub_path.truncate(sub_path.len() - snake_len);
+        sub_path.append(&mut path_to_outside);
+        return Some(sub_path);
     }
 
     None

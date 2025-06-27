@@ -10,42 +10,13 @@ pub fn propagate_exitable(
     grid: &Grid<Color>,
     walkable: Color,
 ) -> () {
-    for x in 0..(grid.width as i8) {
-        {
-            let p = Point { x, y: 0 };
-            if grid.get(&p) <= walkable || !grid.is_inside(&p) {
-                exitable_cells.insert(p);
-            }
-        }
-        {
-            let p = Point {
-                x,
-                y: (grid.height as i8) - 1,
-            };
-            if grid.get(&p) <= walkable || !grid.is_inside(&p) {
-                exitable_cells.insert(p);
-            }
-        }
-    }
-    for y in 0..(grid.height as i8) {
-        {
-            let p = Point { x: 0, y };
-            if grid.get(&p) <= walkable || !grid.is_inside(&p) {
-                exitable_cells.insert(p);
-            }
-        }
-        {
-            let p = Point {
-                x: (grid.width as i8) - 1,
-                y,
-            };
-            if grid.get(&p) <= walkable || !grid.is_inside(&p) {
-                exitable_cells.insert(p);
-            }
+    for p in grid.iter_hull() {
+        if grid.get(&p) <= walkable || !grid.is_inside(&p) {
+            exitable_cells.insert(p);
         }
     }
 
-    let mut open_list: Vec<Point> = exitable_cells.iter().map(|p| p.clone()).collect();
+    let mut open_list: Vec<Point> = exitable_cells.iter().map(|p| *p).collect();
 
     while let Some(p) = open_list.pop() {
         for dir in DIRECTIONS {

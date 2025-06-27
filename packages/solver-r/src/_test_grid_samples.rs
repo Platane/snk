@@ -33,6 +33,7 @@ pub enum SampleGrid {
     Realistic,
     Labyrinthe,
     RandomPack,
+    SolidBlock,
 }
 pub fn get_grid_sample(g: SampleGrid) -> Grid<Color> {
     match g {
@@ -86,6 +87,12 @@ pub fn get_grid_sample(g: SampleGrid) -> Grid<Color> {
                 &[Color::Empty, Color::Empty, Color::Color1, Color::Color4],
                 92u32,
             );
+            grid
+        }
+
+        SampleGrid::SolidBlock => {
+            let mut grid = Grid::<Color>::create(52, 7);
+            randomly_fill_grid(&mut grid, &[Color::Color1], 92u32);
             grid
         }
     }
