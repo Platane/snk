@@ -95,3 +95,9 @@ npm run dev:demo
 ## Implementation
 
 [solver algorithm](./packages/solver/README.md)
+
+## Contribution Policy
+
+This project does not accept pull request.
+
+Reporting or fixing issues is appreciated, but change in the API or implementation should be discussed in issue first and is likely not going be greenlighted.
