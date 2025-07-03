@@ -97,30 +97,30 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  deploy-ghpages:
-    runs-on: ubuntu-latest
-    permissions:
-      pages: write
-      id-token: write
-    steps:
-      - uses: actions/checkout@v4
-      - uses: oven-sh/setup-bun@v1
+  # deploy-ghpages:
+  #   runs-on: ubuntu-latest
+  #   permissions:
+  #     pages: write
+  #     id-token: write
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: oven-sh/setup-bun@v1
 
-      - run: bun install --frozen-lockfile
+  #     - run: bun install --frozen-lockfile
 
-      - run: npm run build:demo
-        env:
-          GITHUB_USER_CONTRIBUTION_API_ENDPOINT: https://github-user-contribution.xploitoverload.workers.dev/github-user-contribution/
+  #     - run: npm run build:demo
+  #       env:
+  #         GITHUB_USER_CONTRIBUTION_API_ENDPOINT: https://github-user-contribution.xploitoverload.workers.dev/github-user-contribution/
 
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: packages/demo/dist
+  #     - uses: actions/upload-pages-artifact@v3
+  #       with:
+  #         path: packages/demo/dist
 
-      - uses: actions/deploy-pages@v4
-        if: success() && github.ref == 'refs/heads/main'
+  #     - uses: actions/deploy-pages@v4
+  #       if: success() && github.ref == 'refs/heads/main'
 
-      - run: bunx wrangler deploy
-        if: success() && github.ref == 'refs/heads/main'
-        working-directory: packages/github-user-contribution-service
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+  #     - run: bunx wrangler deploy
+  #       if: success() && github.ref == 'refs/heads/main'
+  #       working-directory: packages/github-user-contribution-service
+  #       env:
+  #         CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
