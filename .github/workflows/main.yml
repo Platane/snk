@@ -31,7 +31,7 @@ jobs:
         id: generate-snake
         uses: ./
         with:
-          github_user_name: platane
+          github_user_name: xploitoverload
           outputs: |
             dist/github-contribution-grid-snake.svg
             dist/github-contribution-grid-snake-dark.svg?palette=github-dark
@@ -75,7 +75,7 @@ jobs:
         id: generate-snake
         uses: ./svg-only
         with:
-          github_user_name: platane
+          github_user_name: xploitoverload
           outputs: |
             dist/github-contribution-grid-snake.svg
             dist/github-contribution-grid-snake-dark.svg?palette=github-dark
@@ -110,7 +110,7 @@ jobs:
 
       - run: npm run build:demo
         env:
-          GITHUB_USER_CONTRIBUTION_API_ENDPOINT: https://github-user-contribution.platane.workers.dev/github-user-contribution/
+          GITHUB_USER_CONTRIBUTION_API_ENDPOINT: https://github-user-contribution.xploitoverload.workers.dev/github-user-contribution/
 
       - uses: actions/upload-pages-artifact@v3
         with:
