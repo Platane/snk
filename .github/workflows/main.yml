@@ -7,20 +7,36 @@ on:
 
 
 jobs:
-  test:
+  deploy:
     runs-on: ubuntu-latest
-
+    environment:
+      name: github-pages  # ✅ REQUIRED for deploy-pages@v4
     steps:
-      - uses: actions/checkout@v4
-      - uses: oven-sh/setup-bun@v1
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - run: bun install --frozen-lockfile
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
 
-      - run: npm run type
-      - run: npm run lint
-      - run: bun test
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Build
+        run: npm run build
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./dist  # 👈 Adjust if your output dir is different
+
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4
+
 
   test-action:
     runs-on: ubuntu-latest
