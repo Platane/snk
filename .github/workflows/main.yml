@@ -38,7 +38,8 @@ jobs:
             dist/github-contribution-grid-snake-ocean.svg?color_snake=orange&color_dots=#dadcdf94,#8dbdff,#64a1f4,#4b91f1,#3c7dd9
             dist/github-contribution-grid-snake-grey.svg?color_snake=111&color_dots=#eee,#aaa,#888,#666,#444
             dist/github-contribution-grid-snake.gif
-            dist/github-contribution-grid-snake-ocean.gif?color_snake=orange&color_dots=#dadcdf94,#8dbdff,#64a1f4,#4b91f1,#3c7dd9
+            dist/github-contribution-grid-snake-dark.gif?palette=github-dark
+            dist/github-contribution-grid-snake-ocean.gif?color_snake=orange&color_dots=#dadcdf94,#8dbdff,#64a1f4,#4b91f1,#3c7dd9&color_background=#f7f8fa
 
       - name: ensure the generated file exists
         run: |
@@ -48,6 +49,7 @@ jobs:
           test -f dist/github-contribution-grid-snake-ocean.svg
           test -f dist/github-contribution-grid-snake-grey.svg
           test -f dist/github-contribution-grid-snake.gif
+          test -f dist/github-contribution-grid-snake-dark.gif
           test -f dist/github-contribution-grid-snake-ocean.gif
 
       - uses: crazy-max/ghaction-github-pages@v4.1.0
