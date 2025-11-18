@@ -9,6 +9,7 @@ export type Options = {
   colorEmpty: string;
   colorDotBorder: string;
   colorSnake: string;
+  colorBackground?: string;
   sizeCell: number;
   sizeDot: number;
   sizeDotBorderRadius: number;
@@ -43,6 +44,11 @@ export const drawWorld = (
 ) => {
   ctx.save();
 
+  if (o.colorBackground) {
+    ctx.fillStyle = o.colorBackground;
+    ctx.fillRect(0, 0, 99999, 99999);
+  }
+
   ctx.translate(1 * o.sizeCell, 2 * o.sizeCell);
   drawGrid(ctx, grid, cells, o);
   drawSnake(ctx, snake, o);
@@ -76,6 +82,11 @@ export const drawLerpWorld = (
   o: Options,
 ) => {
   ctx.save();
+
+  if (o.colorBackground) {
+    ctx.fillStyle = o.colorBackground;
+    ctx.fillRect(0, 0, 99999, 99999);
+  }
 
   ctx.translate(1 * o.sizeCell, 2 * o.sizeCell);
   drawGrid(ctx, grid, cells, o);

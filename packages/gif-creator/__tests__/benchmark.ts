@@ -29,13 +29,17 @@ const drawOptions: DrawOptions = {
   sizeDotBorderRadius: 2,
   sizeCell: 16,
   sizeDot: 12,
+  colorBackground: "#ffffff",
   colorDotBorder: "#1b1f230a",
   colorDots: { 1: "#9be9a8", 2: "#40c463", 3: "#30a14e", 4: "#216e39" },
   colorEmpty: "#ebedf0",
   colorSnake: "purple",
 };
 
-const animationOptions: AnimationOptions = { frameDuration: 100, step: 1 };
+const animationOptions: AnimationOptions = {
+  stepDurationMs: 100,
+  frameByStep: 1,
+};
 
 (async () => {
   for (
@@ -77,7 +81,7 @@ const animationOptions: AnimationOptions = { frameDuration: 100, step: 1 };
     );
 
     fs.writeFileSync(
-      `__tests__/__snapshots__/benchmark-output-${length}.gif`,
+      __dirname + `/__snapshots__/benchmark-output-${length}.gif`,
       buffer!,
     );
   }

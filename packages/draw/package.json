@@ -2,6 +2,6 @@
   "name": "@snk/draw",
   "version": "1.0.0",
   "dependencies": {
-    "@snk/solver": "1.0.0"
+    "@snk/types": "1.0.0"
   }
 }

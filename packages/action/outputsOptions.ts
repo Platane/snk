@@ -1,6 +1,9 @@
 import type { AnimationOptions } from "@snk/gif-creator";
-import type { DrawOptions as DrawOptions } from "@snk/svg-creator";
+import type { DrawOptions as DrawOptionsSvg } from "@snk/svg-creator";
+import type { DrawOptions as DrawOptionsGif } from "@snk/gif-creator";
 import { palettes } from "./palettes";
+
+type DrawOptions = DrawOptionsSvg & DrawOptionsGif;
 
 export const parseOutputsOption = (lines: string[]) => lines.map(parseEntry);
 
@@ -32,50 +35,29 @@ export const parseEntry = (entry: string) => {
     sizeCell: 16,
     sizeDot: 12,
     ...palettes["default"],
-    dark: palettes["default"].dark && { ...palettes["default"].dark },
   };
-  const animationOptions: AnimationOptions = { step: 1, frameDuration: 100 };
+  const animationOptions: AnimationOptions = {
+    frameByStep: 1,
+    stepDurationMs: 100,
+  };
 
   {
-    const palette = palettes[sp.get("palette")!];
+    const palette = palettes[sp.get("palette") as keyof typeof palettes];
     if (palette) {
       Object.assign(drawOptions, palette);
-      drawOptions.dark = palette.dark && { ...palette.dark };
     }
   }
 
-  {
-    const dark_palette = palettes[sp.get("dark_palette")!];
-    if (dark_palette) {
-      const clone = { ...dark_palette, dark: undefined };
-      drawOptions.dark = clone;
-    }
-  }
-
-  if (sp.has("color_snake")) drawOptions.colorSnake = sp.get("color_snake")!;
   if (sp.has("color_dots")) {
     const colors = sp.get("color_dots")!.split(/[,;]/);
     drawOptions.colorDots = colors;
     drawOptions.colorEmpty = colors[0];
-    drawOptions.dark = undefined;
   }
+  if (sp.has("color_snake")) drawOptions.colorSnake = sp.get("color_snake")!;
+  if (sp.has("color_background"))
+    drawOptions.colorBackground = sp.get("color_background")!;
   if (sp.has("color_dot_border"))
     drawOptions.colorDotBorder = sp.get("color_dot_border")!;
-
-  if (sp.has("dark_color_dots")) {
-    const colors = sp.get("dark_color_dots")!.split(/[,;]/);
-    drawOptions.dark = {
-      colorDotBorder: drawOptions.colorDotBorder,
-      colorSnake: drawOptions.colorSnake,
-      ...drawOptions.dark,
-      colorDots: colors,
-      colorEmpty: colors[0],
-    };
-  }
-  if (sp.has("dark_color_dot_border") && drawOptions.dark)
-    drawOptions.dark.colorDotBorder = sp.get("color_dot_border")!;
-  if (sp.has("dark_color_snake") && drawOptions.dark)
-    drawOptions.dark.colorSnake = sp.get("color_snake")!;
 
   return {
     filename,

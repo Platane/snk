@@ -202,10 +202,13 @@ const createViewer = ({
   schemaSelect.style.alignSelf = "flex-start";
   schemaSelect.value = "github-light";
   schemaSelect.addEventListener("change", () => {
-    Object.assign(drawOptions, basePalettes[schemaSelect.value]);
+    Object.assign(
+      drawOptions,
+      basePalettes[schemaSelect.value as keyof typeof basePalettes],
+    );
 
     svgString = createSvg(grid0, cells, chain, drawOptions, {
-      frameDuration: 100,
+      stepDurationMs: 100,
     } as AnimationOptions);
     const svgImageUri = `data:image/*;charset=utf-8;base64,${btoa(svgString)}`;
     svgLink.href = svgImageUri;
@@ -239,7 +242,7 @@ const createViewer = ({
   // svg
   const svgLink = document.createElement("a");
   let svgString = createSvg(grid0, cells, chain, drawOptions, {
-    frameDuration: 100,
+    stepDurationMs: 100,
   } as AnimationOptions);
   const svgImageUri = `data:image/*;charset=utf-8;base64,${btoa(svgString)}`;
   svgLink.href = svgImageUri;

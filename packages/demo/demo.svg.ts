@@ -11,7 +11,7 @@ chain.push(...getPathToPose(chain.slice(-1)[0], snake)!);
 
 (async () => {
   const svg = await createSvg(grid, null, chain, drawOptions, {
-    frameDuration: 200,
+    stepDurationMs: 200,
   } as AnimationOptions);
 
   const container = document.createElement("div");
