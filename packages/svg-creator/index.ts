@@ -9,7 +9,6 @@ import { getHeadX, getHeadY } from "@snk/types/snake";
 import type { Snake } from "@snk/types/snake";
 import type { Grid, Color, Empty } from "@snk/types/grid";
 import type { Point } from "@snk/types/point";
-import type { AnimationOptions } from "@snk/gif-creator";
 import { createSnake } from "./snake";
 import { createGrid } from "./grid";
 import { createStack } from "./stack";
@@ -73,12 +72,12 @@ export const createSvg = (
   cells: Point[] | null,
   chain: Snake[],
   drawOptions: DrawOptions,
-  animationOptions: Pick<AnimationOptions, "frameDuration">,
+  animationOptions: { stepDurationMs: number },
 ) => {
   const width = (grid.width + 2) * drawOptions.sizeCell;
   const height = (grid.height + 5) * drawOptions.sizeCell;
 
-  const duration = animationOptions.frameDuration * chain.length;
+  const duration = animationOptions.stepDurationMs * chain.length;
 
   const livingCells = createLivingCells(grid, chain, cells);
 

@@ -1,5 +1,6 @@
 {
   "lockfileVersion": 1,
+  "configVersion": 0,
   "workspaces": {
     "": {
       "name": "snk",
@@ -51,7 +52,7 @@
       "name": "@snk/draw",
       "version": "1.0.0",
       "dependencies": {
-        "@snk/solver": "1.0.0",
+        "@snk/types": "1.0.0",
       },
     },
     "packages/gif-creator": {
@@ -60,10 +61,10 @@
       "dependencies": {
         "@snk/draw": "1.0.0",
         "@snk/solver": "1.0.0",
+        "@snk/types": "1.0.0",
         "canvas": "3.1.0",
         "gif-encoder-2": "1.0.5",
         "gifsicle": "5.3.0",
-        "tmp": "0.2.3",
       },
       "devDependencies": {
         "@types/gifsicle": "5.2.2",
@@ -97,6 +98,7 @@
       "version": "1.0.0",
       "dependencies": {
         "@snk/solver": "1.0.0",
+        "@snk/types": "1.0.0",
       },
     },
     "packages/types": {
@@ -1155,8 +1157,6 @@
     "thunky": ["thunky@1.1.0", "", {}, "sha512-eHY7nBftgThBqOyHGVN+l8gF0BucP09fMo0oO/Lb0w1OF80dJv+lDVpXG60WMQvkcxAkNybKsrEIE3ZtKGmPrA=="],
 
     "timed-out": ["timed-out@4.0.1", "", {}, "sha512-G7r3AhovYtr5YKOWQkta8RKAPb+J9IsO4uVmzjl8AZwfhs8UcUwTiD6gcJYSgOtzyjvQKrKYn41syHbUWMkafA=="],
-
-    "tmp": ["tmp@0.2.3", "", {}, "sha512-nZD7m9iCPC5g0pYmcaxogYKggSfLsdxl8of3Q/oIbqCqLLIO9IAF0GWjX1z9NZRHPiXv8Wex4yDCaZsgEw0Y8w=="],
 
     "to-buffer": ["to-buffer@1.1.1", "", {}, "sha512-lx9B5iv7msuFYE3dytT+KE5tap+rNYw+K4jVkb9R/asAb+pbBSM17jtunHplhBe6RRJdZx3Pn2Jph24O32mOVg=="],
 

@@ -13,7 +13,7 @@
     "packages/*"
   ],
   "scripts": {
-    "type": "tsc --noEmit",
+    "type": "tsc",
     "lint": "prettier -c '**/*.{ts,js,json,md,yml,yaml}' '!packages/*/dist/**' '!svg-only/dist/**'",
     "dev:demo": "( cd packages/demo ; npm run dev )",
     "build:demo": "( cd packages/demo ; npm run build )",

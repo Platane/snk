@@ -4,10 +4,10 @@
   "dependencies": {
     "@snk/draw": "1.0.0",
     "@snk/solver": "1.0.0",
+    "@snk/types": "1.0.0",
     "canvas": "3.1.0",
     "gif-encoder-2": "1.0.5",
-    "gifsicle": "5.3.0",
-    "tmp": "0.2.3"
+    "gifsicle": "5.3.0"
   },
   "devDependencies": {
     "@types/gifsicle": "5.2.2",

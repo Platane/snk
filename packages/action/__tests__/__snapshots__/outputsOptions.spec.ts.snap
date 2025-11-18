@@ -1,104 +1,13 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`should parse /out.svg?{"color_snake":"yellow","color_dots":["#000","#111","#222","#333","#444"]} 1`] = `
-{
-  "animationOptions": {
-    "frameDuration": 100,
-    "step": 1,
-  },
-  "drawOptions": {
-    "colorDotBorder": "#1b1f230a",
-    "colorDots": [
-      "#000",
-      "#111",
-      "#222",
-      "#333",
-      "#444",
-    ],
-    "colorEmpty": "#000",
-    "colorSnake": "yellow",
-    "dark": undefined,
-    "sizeCell": 16,
-    "sizeDot": 12,
-    "sizeDotBorderRadius": 2,
-  },
-  "filename": "/out.svg",
-  "format": "svg",
-}
-`;
-
-exports[`should parse /out.svg?color_snake=orange&color_dots=#000,#111,#222,#333,#444 1`] = `
-{
-  "animationOptions": {
-    "frameDuration": 100,
-    "step": 1,
-  },
-  "drawOptions": {
-    "colorDotBorder": "#1b1f230a",
-    "colorDots": [
-      "#000",
-      "#111",
-      "#222",
-      "#333",
-      "#444",
-    ],
-    "colorEmpty": "#000",
-    "colorSnake": "orange",
-    "dark": undefined,
-    "sizeCell": 16,
-    "sizeDot": 12,
-    "sizeDotBorderRadius": 2,
-  },
-  "filename": "/out.svg",
-  "format": "svg",
-}
-`;
-
-exports[`should parse /out.svg?color_snake=orange&color_dots=#000,#111,#222,#333,#444&dark_color_dots=#a00,#a11,#a22,#a33,#a44 1`] = `
-{
-  "animationOptions": {
-    "frameDuration": 100,
-    "step": 1,
-  },
-  "drawOptions": {
-    "colorDotBorder": "#1b1f230a",
-    "colorDots": [
-      "#000",
-      "#111",
-      "#222",
-      "#333",
-      "#444",
-    ],
-    "colorEmpty": "#000",
-    "colorSnake": "orange",
-    "dark": {
-      "colorDotBorder": "#1b1f230a",
-      "colorDots": [
-        "#a00",
-        "#a11",
-        "#a22",
-        "#a33",
-        "#a44",
-      ],
-      "colorEmpty": "#a00",
-      "colorSnake": "orange",
-    },
-    "sizeCell": 16,
-    "sizeDot": 12,
-    "sizeDotBorderRadius": 2,
-  },
-  "filename": "/out.svg",
-  "format": "svg",
-}
-`;
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
 
 exports[`should parse path/to/out.gif 1`] = `
 {
   "animationOptions": {
-    "frameDuration": 100,
-    "step": 1,
+    "frameByStep": 1,
+    "stepDurationMs": 100,
   },
   "drawOptions": {
+    "colorBackground": "#ffffff",
     "colorDotBorder": "#1b1f230a",
     "colorDots": [
       "#ebedf0",
@@ -109,12 +18,65 @@ exports[`should parse path/to/out.gif 1`] = `
     ],
     "colorEmpty": "#ebedf0",
     "colorSnake": "purple",
-    "dark": undefined,
     "sizeCell": 16,
     "sizeDot": 12,
     "sizeDotBorderRadius": 2,
   },
   "filename": "path/to/out.gif",
   "format": "gif",
+}
+`;
+
+exports[`should parse /out.svg?color_snake=orange&color_dots=#000,#111,#222,#333,#444 1`] = `
+{
+  "animationOptions": {
+    "frameByStep": 1,
+    "stepDurationMs": 100,
+  },
+  "drawOptions": {
+    "colorBackground": "#ffffff",
+    "colorDotBorder": "#1b1f230a",
+    "colorDots": [
+      "#000",
+      "#111",
+      "#222",
+      "#333",
+      "#444",
+    ],
+    "colorEmpty": "#000",
+    "colorSnake": "orange",
+    "sizeCell": 16,
+    "sizeDot": 12,
+    "sizeDotBorderRadius": 2,
+  },
+  "filename": "/out.svg",
+  "format": "svg",
+}
+`;
+
+exports[`should parse /out.svg?{"color_snake":"yellow","color_dots":["#000","#111","#222","#333","#444"]} 1`] = `
+{
+  "animationOptions": {
+    "frameByStep": 1,
+    "stepDurationMs": 100,
+  },
+  "drawOptions": {
+    "colorBackground": "#ffffff",
+    "colorDotBorder": "#1b1f230a",
+    "colorDots": [
+      "#000",
+      "#111",
+      "#222",
+      "#333",
+      "#444",
+    ],
+    "colorEmpty": "#000",
+    "colorSnake": "yellow",
+    "sizeCell": 16,
+    "sizeDot": 12,
+    "sizeDotBorderRadius": 2,
+  },
+  "filename": "/out.svg",
+  "format": "svg",
 }
 `;
