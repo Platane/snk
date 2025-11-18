@@ -18,20 +18,6 @@ import GIFEncoder from "gif-encoder-2";
 
 export type { Options as DrawOptions } from "@snk/draw/drawWorld";
 
-const withTmpDir = async <T>(
-  handler: (dir: string) => Promise<T>,
-): Promise<T> => {
-  const dir = path.join(tmpdir(), Math.random().toString(16).slice(2));
-
-  fs.mkdirSync(dir, { recursive: true });
-
-  try {
-    return await handler(dir);
-  } finally {
-    fs.rmdirSync(dir, { recursive: true });
-  }
-};
-
 export type AnimationOptions = { stepDurationMs: number; frameByStep: number };
 
 export const createGif = async (
@@ -52,11 +38,19 @@ export const createGif = async (
     const grid = copyGrid(grid0);
     const stack: Color[] = [];
 
-    const encoder = new GIFEncoder(width, height, "neuquant", true);
+    const encoder = new GIFEncoder(
+      width,
+      height,
+      "neuquant",
+      true,
+      chain.length * animationOptions.frameByStep,
+    );
     encoder.setRepeat(0);
     encoder.setDelay(
       animationOptions.stepDurationMs / animationOptions.frameByStep,
     );
+    // transparency does not look good, let's not
+    // encoder.setTransparent("0x000000");
     encoder.start();
 
     for (let i = 0; i < chain.length; i += 1) {
@@ -93,7 +87,7 @@ export const createGif = async (
         //
         "--optimize=3",
         "--color-method=diversity",
-        "--colors=18",
+        "--colors=16",
         outFileName,
         ["--output", optimizedFileName],
       ].flat(),
@@ -101,3 +95,17 @@ export const createGif = async (
 
     return new Uint8Array(fs.readFileSync(optimizedFileName));
   });
+
+export const withTmpDir = async <T>(
+  handler: (dir: string) => Promise<T>,
+): Promise<T> => {
+  const dir = path.join(tmpdir(), Math.random().toString(16).slice(2));
+
+  fs.mkdirSync(dir, { recursive: true });
+
+  try {
+    return await handler(dir);
+  } finally {
+    fs.rmdirSync(dir, { recursive: true });
+  }
+};
