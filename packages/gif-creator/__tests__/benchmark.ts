@@ -2,10 +2,21 @@ import * as fs from "fs";
 import { performance } from "perf_hooks";
 import { createSnakeFromCells } from "@snk/types/snake";
 import { realistic as grid } from "@snk/types/__fixtures__/grid";
-import { AnimationOptions, createGif } from "..";
+import {
+  type AnimationOptions,
+  type DrawOptions,
+  createGif as createGif_gifencore_gifslice,
+} from "..";
 import { getBestRoute } from "@snk/solver/getBestRoute";
 import { getPathToPose } from "@snk/solver/getPathToPose";
-import type { Options as DrawOptions } from "@snk/draw/drawWorld";
+import {
+  canvasDrawNoOutput,
+  createGif_ffmpeg,
+  createGif_ffmpeg_gifslice,
+  createGif_gifEncoder,
+  createGif_graphicMagic,
+  createPngImageSequenceNoOutput,
+} from "./createGif-variant";
 
 let snake = createSnakeFromCells(
   Array.from({ length: 4 }, (_, i) => ({ x: i, y: -1 })),
@@ -42,47 +53,72 @@ const animationOptions: AnimationOptions = {
 };
 
 (async () => {
-  for (
-    let length = 10;
-    length < chain.length;
-    length += Math.floor((chain.length - 10) / 3 / 10) * 10
-  ) {
-    const stats: number[] = [];
+  const runs: any[] = [];
 
-    let buffer: Uint8Array;
-    const start = Date.now();
-    const chainL = chain.slice(0, length);
-    for (let k = 0; k < 10 && (Date.now() - start < 10 * 1000 || k < 2); k++) {
-      const s = performance.now();
-      buffer = await createGif(
-        grid,
-        null,
-        chainL,
-        drawOptions,
-        animationOptions,
-      );
-      stats.push(performance.now() - s);
-    }
+  for (const [implementation, createGif] of [
+    ["draw steps on canvas (no output)", canvasDrawNoOutput],
+    ["create png image sequence (no output)", createPngImageSequenceNoOutput],
+    ["gifEncoder", createGif_gifEncoder],
+    ["gifEncoder+gifslice", createGif_gifencore_gifslice],
+    ["ffmpeg", createGif_ffmpeg],
+    ["ffmpeg+gifslice", createGif_ffmpeg_gifslice],
+    ["graphicMagic", createGif_graphicMagic],
+  ] as const)
+    for (const colorBackground of [
+      //
+      "transparent",
+      "white",
+    ])
+      for (const frameByStep of [
+        //
+        1, 2, 3,
+      ])
+        for (const maxChainLength of [
+          //
+          1_000,
+        ]) {
+          let buffer: Uint8Array;
+          const start = Date.now();
+          const chainL = chain.slice(0, maxChainLength);
+          const chainLength = chainL.length;
+          const gridDimension = `${grid.width}x${grid.height}`;
 
-    console.log(
-      [
-        "---",
-        `grid dimension:  ${grid.width}x${grid.height}`,
-        `chain length:  ${length}`,
-        `resulting size:  ${(buffer!.length / 1024).toFixed(1)}ko`,
-        `generation duration (mean):  ${(
-          stats.reduce((s, x) => x + s) / stats.length
-        ).toLocaleString(undefined, {
-          maximumFractionDigits: 0,
-        })}ms`,
-        "",
-      ].join("\n"),
-      stats,
-    );
+          drawOptions.colorBackground = colorBackground;
+          animationOptions.frameByStep = frameByStep;
 
-    fs.writeFileSync(
-      __dirname + `/__snapshots__/benchmark-output-${length}.gif`,
-      buffer!,
-    );
-  }
+          const filename = `benchmark-output-${implementation}-${chainLength}-${animationOptions.frameByStep}-${colorBackground}.gif`;
+
+          for (
+            let k = 0;
+            k < 10 && (Date.now() - start < 12_000 || k < 2);
+            k++
+          ) {
+            const s = performance.now();
+            buffer = await createGif(
+              grid,
+              null,
+              chainL,
+              drawOptions,
+              animationOptions,
+            );
+            runs.push({
+              durationMs: performance.now() - s,
+              colorBackground,
+              implementation,
+              chainLength,
+              gridDimension,
+              frameByStep,
+              fileSizeByte: buffer.length,
+              filename,
+            });
+          }
+
+          if (buffer!.length > 0)
+            fs.writeFileSync(__dirname + `/__snapshots__/${filename}`, buffer!);
+
+          fs.writeFileSync(
+            __dirname + `/__snapshots__/benchmark-result.json`,
+            "[\n" + runs.map((r) => JSON.stringify(r)).join(",\n") + "\n]",
+          );
+        }
 })();
