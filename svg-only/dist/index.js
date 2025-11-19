@@ -25755,11 +25755,43 @@ module.exports = require("net");
 
 /***/ }),
 
+/***/ 1421:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("node:child_process");
+
+/***/ }),
+
 /***/ 8474:
 /***/ ((module) => {
 
 "use strict";
 module.exports = require("node:events");
+
+/***/ }),
+
+/***/ 3024:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("node:fs");
+
+/***/ }),
+
+/***/ 8161:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("node:os");
+
+/***/ }),
+
+/***/ 6760:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("node:path");
 
 /***/ }),
 
@@ -27664,12 +27696,14 @@ var core = __nccwpck_require__(7184);
 ;// CONCATENATED MODULE: ./palettes.ts
 const basePalettes = {
     "github-light": {
+        colorBackground: "#ffffff",
         colorDotBorder: "#1b1f230a",
         colorDots: ["#ebedf0", "#9be9a8", "#40c463", "#30a14e", "#216e39"],
         colorEmpty: "#ebedf0",
         colorSnake: "purple",
     },
     "github-dark": {
+        colorBackground: "#0c1116",
         colorDotBorder: "#1b1f230a",
         colorEmpty: "#161b22",
         colorDots: ["#161b22", "#01311f", "#034525", "#0f6d31", "#00c647"],
@@ -27677,9 +27711,12 @@ const basePalettes = {
     },
 };
 // aliases
-const palettes = { ...basePalettes };
-palettes["github"] = palettes["github-light"];
-palettes["default"] = palettes["github"];
+const palettes = {
+    ...basePalettes,
+    // aliases
+    github: basePalettes["github-light"],
+    default: basePalettes["github-light"],
+};
 
 ;// CONCATENATED MODULE: ./outputsOptions.ts
 
@@ -27695,8 +27732,6 @@ const parseEntry = (entry) => {
         const o = JSON.parse(query);
         if (Array.isArray(o.color_dots))
             o.color_dots = o.color_dots.join(",");
-        if (Array.isArray(o.dark_color_dots))
-            o.dark_color_dots = o.dark_color_dots.join(",");
         sp = new URLSearchParams(o);
     }
     catch (err) {
@@ -27708,47 +27743,28 @@ const parseEntry = (entry) => {
         sizeCell: 16,
         sizeDot: 12,
         ...palettes["default"],
-        dark: palettes["default"].dark && { ...palettes["default"].dark },
     };
-    const animationOptions = { step: 1, frameDuration: 100 };
+    const animationOptions = {
+        frameByStep: 1,
+        stepDurationMs: 100,
+    };
     {
         const palette = palettes[sp.get("palette")];
         if (palette) {
             Object.assign(drawOptions, palette);
-            drawOptions.dark = palette.dark && { ...palette.dark };
         }
     }
-    {
-        const dark_palette = palettes[sp.get("dark_palette")];
-        if (dark_palette) {
-            const clone = { ...dark_palette, dark: undefined };
-            drawOptions.dark = clone;
-        }
-    }
-    if (sp.has("color_snake"))
-        drawOptions.colorSnake = sp.get("color_snake");
     if (sp.has("color_dots")) {
         const colors = sp.get("color_dots").split(/[,;]/);
         drawOptions.colorDots = colors;
         drawOptions.colorEmpty = colors[0];
-        drawOptions.dark = undefined;
     }
+    if (sp.has("color_snake"))
+        drawOptions.colorSnake = sp.get("color_snake");
+    if (sp.has("color_background"))
+        drawOptions.colorBackground = sp.get("color_background");
     if (sp.has("color_dot_border"))
         drawOptions.colorDotBorder = sp.get("color_dot_border");
-    if (sp.has("dark_color_dots")) {
-        const colors = sp.get("dark_color_dots").split(/[,;]/);
-        drawOptions.dark = {
-            colorDotBorder: drawOptions.colorDotBorder,
-            colorSnake: drawOptions.colorSnake,
-            ...drawOptions.dark,
-            colorDots: colors,
-            colorEmpty: colors[0],
-        };
-    }
-    if (sp.has("dark_color_dot_border") && drawOptions.dark)
-        drawOptions.dark.colorDotBorder = sp.get("color_dot_border");
-    if (sp.has("dark_color_snake") && drawOptions.dark)
-        drawOptions.dark.colorSnake = sp.get("color_snake");
     return {
         filename,
         format: format,

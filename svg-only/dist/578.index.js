@@ -253,7 +253,7 @@ const createLivingCells = (grid0, chain, cells) => {
 const createSvg = (grid, cells, chain, drawOptions, animationOptions) => {
     const width = (grid.width + 2) * drawOptions.sizeCell;
     const height = (grid.height + 5) * drawOptions.sizeCell;
-    const duration = animationOptions.frameDuration * chain.length;
+    const duration = animationOptions.stepDurationMs * chain.length;
     const livingCells = createLivingCells(grid, chain, cells);
     const elements = [
         createGrid(livingCells, drawOptions, duration),
