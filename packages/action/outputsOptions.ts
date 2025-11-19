@@ -22,8 +22,6 @@ export const parseEntry = (entry: string) => {
     const o = JSON.parse(query);
 
     if (Array.isArray(o.color_dots)) o.color_dots = o.color_dots.join(",");
-    if (Array.isArray(o.dark_color_dots))
-      o.dark_color_dots = o.dark_color_dots.join(",");
 
     sp = new URLSearchParams(o);
   } catch (err) {

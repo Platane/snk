@@ -5,8 +5,8 @@
     "@snk/github-user-contribution": "1.0.0"
   },
   "devDependencies": {
-    "wrangler": "3.109.2",
-    "@cloudflare/workers-types": "4.20250214.0"
+    "wrangler": "4.49.0",
+    "@cloudflare/workers-types": "4.20251119.0"
   },
   "scripts": {
     "deploy": "wrangler deploy"

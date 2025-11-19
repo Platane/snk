@@ -13,7 +13,6 @@ import { userContributionToGrid } from "@snk/action/userContributionToGrid";
 import { createSvg } from "@snk/svg-creator";
 import { createRpcClient } from "./worker-utils";
 import type { API as WorkerAPI } from "./demo.interactive.worker";
-import { AnimationOptions } from "@snk/gif-creator";
 import { basePalettes } from "@snk/action/palettes";
 
 const createForm = ({
@@ -209,7 +208,7 @@ const createViewer = ({
 
     svgString = createSvg(grid0, cells, chain, drawOptions, {
       stepDurationMs: 100,
-    } as AnimationOptions);
+    });
     const svgImageUri = `data:image/*;charset=utf-8;base64,${btoa(svgString)}`;
     svgLink.href = svgImageUri;
 
@@ -243,7 +242,7 @@ const createViewer = ({
   const svgLink = document.createElement("a");
   let svgString = createSvg(grid0, cells, chain, drawOptions, {
     stepDurationMs: 100,
-  } as AnimationOptions);
+  });
   const svgImageUri = `data:image/*;charset=utf-8;base64,${btoa(svgString)}`;
   svgLink.href = svgImageUri;
   svgLink.innerText = "github-user-contribution.svg";
