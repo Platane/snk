@@ -45,15 +45,16 @@ Available as github action. It can automatically generate a new image each day. 
     # one file per line. Each output can be customized with options as query string.
     #
     #  supported options:
-    #  - palette:     A preset of color, one of [github, github-dark, github-light]
-    #  - color_snake: Color of the snake
-    #  - color_dots:  Coma separated list of dots color.
-    #                 The first one is 0 contribution, then it goes from the low contribution to the highest.
-    #                 Exactly 5 colors are expected.
+    #  - palette:           A preset of color, one of [github, github-dark, github-light]
+    #  - color_snake:       Color of the snake
+    #  - color_dots:        Coma separated list of dots color.
+    #                       The first one is 0 contribution, then it goes from the low contribution to the highest.
+    #                       Exactly 5 colors are expected.
+    #  - color_background:  Color of the background (for gif only)
     outputs: |
       dist/github-snake.svg
       dist/github-snake-dark.svg?palette=github-dark
-      dist/ocean.gif?color_snake=orange&color_dots=#bfd6f6,#8dbdff,#64a1f4,#4b91f1,#3c7dd9
+      dist/ocean.gif?color_snake=orange&color_dots=#bfd6f6,#8dbdff,#64a1f4,#4b91f1,#3c7dd9&color_background=#aaaaaa
 ```
 
 [example with cron job](https://github.com/Platane/Platane/blob/master/.github/workflows/main.yml#L26-L33)
