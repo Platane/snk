@@ -1346,18 +1346,16 @@ __webpack_require__.d(__webpack_exports__, {
 
 // UNUSED EXPORTS: withTmpDir
 
+// EXTERNAL MODULE: external "node:child_process"
+var external_node_child_process_ = __webpack_require__(1421);
 // EXTERNAL MODULE: external "node:fs"
 var external_node_fs_ = __webpack_require__(3024);
 var external_node_fs_default = /*#__PURE__*/__webpack_require__.n(external_node_fs_);
+// EXTERNAL MODULE: external "node:os"
+var external_node_os_ = __webpack_require__(8161);
 // EXTERNAL MODULE: external "node:path"
 var external_node_path_ = __webpack_require__(6760);
 var external_node_path_default = /*#__PURE__*/__webpack_require__.n(external_node_path_);
-// EXTERNAL MODULE: external "node:child_process"
-var external_node_child_process_ = __webpack_require__(1421);
-// EXTERNAL MODULE: external "node:os"
-var external_node_os_ = __webpack_require__(8161);
-// EXTERNAL MODULE: external "canvas"
-var external_canvas_ = __webpack_require__(9919);
 // EXTERNAL MODULE: ../types/grid.ts
 var types_grid = __webpack_require__(105);
 ;// CONCATENATED MODULE: ../draw/pathRoundedRect.ts
@@ -1500,12 +1498,14 @@ const step = (grid, stack, snake) => {
     }
 };
 
-// EXTERNAL MODULE: external "gifsicle"
-var external_gifsicle_ = __webpack_require__(5667);
-var external_gifsicle_default = /*#__PURE__*/__webpack_require__.n(external_gifsicle_);
+// EXTERNAL MODULE: external "canvas"
+var external_canvas_ = __webpack_require__(9919);
 // EXTERNAL MODULE: ../../node_modules/gif-encoder-2/index.js
 var gif_encoder_2 = __webpack_require__(1680);
 var gif_encoder_2_default = /*#__PURE__*/__webpack_require__.n(gif_encoder_2);
+// EXTERNAL MODULE: external "gifsicle"
+var external_gifsicle_ = __webpack_require__(5667);
+var external_gifsicle_default = /*#__PURE__*/__webpack_require__.n(external_gifsicle_);
 ;// CONCATENATED MODULE: ../gif-creator/index.ts
 
 
@@ -1515,8 +1515,8 @@ var gif_encoder_2_default = /*#__PURE__*/__webpack_require__.n(gif_encoder_2);
 
 
 
-
 // @ts-ignore
+
 
 const createGif = async (grid0, cells, chain, drawOptions, animationOptions) => withTmpDir(async (dir) => {
     const { width, height } = getCanvasWorldSize(grid0, drawOptions);
@@ -1544,13 +1544,37 @@ const createGif = async (grid0, cells, chain, drawOptions, animationOptions) => 
     }
     const outFileName = external_node_path_default().join(dir, "out.gif");
     const optimizedFileName = external_node_path_default().join(dir, "out.optimized.gif");
+    // generate palette file
+    const paletteFileName = external_node_path_default().join(dir, "palette.txt");
+    {
+        const colors = [
+            drawOptions.colorBackground,
+            drawOptions.colorEmpty,
+            drawOptions.colorSnake,
+            drawOptions.colorDotBorder,
+            ...Object.values(drawOptions.colorDots),
+        ].filter(Boolean);
+        const canvas = (0,external_canvas_.createCanvas)(colors.length, 1);
+        const ctx = canvas.getContext("2d");
+        for (let i = colors.length; i--;) {
+            ctx.fillStyle = colors[i];
+            ctx.fillRect(i, 0, 1, 1);
+        }
+        const imgData = ctx.getImageData(0, 0, colors.length, 1);
+        external_node_fs_default().writeFileSync(paletteFileName, Array.from({ length: colors.length }, (_, i) => [
+            imgData.data[i * 4 + 0],
+            imgData.data[i * 4 + 1],
+            imgData.data[i * 4 + 2],
+        ].join(" ")).join("\n"));
+    }
     encoder.finish();
     external_node_fs_default().writeFileSync(outFileName, encoder.out.getData());
     (0,external_node_child_process_.execFileSync)((external_gifsicle_default()), [
         //
         "--optimize=3",
         "--color-method=diversity",
-        "--colors=16",
+        `--use-colormap=${paletteFileName}`,
+        // "--colors=16",
         outFileName,
         ["--output", optimizedFileName],
     ].flat());
