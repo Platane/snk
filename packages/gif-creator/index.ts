@@ -1,20 +1,20 @@
-import fs from "node:fs";
-import path from "node:path";
 import { execFileSync } from "node:child_process";
+import fs from "node:fs";
 import { tmpdir } from "node:os";
-import { createCanvas } from "canvas";
-import { Grid, copyGrid, Color } from "@snk/types/grid";
-import { Snake } from "@snk/types/snake";
+import path from "node:path";
 import {
   type Options as DrawOptions,
   drawLerpWorld,
   getCanvasWorldSize,
 } from "@snk/draw/drawWorld";
-import type { Point } from "@snk/types/point";
 import { step } from "@snk/solver/step";
-import gifsicle from "gifsicle";
+import { Color, copyGrid, Grid } from "@snk/types/grid";
+import type { Point } from "@snk/types/point";
+import { Snake } from "@snk/types/snake";
+import { createCanvas } from "canvas";
 // @ts-ignore
 import GIFEncoder from "gif-encoder-2";
+import gifsicle from "gifsicle";
 
 export type { Options as DrawOptions } from "@snk/draw/drawWorld";
 
@@ -78,6 +78,38 @@ export const createGif = async (
     const outFileName = path.join(dir, "out.gif");
     const optimizedFileName = path.join(dir, "out.optimized.gif");
 
+    // generate palette file
+    const paletteFileName = path.join(dir, "palette.txt");
+    {
+      const colors = [
+        drawOptions.colorBackground,
+        drawOptions.colorEmpty,
+        drawOptions.colorSnake,
+        drawOptions.colorDotBorder,
+        ...Object.values(drawOptions.colorDots),
+      ].filter(Boolean) as string[];
+
+      const canvas = createCanvas(colors.length, 1);
+      const ctx = canvas.getContext("2d") as any as CanvasRenderingContext2D;
+      for (let i = colors.length; i--; ) {
+        ctx.fillStyle = colors[i];
+        ctx.fillRect(i, 0, 1, 1);
+      }
+
+      const imgData = ctx.getImageData(0, 0, colors.length, 1);
+
+      fs.writeFileSync(
+        paletteFileName,
+        Array.from({ length: colors.length }, (_, i) =>
+          [
+            imgData.data[i * 4 + 0],
+            imgData.data[i * 4 + 1],
+            imgData.data[i * 4 + 2],
+          ].join(" "),
+        ).join("\n"),
+      );
+    }
+
     encoder.finish();
     fs.writeFileSync(outFileName, encoder.out.getData());
 
@@ -87,7 +119,8 @@ export const createGif = async (
         //
         "--optimize=3",
         "--color-method=diversity",
-        "--colors=16",
+        `--use-colormap=${paletteFileName}`,
+        // "--colors=16",
         outFileName,
         ["--output", optimizedFileName],
       ].flat(),
