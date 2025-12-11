@@ -39,7 +39,7 @@ jobs:
           test -f dist/docker/github-contribution-grid-snake.gif
 
       - name: push github-contribution-grid-snake.svg to the output branch
-        uses: crazy-max/ghaction-github-pages@v4.1.0
+        uses: crazy-max/ghaction-github-pages@df5cc2bfa78282ded844b354faee141f06b41865 # v4.2.0
         with:
           target_branch: manual-run-output
           build_dir: dist

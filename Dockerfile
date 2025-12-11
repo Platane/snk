@@ -1,4 +1,4 @@
-FROM oven/bun:1.2.2-slim as builder
+FROM oven/bun:1.3.4-slim AS builder
 
 WORKDIR /app
 
@@ -8,7 +8,7 @@ COPY tsconfig.json ./
 
 COPY packages packages
 
-RUN bun install --no-cache
+RUN bun install --no-cache --frozen-lockfile
 
 RUN bun run build:action
 
@@ -16,7 +16,7 @@ RUN bun run build:action
 
 
 
-FROM oven/bun:1.2.2-slim
+FROM oven/bun:1.3.4-slim
 
 WORKDIR /action-release
 

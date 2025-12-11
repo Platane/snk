@@ -21,19 +21,19 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
 
-      - uses: docker/setup-qemu-action@v2
+      - uses: docker/setup-qemu-action@c7c53464625b32c7a7e944ae62b3e17d2b600130 # v3.7.0
 
-      - uses: docker/setup-buildx-action@v2
+      - uses: docker/setup-buildx-action@e468171a9de216ec08956ac3ada2f0791b6bd435 # v3.11.1
 
-      - uses: docker/login-action@v2
+      - uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef # v3.6.0
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: build and publish the docker image
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@263435318d21b8e681c14492fe198d362a7d2c83 # v6.18.0
         id: docker-build
         with:
           push: true
@@ -45,7 +45,9 @@ jobs:
         run: |
           sed -i "s/image: .*/image: docker:\/\/platane\/snk@${{ steps.docker-build.outputs.digest }}/" action.yml
 
-      - uses: oven-sh/setup-bun@v1
+      - uses: oven-sh/setup-bun@735343b667d3e6f658f44d0eca948eb6282f2b76 # v2.0.2
+        with:
+          bun-version: 1.3.4
 
       - run: bun install --frozen-lockfile
 
@@ -79,7 +81,7 @@ jobs:
             echo "prerelease=true" >> $GITHUB_OUTPUT
           fi
 
-      - uses: ncipollo/release-action@v1.15.0
+      - uses: ncipollo/release-action@b7eabc95ff50cbeeedec83973935c8f306dfcd0b # v1.20.0
         with:
           tag: v${{ github.event.inputs.version }}
           body: ${{ github.event.inputs.description }}

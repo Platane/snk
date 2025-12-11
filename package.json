@@ -5,7 +5,7 @@
   "private": true,
   "repository": "github:platane/snk",
   "devDependencies": {
-    "@types/bun": "1.2.2",
+    "@types/bun": "1.3.4",
     "prettier": "3.6.2",
     "typescript": "5.9.3"
   },
