@@ -87,7 +87,7 @@ For **dark mode** support on github, use this [special syntax](https://docs.gith
 
 ### **local**
 
-```
+```sh
 npm install
 
 npm run dev:demo
