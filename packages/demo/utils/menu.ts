@@ -3,7 +3,16 @@ import * as grids from "@snk/types/__fixtures__/grid";
 import * as snakes from "@snk/types/__fixtures__/snake";
 import { grid, snake } from "./sample";
 
-const demos: string[] = require("./demo.json");
+const demos = [
+  //
+  "getBestRoute",
+  "getBestTunnel",
+  "getPathTo",
+  "getPathToPose",
+  "interactive",
+  "outside",
+  "svg",
+];
 
 export const gui = new GUI();
 
@@ -24,7 +33,8 @@ const onChange = () => {
   }).toString();
 
   const url = new URL(
-    config.demo + ".html?" + search,
+    // @ts-ignore
+    import.meta.env.BASE_URL + "/" + config.demo + "/index.html?" + search,
     window.location.href,
   ).toString();
 

@@ -12,7 +12,7 @@ import {
 import { userContributionToGrid } from "@snk/action/userContributionToGrid";
 import { createSvg } from "@snk/svg-creator";
 import { createRpcClient } from "./worker-utils";
-import type { API as WorkerAPI } from "./demo.interactive.worker";
+import type { API as WorkerAPI } from "./worker";
 import { basePalettes } from "@snk/action/palettes";
 
 const createForm = ({
@@ -294,7 +294,7 @@ const onSubmit = async (userName: string) => {
 
 const worker = new Worker(
   new URL(
-    "./demo.interactive.worker.ts",
+    "./worker.ts",
     // @ts-ignore
     import.meta.url,
   ),

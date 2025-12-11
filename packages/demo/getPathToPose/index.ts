@@ -1,7 +1,7 @@
-import "./menu";
-import { createCanvas } from "./canvas";
+import "../utils/menu";
+import { createCanvas } from "../utils/canvas";
+import { grid, snake } from "../utils/sample";
 import { createSnakeFromCells, snakeToCells } from "@snk/types/snake";
-import { grid, snake } from "./sample";
 import { getPathToPose } from "@snk/solver/getPathToPose";
 
 const { canvas, ctx, draw, highlightCell } = createCanvas(grid);

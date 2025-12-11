@@ -1,6 +1,6 @@
-import "./menu";
-import { createCanvas } from "./canvas";
-import { grid } from "./sample";
+import "../utils/menu";
+import { createCanvas } from "../utils/canvas";
+import { grid } from "../utils/sample";
 import type { Color } from "@snk/types/grid";
 import { createOutside, isOutside } from "@snk/solver/outside";
 

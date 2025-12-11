@@ -7,21 +7,14 @@
     "@snk/github-user-contribution": "1.0.0",
     "@snk/solver": "1.0.0",
     "@snk/svg-creator": "1.0.0",
-    "@snk/types": "1.0.0"
-  },
-  "devDependencies": {
+    "@snk/types": "1.0.0",
     "@types/dat.gui": "0.7.13",
     "dat.gui": "0.7.9",
     "dotenv": "17.2.3",
-    "html-webpack-plugin": "5.6.5",
-    "ts-loader": "9.5.4",
-    "ts-node": "10.9.2",
-    "webpack": "5.103.0",
-    "webpack-cli": "6.0.1",
-    "webpack-dev-server": "5.2.2"
+    "vite": "7.2.7"
   },
   "scripts": {
-    "build": "webpack",
-    "dev": "webpack serve"
+    "build": "vite build",
+    "dev": "vite"
   }
 }

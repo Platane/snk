@@ -1,7 +1,7 @@
-import "./menu";
-import { createCanvas } from "./canvas";
+import "../utils/menu";
+import { createCanvas } from "../utils/canvas";
+import { grid, snake } from "../utils/sample";
 import { getSnakeLength } from "@snk/types/snake";
-import { grid, snake } from "./sample";
 import { getColor } from "@snk/types/grid";
 import { getBestTunnel } from "@snk/solver/getBestTunnel";
 import { createOutside } from "@snk/solver/outside";
