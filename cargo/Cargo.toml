@@ -1,0 +1,18 @@
+[workspace]
+resolver = "3"
+
+members = [
+"snk-js",
+"snk-grid",
+# "snk-solver",
+# "snk-gif-creator"
+]
+
+[workspace.package]
+version = "1.0.0"
+edition = "2024"
+authors = ["platane"]
+
+[workspace.dependencies]
+snk-grid = { path = "snk-grid" }
+snk-solver = { path = "snk-solver" }

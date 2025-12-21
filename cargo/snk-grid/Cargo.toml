@@ -1,0 +1,6 @@
+[package]
+name = "snk-grid"
+
+version.workspace = true
+edition.workspace = true
+authors.workspace = true

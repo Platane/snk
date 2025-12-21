@@ -1,0 +1,10 @@
+[package]
+name = "snk-solver"
+
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+
+[dependencies]
+snk-grid = { workspace = true }
+log = "0.4"

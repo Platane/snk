@@ -1,5 +1,7 @@
 import { serve } from "bun";
 import { getGithubUserContribution } from "../github-user-contribution";
+import * as childProcess from "child_process";
+import * as fs from "fs";
 
 import getBestRoute_page from "./getBestRoute/index.html";
 import getBestTunnel_page from "./getBestTunnel/index.html";
@@ -8,6 +10,9 @@ import getPathToPose_page from "./getPathToPose/index.html";
 import interactive_page from "./interactive/index.html";
 import outside_page from "./outside/index.html";
 import svg_page from "./svg/index.html";
+import rs_solver_page from "./rs-solver/index.html";
+import rs_tunnel_page from "./rs-tunnel/index.html";
+import rs_snakeExit_page from "./rs-snakeExit/index.html";
 
 const server = serve({
   routes: {
@@ -18,6 +23,9 @@ const server = serve({
     "/getPathToPose": getPathToPose_page,
     "/getPathTo": getPathTo_page,
     "/svg": svg_page,
+    "/rs-solver": rs_solver_page,
+    "/rs-tunnel": rs_tunnel_page,
+    "/rs-snakeExit": rs_snakeExit_page,
 
     "/worker.js": async () =>
       Bun.build({
@@ -45,3 +53,36 @@ const server = serve({
 });
 
 console.log(`Listening on ${server.url}`);
+
+//
+// Cargo rebuild
+//
+{
+  const build = () => {
+    const wasmPackFile = __dirname + "/../../node_modules/wasm-pack/run.js";
+    const cwd = __dirname + "/../../cargo/snk-js";
+
+    try {
+      childProcess.execSync(
+        `${wasmPackFile} build --dev --target web --out-dir ../../packages/snk-js`,
+        { cwd },
+      );
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  let timeout: number | Timer | undefined;
+
+  fs.watch(
+    __dirname + "/../../cargo",
+    { recursive: true },
+    (_event, filename) => {
+      if (filename?.startsWith("target/")) return;
+      clearTimeout(timeout);
+      timeout = setTimeout(build, 60);
+    },
+  );
+
+  build();
+}

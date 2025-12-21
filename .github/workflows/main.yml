@@ -11,8 +11,24 @@ jobs:
       - uses: oven-sh/setup-bun@735343b667d3e6f658f44d0eca948eb6282f2b76 # v2.0.2
         with:
           bun-version: 1.3.12
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+          components: rustfmt
+
+      - uses: taiki-e/cache-cargo-install-action@34ce5120836e5f9f1508d8713d7fdea0e8facd6f # v3.0.1
+        with:
+          tool: cargo-nextest
 
       - run: bun install --frozen-lockfile
+
+      - run: cargo nextest run
+        working-directory: cargo
+
+      - run: cargo fmt --check
+        working-directory: cargo
+
+      - run: bun wasm-pack build cargo/snk-js --out-dir ../../packages/snk-js --dev --target nodejs
 
       - run: npm run type
       - run: npm run lint

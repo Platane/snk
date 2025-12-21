@@ -1,0 +1,31 @@
+[package]
+name = "snk-js"
+
+
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[features]
+default = ["console_error_panic_hook"]
+
+[dependencies]
+snk-grid = { workspace = true }
+snk-solver = { workspace = true }
+wasm-bindgen = "0.2.100"
+js-sys = "0.3.77"
+console_log = "1.0.0"
+log = "0.4"
+
+# The `console_error_panic_hook` crate provides better debugging of panics by
+# logging them with `console.error`. This is great for development, but requires
+# all the `std::fmt` and `std::panicking` infrastructure, so isn't great for
+# code size when deploying.
+console_error_panic_hook = { version = "0.1.7", optional = true }
+
+
+[dev-dependencies]
+wasm-bindgen-test = "0.3.34"
