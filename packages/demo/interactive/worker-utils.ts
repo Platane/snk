@@ -9,7 +9,11 @@ export const createRpcServer = (api: API) =>
         const res = await api[event.data.methodName](...event.data.args);
         self.postMessage({ symbol, key: event.data.key, res });
       } catch (error: any) {
-        postMessage({ symbol, key: event.data.key, error: error.message });
+        postMessage({
+          symbol,
+          key: event.data.key,
+          error: error?.message || error?.toString(),
+        });
       }
     }
   });

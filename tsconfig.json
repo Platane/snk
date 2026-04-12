@@ -1,6 +1,8 @@
 {
   "compilerOptions": {
-    "lib": ["dom", "ES2020"],
+    "lib": ["dom", "ES2024"],
+    "module": "ES2022",
+    "target": "ES2024",
     "strict": true,
     "skipLibCheck": true,
     "noUnusedLocals": true,

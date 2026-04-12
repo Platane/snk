@@ -1,19 +1,19 @@
-import { Color, copyGrid, Grid } from "@snk/types/grid";
-import { step } from "@snk/solver/step";
-import { isStableAndBound, stepSpring } from "./springUtils";
-import type { Res } from "@snk/github-user-contribution";
-import type { Snake } from "@snk/types/snake";
-import type { Point } from "@snk/types/point";
+import { basePalettes } from "@snk/action/palettes";
+import { userContributionToGrid } from "@snk/action/userContributionToGrid";
 import {
+  Options as DrawOptions,
   drawLerpWorld,
   getCanvasWorldSize,
-  Options as DrawOptions,
 } from "@snk/draw/drawWorld";
-import { userContributionToGrid } from "@snk/action/userContributionToGrid";
+import type { Res } from "@snk/github-user-contribution";
+import { step } from "@snk/solver/step";
 import { createSvg } from "@snk/svg-creator";
+import { Color, copyGrid, Grid } from "@snk/types/grid";
+import type { Point } from "@snk/types/point";
+import type { Snake } from "@snk/types/snake";
+import { isStableAndBound, stepSpring } from "./springUtils";
+import type { API as WorkerAPI } from "./worker";
 import { createRpcClient } from "./worker-utils";
-import type { API as WorkerAPI } from "./demo.interactive.worker";
-import { basePalettes } from "@snk/action/palettes";
 
 const createForm = ({
   onSubmit,
@@ -293,11 +293,7 @@ const onSubmit = async (userName: string) => {
 };
 
 const worker = new Worker(
-  new URL(
-    "./demo.interactive.worker.ts",
-    // @ts-ignore
-    import.meta.url,
-  ),
+  new URL(process.env.WORKER_URL ?? "./worker.ts", import.meta.url),
 );
 
 const { getChain } = createRpcClient<WorkerAPI>(worker);

@@ -1,8 +1,8 @@
-import "./menu";
-import { createCanvas } from "./canvas";
-import { grid } from "./sample";
-import type { Color } from "@snk/types/grid";
+import "../utils/menu";
 import { createOutside, isOutside } from "@snk/solver/outside";
+import type { Color } from "@snk/types/grid";
+import { createCanvas } from "../utils/canvas";
+import { grid } from "../utils/sample";
 
 const { canvas, ctx, draw, highlightCell } = createCanvas(grid);
 document.body.appendChild(canvas);

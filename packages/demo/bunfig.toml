@@ -1,0 +1,6 @@
+[serve.static]
+# the bun serve command does not support define options, it needs to read it from this bunfig file
+define = {
+    "process.env.WORKER_URL": "'/worker.js'",
+    "process.env.GITHUB_USER_CONTRIBUTION_API_ENDPOINT": "'/api/github-user-contribution/'"
+}

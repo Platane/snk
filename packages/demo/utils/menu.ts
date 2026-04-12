@@ -1,6 +1,6 @@
-import { GUI } from "dat.gui";
 import * as grids from "@snk/types/__fixtures__/grid";
 import * as snakes from "@snk/types/__fixtures__/snake";
+import { GUI } from "dat.gui";
 import { grid, snake } from "./sample";
 
 const demos: string[] = require("./demo.json");
@@ -13,7 +13,7 @@ const config = {
   demo: demos[0],
 };
 {
-  const d = window.location.pathname.match(/(\w+)\.html/);
+  const d = window.location.pathname.match(/(\w+)(\.html)?/);
   if (d && demos.includes(d[1])) config.demo = d[1];
 }
 
@@ -24,7 +24,7 @@ const onChange = () => {
   }).toString();
 
   const url = new URL(
-    config.demo + ".html?" + search,
+    config.demo + "?" + search,
     window.location.href,
   ).toString();
 

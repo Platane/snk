@@ -1,8 +1,8 @@
-import "./menu";
-import { createCanvas } from "./canvas";
-import { createSnakeFromCells, snakeToCells } from "@snk/types/snake";
-import { grid, snake } from "./sample";
+import "../utils/menu";
 import { getPathToPose } from "@snk/solver/getPathToPose";
+import { createSnakeFromCells, snakeToCells } from "@snk/types/snake";
+import { createCanvas } from "../utils/canvas";
+import { grid, snake } from "../utils/sample";
 
 const { canvas, ctx, draw, highlightCell } = createCanvas(grid);
 canvas.style.pointerEvents = "auto";

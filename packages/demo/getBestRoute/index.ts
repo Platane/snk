@@ -1,9 +1,9 @@
-import "./menu";
-import { createCanvas } from "./canvas";
+import "../utils/menu";
 import { getBestRoute } from "@snk/solver/getBestRoute";
-import { Color, copyGrid } from "@snk/types/grid";
-import { grid, snake } from "./sample";
 import { step } from "@snk/solver/step";
+import { Color, copyGrid } from "@snk/types/grid";
+import { createCanvas } from "../utils/canvas";
+import { grid, snake } from "../utils/sample";
 
 const chain = getBestRoute(grid, snake)!;
 
