@@ -19,6 +19,12 @@ jobs:
       - run: bun test
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - run: bun build:lib
+      - run: |
+          ./packages/generate-snake-animation/dist/cli.js --github_user=platane --output=snake.svg
+          test -f snake.svg
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   test-action:
     runs-on: ubuntu-latest
