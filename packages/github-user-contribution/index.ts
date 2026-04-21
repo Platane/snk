@@ -16,7 +16,7 @@
  */
 export const getGithubUserContribution = async (
   userName: string,
-  o: { githubToken: string },
+  o: { githubToken: string; baseUrl?: string },
 ) => {
   const query = /* GraphQL */ `
     query ($login: String!) {
@@ -38,7 +38,11 @@ export const getGithubUserContribution = async (
   `;
   const variables = { login: userName };
 
-  const res = await fetch("https://api.github.com/graphql", {
+  const apiUrl = o.baseUrl
+    ? `${o.baseUrl}/api/graphql`
+    : "https://api.github.com/graphql";
+
+  const res = await fetch(apiUrl, {
     headers: {
       Authorization: `bearer ${o.githubToken}`,
       "Content-Type": "application/json",

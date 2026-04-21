@@ -1,0 +1,18 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "types": ["node"],
+    "paths": {
+      "@snk/forgejo-user-contribution": [
+        "../forgejo-user-contribution/index.ts"
+      ],
+      "@snk/github-user-contribution": ["../github-user-contribution/index.ts"],
+      "@snk/gitlab-user-contribution": ["../gitlab-user-contribution/index.ts"],
+      "@snk/gif-creator": ["../gif-creator/index.ts"],
+      "@snk/svg-creator": ["../svg-creator/index.ts"],
+      "@snk/solver/*": ["../solver/*.ts"],
+      "@snk/types/*": ["../types/*.ts"],
+      "@snk/draw/*": ["../draw/*.ts"]
+    }
+  }
+}

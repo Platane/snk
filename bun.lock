@@ -6,6 +6,7 @@
       "name": "snk",
       "devDependencies": {
         "@types/bun": "1.3.4",
+        "@types/node": "24.12.2",
         "prettier": "3.6.2",
         "typescript": "5.9.3",
       },
@@ -15,11 +16,7 @@
       "version": "1.0.0",
       "dependencies": {
         "@actions/core": "1.11.1",
-        "@snk/gif-creator": "1.0.0",
-        "@snk/github-user-contribution": "1.0.0",
-        "@snk/solver": "1.0.0",
-        "@snk/svg-creator": "1.0.0",
-        "@snk/types": "1.0.0",
+        "generate-snake-animation": "1.0.0",
       },
       "devDependencies": {
         "@vercel/ncc": "0.38.4",
@@ -45,6 +42,26 @@
       "name": "@snk/draw",
       "version": "1.0.0",
       "dependencies": {
+        "@snk/types": "1.0.0",
+      },
+    },
+    "packages/forgejo-user-contribution": {
+      "name": "@snk/forgejo-user-contribution",
+      "version": "1.0.0",
+    },
+    "packages/generate-snake-animation": {
+      "name": "generate-snake-animation",
+      "version": "1.0.0",
+      "bin": {
+        "snk": "./cli.ts",
+      },
+      "dependencies": {
+        "@snk/forgejo-user-contribution": "1.0.0",
+        "@snk/gif-creator": "1.0.0",
+        "@snk/github-user-contribution": "1.0.0",
+        "@snk/gitlab-user-contribution": "1.0.0",
+        "@snk/solver": "1.0.0",
+        "@snk/svg-creator": "1.0.0",
         "@snk/types": "1.0.0",
       },
     },
@@ -78,6 +95,10 @@
         "@cloudflare/workers-types": "4.20251119.0",
         "wrangler": "4.49.0",
       },
+    },
+    "packages/gitlab-user-contribution": {
+      "name": "@snk/gitlab-user-contribution",
+      "version": "1.0.0",
     },
     "packages/solver": {
       "name": "@snk/solver",
@@ -242,11 +263,15 @@
 
     "@snk/draw": ["@snk/draw@workspace:packages/draw"],
 
+    "@snk/forgejo-user-contribution": ["@snk/forgejo-user-contribution@workspace:packages/forgejo-user-contribution"],
+
     "@snk/gif-creator": ["@snk/gif-creator@workspace:packages/gif-creator"],
 
     "@snk/github-user-contribution": ["@snk/github-user-contribution@workspace:packages/github-user-contribution"],
 
     "@snk/github-user-contribution-service": ["@snk/github-user-contribution-service@workspace:packages/github-user-contribution-service"],
+
+    "@snk/gitlab-user-contribution": ["@snk/gitlab-user-contribution@workspace:packages/gitlab-user-contribution"],
 
     "@snk/solver": ["@snk/solver@workspace:packages/solver"],
 
@@ -262,7 +287,7 @@
 
     "@types/gifsicle": ["@types/gifsicle@5.2.2", "", {}, "sha512-lluDxP9Ik6ldUqO385TRTIHCrwmrhj85eruRit3vUkkOReRPb5r4TRVTTZhfvfuw416q7Q/TAMP3G5sQ7VUamg=="],
 
-    "@types/node": ["@types/node@20.14.10", "", { "dependencies": { "undici-types": "~5.26.4" } }, "sha512-MdiXf+nDuMvY0gJKxyfZ7/6UFsETO7mGKF54MVD/ekJS6HdFtpZFBgrh6Pseu64XTb2MLyFPlbW6hj8HYRQNOQ=="],
+    "@types/node": ["@types/node@24.12.2", "", { "dependencies": { "undici-types": "~7.16.0" } }, "sha512-A1sre26ke7HDIuY/M23nd9gfB+nrmhtYyMINbjI1zHJxYteKR6qSMX56FsmjMcDb3SMcjJg5BiRRgOCC/yBD0g=="],
 
     "@types/tmp": ["@types/tmp@0.2.6", "", {}, "sha512-chhaNf2oKHlRkDGt+tiKE2Z5aJ6qalm7Z9rlLdBwmOiAAf09YQvvoLXjWK4HWPF1xU/fqvMgfNfpVoBscA/tKA=="],
 
@@ -393,6 +418,8 @@
     "fs-constants": ["fs-constants@1.0.0", "", {}, "sha512-y6OAwoSIf7FyjMIv94u+b5rdheZEjzR63GTyZJm5qh4Bi+2YgwLCcI/fPFZkL5PSixOt6ZNKm+w+Hfp/Bciwow=="],
 
     "fsevents": ["fsevents@2.3.3", "", { "os": "darwin" }, "sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw=="],
+
+    "generate-snake-animation": ["generate-snake-animation@workspace:packages/generate-snake-animation"],
 
     "get-proxy": ["get-proxy@2.1.0", "", { "dependencies": { "npm-conf": "^1.1.0" } }, "sha512-zmZIaQTWnNQb4R4fJUEp/FC51eZsc6EkErspy3xtIYStaq8EB/hDIWipxsal+E8rz0qD7f2sL/NA9Xee4RInJw=="],
 
@@ -622,7 +649,7 @@
 
     "undici": ["undici@5.28.4", "", { "dependencies": { "@fastify/busboy": "^2.0.0" } }, "sha512-72RFADWFqKmUb2hmmvNODKL3p9hcB6Gt2DOQMis1SEBaV6a4MH8soBvzg+95CYhCKPFedut2JY9bMfrDl9D23g=="],
 
-    "undici-types": ["undici-types@5.26.5", "", {}, "sha512-JlCMO+ehdEIKqlFxk6IfVoAUVmgz7cU7zD/h9XZ0qzeosSHmUJVOzSQvvYSYWXkFXC+IfLKSIffhv0sVZup6pA=="],
+    "undici-types": ["undici-types@7.16.0", "", {}, "sha512-Zz+aZWSj8LE6zoxD+xrjh4VfkIG8Ya6LvYkZqtUQGJPZjYl53ypCaUwWqo7eI0x66KBGeRo+mlBEkMSeSZ38Nw=="],
 
     "unenv": ["unenv@2.0.0-rc.24", "", { "dependencies": { "pathe": "^2.0.3" } }, "sha512-i7qRCmY42zmCwnYlh9H2SvLEypEFGye5iRmEMKjcGi7zk9UquigRjFtTLz0TYqr0ZGLZhaMHl/foy1bZR+Cwlw=="],
 
@@ -669,6 +696,8 @@
     "bin-version-check/semver": ["semver@5.7.2", "", { "bin": { "semver": "bin/semver" } }, "sha512-cBznnQ9KjJqU67B52RMC65CMarK2600WFnbkcaiwWq3xy/5haFJlshgnpjovMVJ+Hff49d8GEn0b87C5pDQ10g=="],
 
     "bin-wrapper/download": ["download@7.1.0", "", { "dependencies": { "archive-type": "^4.0.0", "caw": "^2.0.1", "content-disposition": "^0.5.2", "decompress": "^4.2.0", "ext-name": "^5.0.0", "file-type": "^8.1.0", "filenamify": "^2.0.0", "get-stream": "^3.0.0", "got": "^8.3.1", "make-dir": "^1.2.0", "p-event": "^2.1.0", "pify": "^3.0.0" } }, "sha512-xqnBTVd/E+GxJVrX5/eUJiLYjCGPwMpdL+jGhGU57BvtcA7wwhtHVbXBeUk51kOpW3S7Jn3BQbN9Q1R1Km2qDQ=="],
+
+    "bun-types/@types/node": ["@types/node@20.14.10", "", { "dependencies": { "undici-types": "~5.26.4" } }, "sha512-MdiXf+nDuMvY0gJKxyfZ7/6UFsETO7mGKF54MVD/ekJS6HdFtpZFBgrh6Pseu64XTb2MLyFPlbW6hj8HYRQNOQ=="],
 
     "cacheable-request/get-stream": ["get-stream@3.0.0", "", {}, "sha512-GlhdIUuVakc8SJ6kK0zAFbiGzRFzNnY4jUuEbV9UROo4Y+0Ny4fjvcZFVTeDA4odpFyOQzaw6hXukJSq/f28sQ=="],
 
@@ -753,6 +782,8 @@
     "bin-wrapper/download/p-event": ["p-event@2.3.1", "", { "dependencies": { "p-timeout": "^2.0.1" } }, "sha512-NQCqOFhbpVTMX4qMe8PF8lbGtzZ+LCiN7pcNrb/413Na7+TRoe1xkKUzuWa/YEJdGQ0FvKtj35EEbDoVPO2kbA=="],
 
     "bin-wrapper/download/pify": ["pify@3.0.0", "", {}, "sha512-C3FsVNH1udSEX48gGX1xfvwTWfsYWj5U+8/uK15BGzIGrKoUpghX8hWZwa/OFnakBiiVNmBvemTJR5mcy7iPcg=="],
+
+    "bun-types/@types/node/undici-types": ["undici-types@5.26.5", "", {}, "sha512-JlCMO+ehdEIKqlFxk6IfVoAUVmgz7cU7zD/h9XZ0qzeosSHmUJVOzSQvvYSYWXkFXC+IfLKSIffhv0sVZup6pA=="],
 
     "decompress-tar/tar-stream/bl": ["bl@1.2.3", "", { "dependencies": { "readable-stream": "^2.3.5", "safe-buffer": "^5.1.1" } }, "sha512-pvcNpa0UU69UT341rO6AYy4FVAIkUHuZXRIWbq+zHnsVcRzDDjIAhGuuYoi0d//cwIwtt4pkpKycWEfjdV+vww=="],
 

@@ -10,7 +10,7 @@
     "forceConsistentCasingInFileNames": true,
     "esModuleInterop": true,
     "noEmit": true,
-    "moduleResolution": "node"
+    "moduleResolution": "bundler"
   },
   "exclude": ["node_modules"]
 }

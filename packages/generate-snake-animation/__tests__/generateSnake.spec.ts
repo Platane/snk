@@ -1,7 +1,7 @@
+import { expect, it } from "bun:test";
 import * as fs from "fs";
 import * as path from "path";
-import { it, expect } from "bun:test";
-import { generateContributionSnake } from "../generateContributionSnake";
+import { generateSnakeAnimation } from "../generateSnakeAnimation";
 import { parseOutputsOption } from "../outputsOptions";
 
 const silent = (handler: () => void | Promise<void>) => async () => {
@@ -29,9 +29,14 @@ it(
 
     const outputs = parseOutputsOption(entries);
 
-    const results = await generateContributionSnake("platane", outputs, {
-      githubToken: process.env.GITHUB_TOKEN!,
-    });
+    const results = await generateSnakeAnimation(
+      {
+        platform: "github",
+        username: "platane",
+        githubToken: process.env.GITHUB_TOKEN!,
+      },
+      outputs,
+    );
 
     expect(results[0]).toBeDefined();
     expect(results[1]).toBeDefined();

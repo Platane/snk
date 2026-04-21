@@ -5,7 +5,7 @@ import { snake3 as snake } from "@snk/types/__fixtures__/snake";
 import { createSnakeFromCells, nextSnake } from "@snk/types/snake";
 import * as fs from "fs";
 import * as path from "path";
-import { basePalettes } from "../../action/palettes";
+import { basePalettes } from "../../generate-snake-animation/palettes";
 import { type AnimationOptions, createGif, type DrawOptions } from "..";
 
 const upscale = 1;

@@ -1,12 +1,12 @@
-import { parseEntry } from "@snk/action/outputsOptions";
-import { basePalettes } from "@snk/action/palettes";
-import { userContributionToGrid } from "@snk/action/userContributionToGrid";
 import {
   Options as DrawOptions,
   drawLerpWorld,
   getCanvasWorldSize,
 } from "@snk/draw/drawWorld";
 import type { Res } from "@snk/github-user-contribution";
+import { cellsToGrid } from "generate-snake-animation/cellsToGrid";
+import { parseEntry } from "generate-snake-animation/outputsOptions";
+import { basePalettes } from "generate-snake-animation/palettes";
 import { step } from "@snk/solver/step";
 import { createSvg } from "@snk/svg-creator";
 import { Color, copyGrid, Grid } from "@snk/types/grid";
@@ -312,7 +312,7 @@ const onSubmit = async (userName: string) => {
   );
   const cells = (await res.json()) as Res;
 
-  const grid = userContributionToGrid(cells);
+  const grid = cellsToGrid(cells);
 
   const chain = await getChain(grid);
 

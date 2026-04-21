@@ -1,11 +1,15 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { parseOutputsOption } from "./outputsOptions";
+import { generateSnakeAnimation } from "generate-snake-animation/generateSnakeAnimation";
+import { parseOutputsOption } from "generate-snake-animation/outputsOptions";
 import * as githubAction from "./github-action";
 
 (async () => {
   try {
     const userName = githubAction.getInput("github_user_name");
+    const githubToken =
+      process.env.GITHUB_TOKEN ?? githubAction.getInput("github_token");
+
     const outputsRaw = [
       ...githubAction.getInput("outputs").split("\n"),
       //
@@ -17,15 +21,11 @@ import * as githubAction from "./github-action";
       .filter(Boolean);
 
     const outputs = parseOutputsOption(outputsRaw);
-    const githubToken =
-      process.env.GITHUB_TOKEN ?? githubAction.getInput("github_token");
 
-    const { generateContributionSnake } = await import(
-      "./generateContributionSnake"
+    const results = await generateSnakeAnimation(
+      { platform: "github", username: userName, githubToken },
+      outputs,
     );
-    const results = await generateContributionSnake(userName, outputs, {
-      githubToken,
-    });
 
     outputs.forEach((out, i) => {
       const result = results[i];
