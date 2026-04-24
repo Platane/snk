@@ -11,10 +11,6 @@ import { step } from "@snk/solver/step";
 import { Color, copyGrid, Grid } from "@snk/types/grid";
 import type { Point } from "@snk/types/point";
 import { Snake } from "@snk/types/snake";
-import { createCanvas } from "canvas";
-// @ts-ignore
-import GIFEncoder from "gif-encoder-2";
-import gifsicle from "gifsicle";
 
 export type { Options as DrawOptions } from "@snk/draw/drawWorld";
 
@@ -28,6 +24,13 @@ export const createGif = async (
   animationOptions: AnimationOptions,
 ) =>
   withTmpDir(async (dir) => {
+    // import dependencies that are optionnals for svg
+    //
+    const { createCanvas } = await import("canvas");
+    const { default: gifsicle } = await import("gifsicle");
+    // @ts-ignore
+    const { default: GIFEncoder } = await import("gif-encoder-2");
+
     const { width, height } = getCanvasWorldSize(grid0, drawOptions);
 
     const canvas = createCanvas(width, height);

@@ -13,8 +13,8 @@ bunx dts-bundle-generator --out-file dist/generateSnakeAnimation.d.ts --project 
 cat > dist/package.json << EOF
 {
   "name": "generate-snake-animation",
-  "version": "$(node -p "require('./package.json').version")",
-  "bin": { "snk": "./cli.js" },
+  "version": "$(node -p "require('../../package.json').version")",
+  "bin": { "snk": "cli.js" },
   "type": "module",
   "main": "./generateSnakeAnimation.js",
   "types": "./generateSnakeAnimation.d.ts",

@@ -19,6 +19,7 @@
     "dev:demo": "( cd packages/demo ; npm run dev )",
     "build:demo": "( cd packages/demo ; npm run build )",
     "build:action": "( cd packages/action ; npm run build )",
-    "build:lib": "( cd packages/generate-snake-animation ; npm run build )"
+    "build:lib": "( cd packages/generate-snake-animation ; npm run build )",
+    "publish:lib": "( cd packages/generate-snake-animation/dist ; npm publish )"
   }
 }
