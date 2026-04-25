@@ -1,7 +1,7 @@
 import { serve } from "bun";
-import { getGithubUserContribution } from "../github-user-contribution";
 import * as childProcess from "child_process";
 import * as fs from "fs";
+import { getGithubUserContribution } from "../github-user-contribution";
 
 import getBestRoute_page from "./getBestRoute/index.html";
 import getBestTunnel_page from "./getBestTunnel/index.html";
@@ -9,10 +9,10 @@ import getPathTo_page from "./getPathTo/index.html";
 import getPathToPose_page from "./getPathToPose/index.html";
 import interactive_page from "./interactive/index.html";
 import outside_page from "./outside/index.html";
-import svg_page from "./svg/index.html";
+import rs_snakeExit_page from "./rs-snakeExit/index.html";
 import rs_solver_page from "./rs-solver/index.html";
 import rs_tunnel_page from "./rs-tunnel/index.html";
-import rs_snakeExit_page from "./rs-snakeExit/index.html";
+import svg_page from "./svg/index.html";
 
 const server = serve({
   routes: {
