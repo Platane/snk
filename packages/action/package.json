@@ -5,10 +5,7 @@
     "@actions/core": "1.11.1",
     "generate-snake-animation": "1.0.0"
   },
-  "devDependencies": {
-    "@vercel/ncc": "0.38.4"
-  },
   "scripts": {
-    "build": "ncc build --external canvas --external gifsicle --out dist ./index.ts"
+    "build": "bun build ./index.ts --outfile=dist/index.js --target=node --format=cjs --external=canvas --external=gifsicle"
   }
 }
