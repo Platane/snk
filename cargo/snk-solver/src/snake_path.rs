@@ -55,6 +55,10 @@ impl PartialOrd for Node {
     }
 }
 
+// move a snake from a position to a point (that it reaches with its head)
+//
+// it should be the same as path finding from cell to cell
+// with the caveat that is might block it-self in the first N step (for a snake of size N)
 pub fn get_snake_path(
     grid: &Grid<Color>,
     from: &Snake4,
@@ -80,10 +84,7 @@ pub fn get_snake_path(
 
     while let Some(node) = open_list.pop() {
         loop_count += 1;
-
-        if loop_count > 20_000 {
-            panic!("loop_count out of control")
-        }
+        debug_assert!(loop_count < 20_000, "invariant: loop out of control");
 
         let node_cost = node.cost;
 

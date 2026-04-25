@@ -137,6 +137,17 @@ pub fn solve(color_grid: &Grid<Color>, snake: &Snake4) -> Vec<Direction> {
                 })
                 .collect();
         }
+
+        debug_assert!(
+            iter_rectangle_fill(color_grid.width, color_grid.height)
+                .filter(|p| {
+                    let color = color_grid.get_color(*p);
+                    color.is_empty() || color >= color
+                })
+                .next()
+                .is_none(),
+            "invariant: should have cleared the color"
+        )
     }
 
     path
