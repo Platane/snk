@@ -2,6 +2,8 @@
 // pub mod reach_outside;
 pub mod best_tunnel;
 pub mod cost;
+#[cfg(test)]
+mod debug_world;
 pub mod exit_grid;
 mod fitness;
 pub mod snake_path;
