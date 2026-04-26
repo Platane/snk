@@ -22,14 +22,11 @@ pub fn init_log() {
 #[wasm_bindgen]
 pub fn get_snake_path(grid: IColorGrid, snake: Vec<IPoint>, to: IPoint) -> Option<Vec<IPoint>> {
     let grid = snk_grid::grid::Grid::from(grid);
-    let snake = Snake4::from_points(
-        snake
-            .into_iter()
-            .map(|p| Point::from(p))
-            .collect::<Vec<_>>()
-            .try_into()
-            .expect("snake should be 4 points"),
-    );
+    let snake = snake
+        .into_iter()
+        .map(|p| Point::from(p))
+        .collect::<Vec<_>>();
+
     let res = snk_solver::snake_path::get_snake_path(&grid, &snake, to.into(), Cost::max());
 
     res.map(|(d, _)| {

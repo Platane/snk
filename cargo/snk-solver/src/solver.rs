@@ -50,6 +50,7 @@ pub fn solve(color_grid: &Grid<Color>, snake: &Snake4) -> Vec<Direction> {
     let add_sub_path = |sub_path: Vec<Direction>| {};
 
     for color in COLORS.into_iter() {
+        // list all of dot location for that color
         let to_collect = iter_rectangle_fill(color_grid.width, color_grid.height)
             .filter(|p| color_grid.get_color(*p) == color)
             .map(|p| {
@@ -73,8 +74,13 @@ pub fn solve(color_grid: &Grid<Color>, snake: &Snake4) -> Vec<Direction> {
 
                 // path find from the snake to the point
                 // (it should be able to do so without eating walls)
-                let (sub_path, _) =
-                    get_snake_path(&color_grid, &snake, point, Cost::from(color) * 64).unwrap();
+                let (sub_path, _) = get_snake_path(
+                    &color_grid,
+                    &snake.iter_head_to_tail().collect::<Vec<_>>(),
+                    point,
+                    Cost::from(color) * 64,
+                )
+                .unwrap();
 
                 // traverse the path to update the grid
                 for dir in sub_path.into_iter() {
@@ -100,7 +106,7 @@ pub fn solve(color_grid: &Grid<Color>, snake: &Snake4) -> Vec<Direction> {
                 // path find from the snake to the point
                 let (sub_path, _) = get_snake_path(
                     &color_grid,
-                    &snake,
+                    &snake.iter_head_to_tail().collect::<Vec<_>>(),
                     point,
                     Cost::max(),
                     // tunnel.in_cost + Cost::from(Color::Color1) ,

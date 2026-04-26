@@ -1,6 +1,6 @@
 use snk_grid::{
     color::Color,
-    direction::{Direction, add_direction, sub_direction},
+    direction::Direction,
     grid::{Grid, iter_rectangle_fill},
     point::Point,
 };
@@ -25,39 +25,48 @@ pub fn render_world(
                 y: y as i8,
             };
 
-            let char: char = if let Some(c) = poi_opt.as_ref().and_then(|poi| poi.get(&p)) {
-                *c
-            } else if let Some(i) = snake_head_to_tail.iter().position(|s| p.eq(s)) {
-                if i == 0 {
-                    '@'
-                } else {
-                    let p0 = snake_head_to_tail[i - 1];
-                    let dir0 = sub_direction(p0, p);
+            let char: char =
+                if let Some(c) = poi_opt.as_ref().and_then(|poi| poi.get(&p)) {
+                    *c
+                } else if let Some(i) = snake_head_to_tail.iter().position(|s| p.eq(s)) {
+                    if i == 0 {
+                        '@'
+                    } else {
+                        let p0 = snake_head_to_tail[i - 1];
+                        let dir0: Direction = (p0 - p).try_into().unwrap();
 
-                    let dir1 = snake_head_to_tail
-                        .get(i + 1)
-                        .map(|p1| sub_direction(*p1, p))
-                        .unwrap_or(dir0.get_opposite());
+                        let dir1_opt = snake_head_to_tail
+                            .get(i + 1)
+                            .map(|p1| (*p1 - p).try_into().unwrap());
 
-                    match (dir0, dir1) {
-                        (Direction::DOWN, Direction::UP) | (Direction::UP, Direction::DOWN) => '│',
-                        (Direction::LEFT, Direction::RIGHT)
-                        | (Direction::RIGHT, Direction::LEFT) => '─',
-                        (Direction::LEFT, Direction::DOWN) | (Direction::DOWN, Direction::LEFT) => {
-                            '┘'
+                        if let Some(dir1) = dir1_opt {
+                            match (dir0, dir1) {
+                                (Direction::DOWN, Direction::UP)
+                                | (Direction::UP, Direction::DOWN) => '│',
+                                (Direction::LEFT, Direction::RIGHT)
+                                | (Direction::RIGHT, Direction::LEFT) => '─',
+                                (Direction::LEFT, Direction::DOWN)
+                                | (Direction::DOWN, Direction::LEFT) => '┐',
+                                (Direction::RIGHT, Direction::DOWN)
+                                | (Direction::DOWN, Direction::RIGHT) => '┌',
+                                (Direction::RIGHT, Direction::UP)
+                                | (Direction::UP, Direction::RIGHT) => '└',
+                                (Direction::LEFT, Direction::UP)
+                                | (Direction::UP, Direction::LEFT) => '┘',
+                                _ => panic!("Invalid path {:?} {:?}", dir0, dir1),
+                            }
+                        } else {
+                            match (dir0) {
+                                Direction::LEFT => '╴',
+                                Direction::RIGHT => '╶',
+                                Direction::UP => '╵',
+                                Direction::DOWN => '╷',
+                            }
                         }
-                        (Direction::RIGHT, Direction::DOWN)
-                        | (Direction::DOWN, Direction::RIGHT) => '└',
-                        (Direction::RIGHT, Direction::UP) | (Direction::UP, Direction::RIGHT) => {
-                            '┌'
-                        }
-                        (Direction::LEFT, Direction::UP) | (Direction::UP, Direction::LEFT) => '┐',
-                        _ => panic!("Invalid path {:?} {:?}", dir0, dir1),
                     }
-                }
-            } else {
-                get_dot_block(grid.get_color(p))
-            };
+                } else {
+                    get_dot_block(grid.get_color(p))
+                };
 
             out.push(char);
         }
@@ -68,7 +77,14 @@ pub fn render_world(
     out
 }
 
-pub fn read_world(w: &str) -> (Grid<Color>, Vec<Point>, HashMap<Point, char>) {
+pub fn read_world(
+    w: &str,
+) -> (
+    Grid<Color>,
+    Vec<Point>,
+    HashMap<Point, char>,
+    HashMap<char, Point>,
+) {
     let w = normalize_world(w);
     let lines = w
         .split('\n')
@@ -100,7 +116,7 @@ pub fn read_world(w: &str) -> (Grid<Color>, Vec<Point>, HashMap<Point, char>) {
             })
         {
             grid.set(p, color)
-        } else if let Some((l1, l2)) = match char {
+        } else if let Some((d1, d2)) = match char {
             '┌' => Some((Direction::DOWN, Direction::RIGHT)),
             '└' => Some((Direction::UP, Direction::RIGHT)),
             '┐' => Some((Direction::DOWN, Direction::LEFT)),
@@ -109,8 +125,16 @@ pub fn read_world(w: &str) -> (Grid<Color>, Vec<Point>, HashMap<Point, char>) {
             '│' => Some((Direction::UP, Direction::DOWN)),
             _ => None,
         } {
-            links.push((p, add_direction(p, l1)));
-            links.push((p, add_direction(p, l2)));
+            links.push((p, p + d1));
+            links.push((p, p + d2));
+        } else if let Some(d1) = match char {
+            '╴' => Some(Direction::LEFT),
+            '╶' => Some(Direction::RIGHT),
+            '╵' => Some(Direction::UP),
+            '╷' => Some(Direction::DOWN),
+            _ => None,
+        } {
+            links.push((p, p + d1));
         } else if char == '@' {
             head = Some(p);
         } else {
@@ -134,10 +158,8 @@ pub fn read_world(w: &str) -> (Grid<Color>, Vec<Point>, HashMap<Point, char>) {
                     break;
                 };
 
-                if head != p {
-                    path.push(p);
-                }
                 p = if p1 == p { p2 } else { p1 };
+                path.push(p);
 
                 links.retain(|(pa, pb)| !((*pa == p1 && *pb == p2) || (*pb == p1 && *pa == p2)));
             }
@@ -146,7 +168,9 @@ pub fn read_world(w: &str) -> (Grid<Color>, Vec<Point>, HashMap<Point, char>) {
         })
         .unwrap_or_default();
 
-    (grid, path, poi)
+    let reverse_poi = poi.iter().map(|(k, v)| (*v, *k)).collect::<HashMap<_, _>>();
+
+    (grid, path, poi, reverse_poi)
 }
 
 fn normalize_world(w: &str) -> String {
@@ -194,7 +218,7 @@ fn it_should_read_render_world() {
     ··░·▒·▓·█···
     ········▓···
     ············"#;
-    let (grid, path, poi) = read_world(g);
+    let (grid, path, poi, _) = read_world(g);
     assert_world_equal(render_world(&grid, &path, Some(poi)).as_str(), g);
 }
 
@@ -228,23 +252,25 @@ fn it_should_render_snake() {
     assert_world_equal(
         render_world(&grid, &path, None).as_str(),
         r#"
-        ··@───┐·····
-        ┌─┐···│·····
-        │·└─··│·····
-        └─────┘·····
-        ············"#,
+            ··@───┐·····
+            ┌─┐···│·····
+            │·└╴··│·····
+            └─────┘·····
+            ············
+        "#,
     );
 }
 
 #[test]
 fn it_should_read_render_snake() {
     let g = r#"
-    ··@───┐·····
-    ┌─┐···│·····
-    │·└─··│·····
-    └─────┘·····
-    ············"#;
-    let (grid, path, poi) = read_world(g);
+        ··@───┐·····
+        ┌─┐···│·····
+        │·└╴··│·····
+        └─────┘·····
+        ············
+    "#;
+    let (grid, path, poi, _) = read_world(g);
 
     assert_world_equal(render_world(&grid, &path, Some(poi)).as_str(), g);
 }

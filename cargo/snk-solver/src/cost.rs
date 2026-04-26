@@ -9,19 +9,49 @@ impl Add for Cost {
     type Output = Self;
 
     fn add(self, rhs: Self) -> Self {
-        Self(self.0 + rhs.0)
+        let sum = Self(self.0 + rhs.0);
+
+        debug_assert!(
+            [
+                Color::Empty,
+                Color::Color1,
+                Color::Color2,
+                Color::Color3,
+                Color::Color4
+            ]
+            .iter()
+            .all(|&c| sum.get_color_count(c) == self.get_color_count(c) + rhs.get_color_count(c)),
+            "invariant: cost bucket overflow with add"
+        );
+
+        sum
     }
 }
 impl AddAssign for Cost {
     fn add_assign(&mut self, rhs: Self) {
-        self.0 += rhs.0;
+        *self = self.add(rhs)
     }
 }
 impl Mul<u64> for Cost {
     type Output = Self;
 
     fn mul(self, rhs: u64) -> Self {
-        Self(self.0 * rhs)
+        let result = self.0 * rhs;
+
+        debug_assert!(
+            [
+                Color::Empty,
+                Color::Color1,
+                Color::Color2,
+                Color::Color3,
+                Color::Color4
+            ]
+            .iter()
+            .all(|&c| Cost(result).get_color_count(c) == self.get_color_count(c) * rhs),
+            "invariant: cost bucket overflow with mul"
+        );
+
+        Self(result)
     }
 }
 
@@ -45,7 +75,7 @@ impl Cost {
         Self(u64::MAX)
     }
     pub fn very_large() -> Self {
-        Self(u64::MAX / 8)
+        Cost::from(Color::Color4) * 198
     }
     pub fn is_free(&self) -> bool {
         self.0 < 256
@@ -67,9 +97,9 @@ impl Cost {
 }
 
 #[test]
-fn it_should_not_overflow() {
+fn it_should_not_overflow_for_reasonable_values() {
     // it should not panic
-    let very_large_cost = Cost::from(Color::Color4) * 256;
+    let very_large_cost = Cost::from(Color::Color4) * 199;
     assert!(very_large_cost < Cost::max())
 }
 
@@ -79,6 +109,7 @@ fn it_should_sum_cost() {
     c = c + Color::Color1.into();
     assert!(Cost::zero() < c);
 }
+
 #[test]
 fn it_should_extract_color_count() {
     let c = Cost::zero()
@@ -90,4 +121,16 @@ fn it_should_extract_color_count() {
     assert_eq!(c.get_color_count(Color::Color2), 6);
     assert_eq!(c.get_color_count(Color::Color3), 0);
     assert_eq!(c.get_color_count(Color::Color4), 25);
+}
+
+#[test]
+#[should_panic(expected = "invariant: cost bucket overflow with add")]
+fn it_should_guard_against_bucket_overflow_add() {
+    let _ = (Cost::from(Color::Color1) * 150) + (Cost::from(Color::Color1) * 150);
+}
+
+#[test]
+#[should_panic(expected = "invariant: cost bucket overflow with mul")]
+fn it_should_guard_against_bucket_overflow_mul() {
+    let _ = Cost::from(Color::Color1) * 400;
 }

@@ -1,4 +1,7 @@
-use std::collections::HashSet;
+use std::{
+    collections::HashSet,
+    ops::{Add, AddAssign, Neg},
+};
 
 use crate::point::{Point, add};
 
@@ -25,6 +28,19 @@ impl Into<Point> for Direction {
             Direction::DOWN => Point { x: 0, y: 1 },
             Direction::LEFT => Point { x: -1, y: 0 },
             Direction::RIGHT => Point { x: 1, y: 0 },
+        }
+    }
+}
+impl TryInto<Direction> for Point {
+    type Error = ();
+
+    fn try_into(self) -> Result<Direction, Self::Error> {
+        match self {
+            Point { x: 0, y: -1 } => Ok(Direction::UP),
+            Point { x: 0, y: 1 } => Ok(Direction::DOWN),
+            Point { x: -1, y: 0 } => Ok(Direction::LEFT),
+            Point { x: 1, y: 0 } => Ok(Direction::RIGHT),
+            _ => Err(()),
         }
     }
 }
@@ -73,18 +89,28 @@ pub fn iter_directions() -> impl Iterator<Item = Direction> {
 }
 
 pub fn iter_neighbour(p: Point) -> impl Iterator<Item = Point> {
-    iter_directions().map(move |dir| add_direction(p, dir))
+    iter_directions().map(move |dir| p + dir)
 }
 
-pub fn sub_direction(a: Point, b: Point) -> Direction {
-    let x = a.x - b.x;
-    let y = a.y - b.y;
-    match (x, y) {
-        (0, 1) => Direction::UP,
-        (0, -1) => Direction::DOWN,
-        (-1, 0) => Direction::LEFT,
-        (1, 0) => Direction::RIGHT,
-        _ => panic!("Invalid direction"),
+impl Neg for Direction {
+    type Output = Direction;
+
+    fn neg(self) -> Direction {
+        self.get_opposite()
+    }
+}
+impl Add<Direction> for Point {
+    type Output = Point;
+
+    fn add(self, rhs: Direction) -> Point {
+        add_direction(self, rhs)
+    }
+}
+impl AddAssign<Direction> for Point {
+    fn add_assign(&mut self, rhs: Direction) {
+        let p = rhs.to_point();
+        self.x += p.x;
+        self.y += p.y;
     }
 }
 
@@ -116,4 +142,30 @@ fn it_should_iter_direction_point() {
             Point { x: 1, y: 0 }
         ])
     );
+}
+
+#[test]
+fn it_should_allows_ops() {
+    assert_eq!(
+        //
+        Point { x: 0, y: 1 } + Direction::DOWN,
+        Point { x: 0, y: 2 }
+    );
+
+    assert_eq!(
+        //
+        Point { x: 0, y: 1 } + -Direction::DOWN,
+        Point { x: 0, y: 0 }
+    );
+}
+
+#[test]
+fn it_should_convert_point_into_dir() {
+    let p = Point { x: 3, y: 2 };
+
+    for dir in iter_directions() {
+        let p2 = p + dir;
+
+        assert_eq!(dir, (p2 - p).try_into().unwrap())
+    }
 }

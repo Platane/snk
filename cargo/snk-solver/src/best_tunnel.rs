@@ -37,7 +37,7 @@ pub fn get_best_tunnel_to_collect_point(
             break;
         }
 
-        p += exit_grid.get_exit_direction(p).into();
+        p += exit_grid.get_exit_direction(p);
     }
 
     // path from the outside to the dot
@@ -67,7 +67,7 @@ pub fn get_best_tunnel_to_collect_point(
     );
     for dir in path_out {
         let p = *path.last().unwrap();
-        path.push(p + dir.into());
+        path.push(p + dir);
     }
     path.pop();
 

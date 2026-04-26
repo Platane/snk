@@ -1,14 +1,12 @@
 use snk_grid::{
     color::Color,
-    direction::{Direction, iter_directions, sub_direction},
+    direction::{Direction, iter_directions},
     grid::Grid,
-    grid_samples::get_grid_sample,
     point::{Point, get_distance},
-    snake::{Snake, Snake4, snake_will_self_collide},
 };
-use std::hash::{Hash, Hasher};
 use std::{
-    collections::{BinaryHeap, HashMap, HashSet},
+    collections::{BinaryHeap, HashMap},
+    hash::{Hash, Hasher},
     rc::Rc,
 };
 
@@ -18,7 +16,7 @@ use crate::cost::Cost;
 struct Node {
     pub point: Point,
     pub cost: Cost,
-    pub n: u8,
+    pub n: usize,
     pub f: Cost,
     pub parent: Option<Rc<Node>>,
 }
@@ -46,7 +44,12 @@ impl PartialEq for Node {
 }
 impl Ord for Node {
     fn cmp(&self, other: &Self) -> std::cmp::Ordering {
-        other.f.cmp(&self.f)
+        other
+            .f
+            .cmp(&self.f)
+            // this act as tie-breaker, to make the binaryheap (and the whole alg) determinist
+            .then(self.point.x.cmp(&other.point.x))
+            .then(self.point.y.cmp(&other.point.y))
     }
 }
 impl PartialOrd for Node {
@@ -55,28 +58,30 @@ impl PartialOrd for Node {
     }
 }
 
+struct CloseEntry {
+    n: usize,
+}
+
 // move a snake from a position to a point (that it reaches with its head)
 //
 // it should be the same as path finding from cell to cell
 // with the caveat that is might block it-self in the first N step (for a snake of size N)
 pub fn get_snake_path(
     grid: &Grid<Color>,
-    from: &Snake4,
+    starting_snake_head_to_tail: &[Point],
     to: Point,
     max_cost: Cost,
 ) -> Option<(Vec<Direction>, Cost)> {
     let mut open_list: BinaryHeap<Node> = BinaryHeap::new();
-    let mut close_list: HashSet<(Point, Point)> = HashSet::new();
+    let mut close_list: HashMap<Point, CloseEntry> = HashMap::new();
 
-    let forbidden_cells: Vec<_> = from.iter_head_to_tail().collect();
-    let n_max = forbidden_cells.len() as u8;
+    let snake_len = starting_snake_head_to_tail.len();
 
     open_list.push(Node {
-        point: from.get_head(),
+        point: starting_snake_head_to_tail[0],
         cost: Cost::zero(),
         f: Cost::zero(),
         n: 0,
-        // parent: first_parent.map(|p| Rc::new(p)),
         parent: None,
     });
 
@@ -89,47 +94,128 @@ pub fn get_snake_path(
         let node_cost = node.cost;
 
         if to == node.point {
-            println!("{:?}", loop_count);
+            // println!("found solution {:?}", loop_count);
 
+            // unwrap
             let mut path = Vec::new();
 
-            let mut u = Rc::new(node);
+            let mut u = &Rc::new(node);
             while let Some(ref parent) = u.parent {
-                let dir = sub_direction(parent.point, u.point);
+                let dir: Direction = (u.point - parent.point).try_into().unwrap();
                 path.push(dir);
-                u = Rc::clone(parent);
+
+                u = &parent;
             }
+            path.reverse();
+
+            debug_assert_eq!(
+                path.iter()
+                    .fold(starting_snake_head_to_tail[0], |p, &dir| p + dir.to_point()),
+                to,
+                "path should lead to target"
+            );
+
             return Some((path, node_cost));
         }
 
         let n = node.n + 1;
 
         let node_point = node.point;
-        let b = Rc::new(node);
+
+        let rc_parent = Rc::new(node);
+
+        // invariant check
+        // make sure the path is valid so far
+        #[cfg(debug_assertions)]
+        {
+            // construct the path so far
+            let mut path = Vec::new();
+
+            let mut u = &rc_parent;
+            path.push(node_point);
+            while let Some(ref parent) = u.parent {
+                u = &parent;
+                path.push(u.point);
+            }
+            let mut o = starting_snake_head_to_tail
+                .iter()
+                .skip(1)
+                .map(|p| *p)
+                .collect::<Vec<_>>();
+
+            path.append(&mut o);
+
+            // println!("---\npath:{:?}", path);
+
+            // for each step of the path, the snake should not self collide
+            for i in 0..(path.len() - snake_len + 1) {
+                let snake = &path[i..(i + snake_len)];
+                // println!("  {:?}", snake);
+
+                let head = snake[0];
+                for i in 1..(snake_len) {
+                    debug_assert_ne!(head, snake[i], "snake should not self collide");
+                }
+            }
+        }
 
         for dir in iter_directions() {
             let next_point = node_point + dir.to_point();
-
-            if close_list.contains(&(next_point, node_point)) {
-                continue;
-            } else {
-                close_list.insert((next_point, node_point));
-            }
 
             if !grid.is_inside_margin(next_point, 2) {
                 continue;
             }
 
-            if (n as usize) + 1 < (n_max as usize) {
-                let collide = forbidden_cells
+            // if the path is smaller than the snake length,
+            // it can self collide
+            if n < snake_len {
+                // we might have already tried with a greater n,
+                // no need to retry then
+                if let Some(o) = close_list.get(&next_point) {
+                    // we already processed this point,
+
+                    // it safe to ignore if we tried with a greater n
+                    // because the case where the snake self collide would already have been tested
+                    if o.n >= n {
+                        continue;
+                    }
+
+                    // it stills forbidden to go self collide, so check that
+                    // walk the ancestor and check
+                    let mut ancestor = &rc_parent;
+                    let mut collision = false;
+                    while let Some(parent) = ancestor.parent.as_ref()
+                        && !collision
+                    {
+                        if parent.point == next_point {
+                            collision = true
+                        }
+                        ancestor = &parent;
+                    }
+                    if collision {
+                        continue;
+                    }
+                }
+
+                // check if it self collide
+                let collide = starting_snake_head_to_tail
                     .iter()
-                    .take((n_max as usize) - (n as usize) + 1)
+                    .take(snake_len - n)
                     .any(|p| *p == next_point);
 
                 if collide {
                     continue;
                 }
+            } else {
+                // the snake can no longer self collide because it can't go back
+
+                // check if the cell was already processed
+                if close_list.contains_key(&next_point) {
+                    continue;
+                }
             }
+
+            close_list.insert(next_point, CloseEntry { n });
 
             let cost = node_cost + grid.get_color(next_point).into();
             let distance = get_distance(next_point, to);
@@ -140,12 +226,14 @@ pub fn get_snake_path(
                 continue;
             }
 
+            debug_assert!(f >= cost, "heuristic must be admissible");
+
             open_list.push(Node {
                 point: next_point,
                 cost,
                 n,
                 f,
-                parent: Some(Rc::clone(&b)),
+                parent: Some(Rc::clone(&rc_parent)),
             });
         }
     }
@@ -153,76 +241,156 @@ pub fn get_snake_path(
     None
 }
 
-#[test]
-fn it_should_find_simple_path() {
-    let snake = Snake4::from_points([
-        Point { x: 0, y: 0 },
-        Point { x: 1, y: 0 },
-        Point { x: 2, y: 0 },
-        Point { x: 3, y: 0 },
-    ]);
-    let grid = Grid::<_>::from(
-        r#"
-_    _
-_    _
-_    _
-_    _
-"#,
-    );
-    let (path, cost) = get_snake_path(&grid, &snake, Point { x: 0, y: 3 }, Cost::max()).unwrap();
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::debug_world::{assert_world_equal, read_world, render_world};
 
-    assert_eq!(
-        path,
-        vec![
-            //
-            Direction::DOWN,
-            Direction::DOWN,
-            Direction::DOWN,
-        ]
-    )
-}
+    // make the snake walk all the instruction directions (from start to end)
+    // return the list of cells visited in snake order (head first)
+    fn get_full_path(snake: &[Point], directions: &[Direction]) -> Vec<Point> {
+        let mut full_path = snake.iter().map(|p| *p).collect::<Vec<_>>();
+        full_path.reverse();
+        for dir in directions.iter() {
+            let p = full_path.last().unwrap();
+            full_path.push(*p + *dir);
+        }
+        full_path.reverse();
+        full_path
+    }
 
-#[test]
-fn it_should_find_path_out_of_labyrinth() {
-    let snake = Snake4::from_points([
-        Point { x: 0, y: -1 },
-        Point { x: 1, y: -1 },
-        Point { x: 2, y: -1 },
-        Point { x: 3, y: -1 },
-    ]);
-    let grid = get_grid_sample(snk_grid::grid_samples::SampleGrid::Labyrinth);
+    fn get_last_snake(snake: &[Point], directions: &[Direction]) -> Vec<Point> {
+        let mut s = get_full_path(snake, directions);
+        s.truncate(snake.len());
+        s
+    }
 
-    assert_eq!(grid.get_color(Point { x: 1, y: 5 }), Color::Color1);
+    fn print_sequence(grid: &Grid<Color>, snake: &[Point], directions: &[Direction]) {
+        let full = get_full_path(snake, directions);
+        println!("{}", render_world(grid, snake, None));
+        for i in (0..directions.len()).rev() {
+            println!(
+                "\n{}",
+                render_world(grid, &full[i..(i + snake.len())], None)
+            );
+        }
+    }
 
-    let (path, cost) = get_snake_path(&grid, &snake, Point { x: 1, y: 5 }, Cost::max()).unwrap();
+    #[test]
+    fn it_should_find_simple_path() {
+        let (grid, snake, _, poi) = read_world(
+            r#"
+                ··········
+                ···╶@█····
+                ·······x··
+            "#,
+        );
+        let target = *poi.get(&'x').unwrap();
 
-    println!("{:?} {:?}", path, cost);
+        let (path, _cost) = get_snake_path(&grid, &snake, target, Cost::max()).unwrap();
 
-    assert!(cost < Cost::from(Color::Color1) * 2)
-}
+        assert_world_equal(
+            &render_world(&grid, &get_full_path(&snake, &path), None),
+            r#"
+                ··········
+                ···╶┐█····
+                ····└──@··
+            "#,
+        );
+    }
 
-#[test]
-fn it_should_not_self_collide() {
-    let snake = Snake4::from_points([
-        Point { x: 0, y: 1 },
-        Point { x: 1, y: 1 },
-        Point { x: 2, y: 1 },
-        Point { x: 3, y: 1 },
-    ]);
-    let grid = Grid::<_>::from(
-        r#"
-########
-       .
-########
-"#,
-    );
+    #[test]
+    fn it_should_find_path_out_of_labyrinth() {
+        let (grid, snake, _, poi) = read_world(
+            r#"
+                ··╶─@···············································
+                ██████████████████████████████████████████████████·█
+                █··················································█
+                █·██████████████████████████████████████████████████
+                █··················································█
+                ██████████████████████████████████████████████████·█
+                █x·················································█
+                ████████████████████████████████████████████████████
+            "#,
+        );
+        let target = *poi.get(&'x').unwrap();
 
-    assert_eq!(grid.get_color(Point { x: 7, y: 1 }), Color::Color1);
+        let (path, _cost) = get_snake_path(&grid, &snake, target, Cost::max()).unwrap();
 
-    let (path, cost) = get_snake_path(&grid, &snake, Point { x: 7, y: 1 }, Cost::max()).unwrap();
+        assert_world_equal(
+            &render_world(&grid, &get_full_path(&snake, &path), None),
+            r#"
+                ··╶───────────────────────────────────────────────┐·
+                ██████████████████████████████████████████████████│█
+                █┌────────────────────────────────────────────────┘█
+                █│██████████████████████████████████████████████████
+                █└────────────────────────────────────────────────┐█
+                ██████████████████████████████████████████████████│█
+                █@────────────────────────────────────────────────┘█
+                ████████████████████████████████████████████████████
+            "#,
+        );
+    }
 
-    println!("{:?} {:?}", path, cost);
+    #[test]
+    fn it_should_be_able_to_coil_the_snake() {
+        let (grid, snake, _, poi) = read_world(
+            r#"
+                ····x·····
+                ████·█····
+                █@──┐█····
+                █╷┌┐│█····
+                █└┘└┘█····
+                ██████····
+                ··········
+            "#,
+        );
+        let target = *poi.get(&'x').unwrap();
 
-    assert!(cost < Cost::from(Color::Color4));
-    assert!(cost > Cost::from(Color::Color1) + Cost::from(Color::Empty) * 5);
+        let (path, _cost) = get_snake_path(&grid, &snake, target, Cost::max()).unwrap();
+
+        print_sequence(&grid, &snake, &path);
+
+        assert_world_equal(
+            &render_world(&grid, &get_last_snake(&snake, &path), None),
+            r#"
+                ····@·····
+                ████│█····
+                █╷··│█····
+                █│┌┐│█····
+                █└┘└┘█····
+                ██████····
+                ··········
+            "#,
+        );
+    }
+
+    #[test]
+    fn it_should_avoid_self_colliding_the_snake() {
+        let (grid, snake, _, poi) = read_world(
+            r#"
+                ·┌──────────┐···
+                ·│··┌┐······│···
+                ·│┌─┘└─@····│···
+                ·│└─────────┘···
+                ·╵·······x······
+            "#,
+        );
+        let target = *poi.get(&'x').unwrap();
+
+        let (path, _cost) = get_snake_path(&grid, &snake, target, Cost::max()).unwrap();
+
+        print_sequence(&grid, &snake, &path);
+
+        assert_world_equal(
+            &render_world(&grid, &get_last_snake(&snake, &path), None),
+            r#"
+                ······┌─────┐···
+                ····┌┐└────┐│···
+                ··┌─┘└─────┘│···
+                ··└───╴·····│···
+                ·········@──┘···
+            "#,
+        );
+    }
 }

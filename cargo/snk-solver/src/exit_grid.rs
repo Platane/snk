@@ -79,7 +79,7 @@ impl ExitGrid {
             let color = grid.get_color(p);
             let (new_cost, new_direction) = iter_directions()
                 .map(|dir| {
-                    let p = p + dir.into();
+                    let p = p + dir;
                     let cost = self.get_cost_to_outside(p) + color.into();
                     (cost, dir)
                 })
@@ -98,7 +98,7 @@ impl ExitGrid {
                 e.exit_direction = new_direction;
 
                 for dir in iter_directions() {
-                    let p = p + dir.into();
+                    let p = p + dir;
                     if self.0.is_inside(p) {
                         changed.insert(p);
                     }
