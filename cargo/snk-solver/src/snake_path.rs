@@ -6,61 +6,10 @@ use snk_grid::{
 };
 use std::{
     collections::{BinaryHeap, HashMap},
-    hash::{Hash, Hasher},
     rc::Rc,
 };
 
 use crate::cost::Cost;
-
-#[derive(Clone, Debug)]
-struct Node {
-    pub point: Point,
-    pub cost: Cost,
-    pub n: usize,
-    pub f: Cost,
-    pub parent: Option<Rc<Node>>,
-}
-
-impl Hash for Node {
-    fn hash<H: Hasher>(&self, state: &mut H) {
-        self.point.hash(state);
-        if let Some(ref parent) = self.parent {
-            parent.point.hash(state);
-        }
-    }
-}
-impl Eq for Node {}
-impl PartialEq for Node {
-    fn eq(&self, other: &Self) -> bool {
-        self.point.eq(&other.point)
-            && match self.parent {
-                Some(ref parent) => match other.parent {
-                    Some(ref other_parent) => parent.point.eq(&other_parent.point),
-                    None => false,
-                },
-                None => other.parent.is_none(),
-            }
-    }
-}
-impl Ord for Node {
-    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
-        other
-            .f
-            .cmp(&self.f)
-            // this act as tie-breaker, to make the binaryheap (and the whole alg) determinist
-            .then(self.point.x.cmp(&other.point.x))
-            .then(self.point.y.cmp(&other.point.y))
-    }
-}
-impl PartialOrd for Node {
-    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
-        Some(self.cmp(other))
-    }
-}
-
-struct CloseEntry {
-    n: usize,
-}
 
 // move a snake from a position to a point (that it reaches with its head)
 //
@@ -239,6 +188,47 @@ pub fn get_snake_path(
     }
 
     None
+}
+
+#[derive(Debug)]
+struct Node {
+    pub point: Point,
+    pub cost: Cost,
+    pub n: usize,
+    pub f: Cost,
+    pub parent: Option<Rc<Node>>,
+}
+impl Eq for Node {}
+impl PartialEq for Node {
+    fn eq(&self, other: &Self) -> bool {
+        self.point.eq(&other.point)
+            && match self.parent {
+                Some(ref parent) => match other.parent {
+                    Some(ref other_parent) => parent.point.eq(&other_parent.point),
+                    None => false,
+                },
+                None => other.parent.is_none(),
+            }
+    }
+}
+impl Ord for Node {
+    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+        other
+            .f
+            .cmp(&self.f)
+            // this act as tie-breaker, to make the binaryheap (and the whole alg) determinist
+            .then(self.point.x.cmp(&other.point.x))
+            .then(self.point.y.cmp(&other.point.y))
+    }
+}
+impl PartialOrd for Node {
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
+struct CloseEntry {
+    n: usize,
 }
 
 #[cfg(test)]
