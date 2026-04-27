@@ -47,11 +47,11 @@ impl<T: Copy> Grid<T> {
         -m <= p.x && p.x < (self.width as i8) + m && -m <= p.y && p.y < (self.height as i8) + m
     }
 
-    /// ⚠️ assuming the point is inside the grid
     pub fn distance_from_outside(&self, p: Point) -> i8 {
         p.y.min(self.height - 1 - p.y)
             .min(p.x)
             .min(self.width - 1 - p.x)
+            + 1
     }
 
     pub fn create_with_value(width: i8, height: i8, value: T) -> Grid<T> {
@@ -147,4 +147,30 @@ fn it_should_iterate_hull() {
             Point { y: 2, x: 2 },
         ])
     );
+}
+
+#[test]
+fn it_should_return_distance_from_outside() {
+    let g = Grid::<bool>::create_with_default(11, 5);
+
+    // touching the outside = 1
+    assert_eq!(g.distance_from_outside(Point { x: 5, y: 0 }), 1);
+
+    // properly outside = 0
+    assert_eq!(g.distance_from_outside(Point { x: 5, y: -1 }), 0);
+
+    for p in [
+        Point { x: 5, y: 0 },
+        Point { x: 5, y: -1 },
+        Point { x: 5, y: -14 },
+        Point { x: 5, y: 5 },
+        Point { x: 5, y: 3 },
+        Point { x: -1, y: 3 },
+    ] {
+        let d = g.distance_from_outside(p);
+        let m = -d;
+
+        assert!(!g.is_inside_margin(p, m));
+        assert!(g.is_inside_margin(p, m + 1));
+    }
 }
