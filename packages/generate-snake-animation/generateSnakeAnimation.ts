@@ -20,11 +20,16 @@ export type Source =
   | { platform: "gitlab"; username: string; baseUrl?: string }
   | { platform: "forgejo"; username: string; baseUrl: string };
 
-export type Output = {
+export type OutputConfig = {
   format: "svg" | "gif";
   drawOptions: DrawOptions;
   animationOptions: AnimationOptions;
 };
+
+/**
+ * Result from generateSnakeAnimation - can be a string (SVG/GIF data) or null
+ */
+export type GenerationResult = string | Buffer | null;
 
 export const getUserContribution = async (source: Source) => {
   switch (source.platform) {
@@ -44,10 +49,18 @@ export const getUserContribution = async (source: Source) => {
   }
 };
 
+/**
+ * Generates snake animation in-memory without filesystem access.
+ * Returns results as strings/buffers ready for serverless environments.
+ * 
+ * @param source - User contribution source (GitHub, GitLab, or Forgejo)
+ * @param outputs - Array of output configurations (SVG/GIF)
+ * @returns Promise of results - SVG as string, GIF as Buffer, or null if output is null
+ */
 export const generateSnakeAnimation = async (
   source: Source,
-  outputs: (Output | null)[],
-) => {
+  outputs: (OutputConfig | null)[],
+): Promise => {
   console.log(`🎣 fetching user contribution from ${source.platform}`);
   const cells = await getUserContribution(source);
   const grid = cellsToGrid(cells);
@@ -59,7 +72,7 @@ export const generateSnakeAnimation = async (
 
   return Promise.all(
     outputs.map(async (out, i) => {
-      if (!out) return;
+      if (!out) return null;
       const { format, drawOptions, animationOptions } = out;
       switch (format) {
         case "svg": {
@@ -73,6 +86,7 @@ export const generateSnakeAnimation = async (
           return createGif(grid, cells, chain, drawOptions, animationOptions);
         }
       }
+      return null;
     }),
   );
 };
