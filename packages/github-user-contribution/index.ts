@@ -16,12 +16,33 @@
  */
 export const getGithubUserContribution = async (
   userName: string,
-  o: { githubToken: string; baseUrl?: string },
+  o: {
+    githubToken: string;
+    baseUrl?: string;
+    year?: number;
+    from?: string;
+    to?: string;
+  },
 ) => {
+  const from =
+    o.from ??
+    (o.year !== undefined ? `${o.year}-01-01T00:00:00Z` : undefined);
+
+  const to =
+    o.to ??
+    (o.year !== undefined ? `${o.year}-12-31T23:59:59Z` : undefined);
+
   const query = /* GraphQL */ `
-    query ($login: String!) {
+    query (
+      $login: String!
+      $from: DateTime
+      $to: DateTime
+    ) {
       user(login: $login) {
-        contributionsCollection {
+        contributionsCollection(
+          from: $from
+          to: $to
+        ) {
           contributionCalendar {
             weeks {
               contributionDays {
@@ -36,7 +57,12 @@ export const getGithubUserContribution = async (
       }
     }
   `;
-  const variables = { login: userName };
+
+  const variables = {
+    login: userName,
+    from,
+    to,
+  };
 
   const apiUrl = o.baseUrl
     ? `${o.baseUrl}/api/graphql`

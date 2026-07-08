@@ -10,6 +10,10 @@ import * as githubAction from "./github-action";
     const githubToken =
       process.env.GITHUB_TOKEN ?? githubAction.getInput("github_token");
 
+    const year = githubAction.getInput("year");
+    const from = githubAction.getInput("from");
+    const to = githubAction.getInput("to");
+
     const outputsRaw = [
       ...githubAction.getInput("outputs").split("\n"),
       //
@@ -23,7 +27,14 @@ import * as githubAction from "./github-action";
     const outputs = parseOutputsOption(outputsRaw);
 
     const results = await generateSnakeAnimation(
-      { platform: "github", username: userName, githubToken },
+      { 
+        platform: "github", 
+        username: userName, 
+        githubToken,
+        year: year ? Number(year) : undefined,
+        from: from || undefined,
+        to: to || undefined
+      },
       outputs,
     );
 

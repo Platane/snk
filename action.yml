@@ -10,10 +10,24 @@ inputs:
   github_user_name:
     description: "github user name"
     required: true
+
   github_token:
     description: "github token used to fetch the contribution calendar. Default to the action token if empty."
     required: false
     default: ${{ github.token }}
+
+  year:
+    description: "Contribution year to render"
+    required: false
+
+  from:
+    description: "Contribution start date (ISO-8601)"
+    required: false
+
+  to:
+    description: "Contribution end date (ISO-8601)"
+    required: false
+
   outputs:
     required: false
     description: |

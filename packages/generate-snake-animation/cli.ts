@@ -28,11 +28,14 @@ const { values } = parseArgs({
     github_token: { type: "string" },
     gitlab_user: { type: "string" },
     forgejo_user: { type: "string" },
+    year: { type: "string" },
+    from: { type: "string" },
+    to: { type: "string" },
     output: { type: "string", multiple: true },
   },
 });
 
-const { github_user, github_token, gitlab_user, forgejo_user, output } = values;
+const { github_user, github_token, gitlab_user, forgejo_user, year, from, to, output } = values;
 
 const set = [github_user, gitlab_user, forgejo_user].filter(Boolean);
 if (set.length === 0) {
@@ -75,6 +78,9 @@ const source: Source = (() => {
       githubToken,
       username,
       baseUrl,
+      year: year ? Number(year) : undefined,
+      from: from,
+      to: to,
     };
   }
 
