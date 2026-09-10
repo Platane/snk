@@ -32,14 +32,15 @@ Available as github action. It can automatically generate a new image each day. 
 
 ## Multi-source (GitHub + GitLab + WakaTime)
 
-Merge calendars from multiple platforms into one snake. Cell colors encode **where** activity came from (presence mix):
+Merge calendars from multiple platforms into one snake. Cell colors encode **where** activity came from (presence mix in OKLCH):
 
-- GitHub → green (`#40c463`)
-- WakaTime → yellow (`#f1e05a`)
-- GitLab → orange (`#fc6D26`)
-- Overlaps → equal RGB blend of active sources
+- Shared lightness/chroma from GitHub active `oklch(74.35% 0.1501 144.10)`; only **hue** changes per source
+- GitHub → green (base hue)
+- WakaTime → yellow (hue from `#f1e05a`)
+- GitLab → orange (hue from `#fc6D26`)
+- Overlaps → average L / C and circular-mean H; colors are emitted as native `oklch(...)` in the SVG
 
-The SVG includes a header legend in order **GitHub · WakaTime · GitLab**. Use palettes `sources` / `sources-dark` (dark empty cells use `#2d333b`).
+The SVG includes a header legend in order **GitHub · WakaTime · GitLab**. Use palettes `sources` / `sources-dark` (dark empty cells use `oklch(31.03% 0.0227 256.41)`).
 
 ```bash
 bun packages/generate-snake-animation/cli.ts \
