@@ -25,6 +25,7 @@ export { basePalettes, palettes } from "./palettes";
 export { mergeContributionCells, PLATFORM_BITS } from "./mergeContributionCells";
 export {
   blendHex,
+  blendOklch,
   buildSourcesColorDots,
   SOURCE_COLORS,
   SOURCE_LABELS,

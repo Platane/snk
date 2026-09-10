@@ -1,7 +1,140 @@
+export type Oklch = { l: number; c: number; h: number };
+
+/**
+ * Dark empty from GitHub ladder step 0.
+ * `#29313C` → oklch(31.03% 0.0227 256.41)
+ */
+export const EMPTY_DARK = "oklch(31.03% 0.0227 256.41)";
+
+/** Light empty (unchanged hex — fine in SVG). */
+export const EMPTY_LIGHT = "#ebedf0";
+
+/**
+ * GitHub active base: brightest ladder step `#6BC46C`
+ * oklch(74.35% 0.1501 144.10)
+ */
+export const GH_ACTIVE: Oklch = { l: 0.7435, c: 0.1501, h: 144.1 };
+
+/** Format OKLCH as a CSS/SVG color (percent lightness). */
+export const formatOklch = ({ l, c, h }: Oklch): string => {
+  const lp = (l <= 1 ? l * 100 : l).toFixed(2).replace(/\.?0+$/, "");
+  const cp = Number(c.toFixed(4));
+  const hp = Number(h.toFixed(2));
+  return `oklch(${lp}% ${cp} ${hp})`;
+};
+
+/** Parse `oklch(...)` or fall back to hex→OKLCH for brand seed hues. */
+export const parseOklch = (color: string): Oklch => {
+  const m = color
+    .trim()
+    .match(
+      /^oklch\(\s*([\d.]+)%?\s+([\d.]+)\s+([\d.]+)(?:deg)?\s*\)$/i,
+    );
+  if (m) {
+    let l = parseFloat(m[1]!);
+    if (l > 1) l = l / 100;
+    return { l, c: parseFloat(m[2]!), h: parseFloat(m[3]!) };
+  }
+  return hexToOklch(color);
+};
+
+const lin = (c: number) =>
+  c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+
+const parseHex = (hex: string): [number, number, number] => {
+  const h = hex.replace("#", "");
+  const full =
+    h.length === 3
+      ? h
+          .split("")
+          .map((c) => c + c)
+          .join("")
+      : h;
+  return [
+    parseInt(full.slice(0, 2), 16) / 255,
+    parseInt(full.slice(2, 4), 16) / 255,
+    parseInt(full.slice(4, 6), 16) / 255,
+  ];
+};
+
+/** sRGB hex → OKLCH (only used to seed brand hues from `#fc6D26` / `#f1e05a`). */
+export const hexToOklch = (hex: string): Oklch => {
+  const [r8, g8, b8] = parseHex(hex);
+  const r = lin(r8);
+  const g = lin(g8);
+  const b = lin(b8);
+
+  const l_ =
+    0.4122214708 * r + 0.5363325363 * g + 0.0514459929 * b;
+  const m_ =
+    0.2119034982 * r + 0.6806995451 * g + 0.1073969566 * b;
+  const s_ =
+    0.0883024619 * r + 0.2817188376 * g + 0.6299787005 * b;
+
+  const l = Math.cbrt(l_);
+  const m = Math.cbrt(m_);
+  const s = Math.cbrt(s_);
+
+  const L = 0.2104542553 * l + 0.793617785 * m - 0.0040720468 * s;
+  const a = 1.9779984951 * l - 2.428592205 * m + 0.4505937099 * s;
+  const bLab = 0.0259040371 * l + 0.7827717662 * m - 0.808675766 * s;
+
+  const c = Math.sqrt(a * a + bLab * bLab);
+  let h = (Math.atan2(bLab, a) * 180) / Math.PI;
+  if (h < 0) h += 360;
+
+  return { l: L, c, h };
+};
+
+export const withHue = (base: Oklch, h: number): Oklch => ({
+  l: base.l,
+  c: base.c,
+  h: ((h % 360) + 360) % 360,
+});
+
+export const hueOf = (color: string): number => parseOklch(color).h;
+
+/** Circular mean of hues in degrees. */
+const circularMeanHue = (hues: number[]): number => {
+  let x = 0;
+  let y = 0;
+  for (const h of hues) {
+    const r = (h * Math.PI) / 180;
+    x += Math.cos(r);
+    y += Math.sin(r);
+  }
+  const n = hues.length || 1;
+  let deg = (Math.atan2(y / n, x / n) * 180) / Math.PI;
+  if (deg < 0) deg += 360;
+  return deg;
+};
+
+/**
+ * Presence mix in OKLCH: average L, C, and circular-mean H.
+ * Returns an `oklch(...)` CSS color string (valid in SVG fills).
+ */
+export const blendOklch = (colors: string[]): string => {
+  if (colors.length === 0) return "oklch(0% 0 0)";
+  if (colors.length === 1) return formatOklch(parseOklch(colors[0]!));
+
+  const parts = colors.map(parseOklch);
+  const n = parts.length;
+  const l = parts.reduce((s, p) => s + p.l, 0) / n;
+  const c = parts.reduce((s, p) => s + p.c, 0) / n;
+  const h = circularMeanHue(parts.map((p) => p.h));
+  return formatOklch({ l, c, h });
+};
+
+/** @deprecated Alias — blends in OKLCH and returns `oklch(...)`. */
+export const blendHex = blendOklch;
+
+const GITLAB_BRAND_HEX = "#fc6D26";
+const WAKATIME_BRAND_HEX = "#f1e05a";
+
 export const SOURCE_COLORS = {
-  github: "#40c463",
-  gitlab: "#fc6D26",
-  wakatime: "#f1e05a",
+  github: formatOklch(GH_ACTIVE),
+  gitlab: formatOklch(withHue(GH_ACTIVE, hueOf(GITLAB_BRAND_HEX))),
+  wakatime: formatOklch(withHue(GH_ACTIVE, hueOf(WAKATIME_BRAND_HEX))),
 } as const;
 
 export type SourceColorKey = keyof typeof SOURCE_COLORS;
@@ -17,38 +150,6 @@ export const SOURCE_LABELS: Record<SourceColorKey, string> = {
   github: "GitHub",
   gitlab: "GitLab",
   wakatime: "WakaTime",
-};
-
-/** Average RGB of hex colors (presence mix). */
-export const blendHex = (colors: string[]): string => {
-  if (colors.length === 0) return "#000000";
-  if (colors.length === 1) return colors[0]!.toLowerCase();
-
-  let r = 0;
-  let g = 0;
-  let b = 0;
-
-  for (const hex of colors) {
-    const h = hex.replace("#", "");
-    const full =
-      h.length === 3
-        ? h
-            .split("")
-            .map((c) => c + c)
-            .join("")
-        : h;
-    r += parseInt(full.slice(0, 2), 16);
-    g += parseInt(full.slice(2, 4), 16);
-    b += parseInt(full.slice(4, 6), 16);
-  }
-
-  const n = colors.length;
-  const toHex = (v: number) =>
-    Math.round(v / n)
-      .toString(16)
-      .padStart(2, "0");
-
-  return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
 };
 
 /**
@@ -67,16 +168,16 @@ export const buildSourcesColorDots = (
     empty, // 0
     gh, // 1 GitHub
     gl, // 2 GitLab
-    blendHex([gh, gl]), // 3
+    blendOklch([gh, gl]), // 3
     wt, // 4 WakaTime
-    blendHex([gh, wt]), // 5
-    blendHex([gl, wt]), // 6
-    blendHex([gh, gl, wt]), // 7
+    blendOklch([gh, wt]), // 5
+    blendOklch([gl, wt]), // 6
+    blendOklch([gh, gl, wt]), // 7
   ];
 };
 
-const sourcesLightDots = buildSourcesColorDots("#ebedf0");
-const sourcesDarkDots = buildSourcesColorDots("#2d333b");
+const sourcesLightDots = buildSourcesColorDots(EMPTY_LIGHT);
+const sourcesDarkDots = buildSourcesColorDots(EMPTY_DARK);
 
 export const basePalettes = {
   "github-light": {
@@ -138,14 +239,14 @@ export const basePalettes = {
   "sources-light": {
     colorBackground: "#ffffff",
     colorDotBorder: "#1b1f230a",
-    colorEmpty: "#ebedf0",
+    colorEmpty: EMPTY_LIGHT,
     colorDots: sourcesLightDots,
     colorSnake: "#6e40c9",
   },
   "sources-dark": {
     colorBackground: "#0c1116",
     colorDotBorder: "#1b1f230a",
-    colorEmpty: "#2d333b",
+    colorEmpty: EMPTY_DARK,
     colorDots: sourcesDarkDots,
     colorSnake: "#a371f7",
   },
