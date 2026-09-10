@@ -1,3 +1,76 @@
+export const SOURCE_COLORS = {
+  github: "#40c463",
+  gitlab: "#fc6D26",
+  wakatime: "#292FBB",
+} as const;
+
+export type SourceColorKey = keyof typeof SOURCE_COLORS;
+
+export const SOURCE_LABELS: Record<SourceColorKey, string> = {
+  github: "GitHub",
+  gitlab: "GitLab",
+  wakatime: "WakaTime",
+};
+
+/** Average RGB of hex colors (presence mix). */
+export const blendHex = (colors: string[]): string => {
+  if (colors.length === 0) return "#000000";
+  if (colors.length === 1) return colors[0]!.toLowerCase();
+
+  let r = 0;
+  let g = 0;
+  let b = 0;
+
+  for (const hex of colors) {
+    const h = hex.replace("#", "");
+    const full =
+      h.length === 3
+        ? h
+            .split("")
+            .map((c) => c + c)
+            .join("")
+        : h;
+    r += parseInt(full.slice(0, 2), 16);
+    g += parseInt(full.slice(2, 4), 16);
+    b += parseInt(full.slice(4, 6), 16);
+  }
+
+  const n = colors.length;
+  const toHex = (v: number) =>
+    Math.round(v / n)
+      .toString(16)
+      .padStart(2, "0");
+
+  return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+};
+
+/**
+ * Build colorDots[0..7] for bitmask cells:
+ * 0 empty, 1 GH, 2 GL, 3 GH+GL, 4 WT, 5 GH+WT, 6 GL+WT, 7 all
+ */
+export const buildSourcesColorDots = (
+  empty: string,
+  brands: Partial<Record<SourceColorKey, string>> = SOURCE_COLORS,
+): string[] => {
+  const gh = brands.github ?? SOURCE_COLORS.github;
+  const gl = brands.gitlab ?? SOURCE_COLORS.gitlab;
+  const wt = brands.wakatime ?? SOURCE_COLORS.wakatime;
+
+  return [
+    empty, // 0
+    gh, // 1 GitHub
+    gl, // 2 GitLab
+    blendHex([gh, gl]), // 3
+    wt, // 4 WakaTime
+    blendHex([gh, wt]), // 5
+    blendHex([gl, wt]), // 6
+    blendHex([gh, gl, wt]), // 7
+  ];
+};
+
+const sourcesLightDots = buildSourcesColorDots("#ebedf0");
+const sourcesDarkDots = buildSourcesColorDots("#161b22");
+
 export const basePalettes = {
   "github-light": {
     colorBackground: "#ffffff",
@@ -55,6 +128,20 @@ export const basePalettes = {
     colorDots: ["#2a2a36", "#284779", "#2f68b4", "#428fdc", "#9dc7f1"],
     colorSnake: "#9dc7f1",
   },
+  "sources-light": {
+    colorBackground: "#ffffff",
+    colorDotBorder: "#1b1f230a",
+    colorEmpty: "#ebedf0",
+    colorDots: sourcesLightDots,
+    colorSnake: "#6e40c9",
+  },
+  "sources-dark": {
+    colorBackground: "#0c1116",
+    colorDotBorder: "#1b1f230a",
+    colorEmpty: "#161b22",
+    colorDots: sourcesDarkDots,
+    colorSnake: "#a371f7",
+  },
 };
 
 // aliases
@@ -66,5 +153,6 @@ export const palettes = {
   forgejo: basePalettes["forgejo-light"],
   codeberg: basePalettes["codeberg-light"],
   gitlab: basePalettes["gitlab-light"],
+  sources: basePalettes["sources-light"],
   default: basePalettes["github-light"],
 };
