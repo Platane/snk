@@ -6,9 +6,28 @@ import { getBestRoute } from "@snk/solver/getBestRoute";
 import { getPathToPose } from "@snk/solver/getPathToPose";
 import type { DrawOptions } from "@snk/svg-creator";
 import { snake4 } from "@snk/types/__fixtures__/snake";
+import { getWakatimeUserContribution } from "@snk/wakatime-user-contribution";
 import { cellsToGrid } from "./cellsToGrid";
+import {
+  mergeContributionCells,
+  PLATFORM_BITS,
+  type ContributionCell,
+} from "./mergeContributionCells";
+import {
+  buildSourcesColorDots,
+  SOURCE_COLORS,
+  SOURCE_LABELS,
+  type SourceColorKey,
+} from "./palettes";
 
 export { basePalettes, palettes } from "./palettes";
+export { mergeContributionCells, PLATFORM_BITS } from "./mergeContributionCells";
+export {
+  blendHex,
+  buildSourcesColorDots,
+  SOURCE_COLORS,
+  SOURCE_LABELS,
+} from "./palettes";
 
 export type Source =
   | {
@@ -18,7 +37,9 @@ export type Source =
       baseUrl?: string;
     }
   | { platform: "gitlab"; username: string; baseUrl?: string }
-  | { platform: "forgejo"; username: string; baseUrl: string };
+  | { platform: "forgejo"; username: string; baseUrl: string }
+  | { platform: "wakatime"; apiKey: string };
+// bitbucket reserved for later
 
 export type Output = {
   format: "svg" | "gif";
@@ -26,7 +47,9 @@ export type Output = {
   animationOptions: AnimationOptions;
 };
 
-export const getUserContribution = async (source: Source) => {
+export const getUserContribution = async (
+  source: Source,
+): Promise<ContributionCell[]> => {
   switch (source.platform) {
     case "github":
       return getGithubUserContribution(source.username, {
@@ -41,15 +64,94 @@ export const getUserContribution = async (source: Source) => {
       return getForgejoUserContribution(source.username, {
         baseUrl: source.baseUrl,
       });
+    case "wakatime":
+      return getWakatimeUserContribution({ apiKey: source.apiKey });
   }
 };
 
+const platformToSourceKey = (
+  platform: Source["platform"],
+): SourceColorKey | null => {
+  if (platform === "github" || platform === "gitlab" || platform === "wakatime")
+    return platform;
+  return null;
+};
+
+export const buildSourcesLegend = (sources: Source[]) => {
+  const seen = new Set<SourceColorKey>();
+  const legend: { label: string; color: string }[] = [];
+
+  for (const s of sources) {
+    const key = platformToSourceKey(s.platform);
+    if (!key || seen.has(key)) continue;
+    seen.add(key);
+    legend.push({ label: SOURCE_LABELS[key], color: SOURCE_COLORS[key] });
+  }
+
+  return legend;
+};
+
+const applyMultiSourceDrawOptions = (
+  drawOptions: DrawOptions,
+  sources: Source[],
+): DrawOptions => {
+  const legend = buildSourcesLegend(sources);
+  const dots = drawOptions.colorDots as unknown as string[] | Record<string, string>;
+  const len = Array.isArray(dots)
+    ? dots.length
+    : Object.keys(dots ?? {}).length;
+
+  // Ensure bitmask palette (empty + 7 combos) unless caller already provided one.
+  const colorDots =
+    len >= 8
+      ? drawOptions.colorDots
+      : (buildSourcesColorDots(drawOptions.colorEmpty) as unknown as DrawOptions["colorDots"]);
+
+  return {
+    ...drawOptions,
+    colorDots,
+    sourcesLegend: drawOptions.sourcesLegend ?? legend,
+  };
+};
+
+/**
+ * Generate snake animation from one or more contribution sources.
+ * Multiple sources are merged by date with presence bitmasks and source colors.
+ */
 export const generateSnakeAnimation = async (
-  source: Source,
+  sources: Source | Source[],
   outputs: (Output | null)[],
 ) => {
-  console.log(`🎣 fetching user contribution from ${source.platform}`);
-  const cells = await getUserContribution(source);
+  const sourceList = Array.isArray(sources) ? sources : [sources];
+  if (sourceList.length === 0) throw new Error("No sources provided");
+
+  const multi = sourceList.length > 1;
+
+  console.log(
+    `🎣 fetching user contribution from ${sourceList
+      .map((s) => s.platform)
+      .join(" + ")}`,
+  );
+
+  const fetched = await Promise.all(sourceList.map(getUserContribution));
+
+  let cells: ContributionCell[];
+  if (multi) {
+    const labeled = sourceList.map((s, i) => {
+      const bit =
+        PLATFORM_BITS[s.platform as keyof typeof PLATFORM_BITS] ??
+        (() => {
+          throw new Error(
+            `Platform ${s.platform} cannot be used in multi-source merge`,
+          );
+        })();
+      return { bit, cells: fetched[i]! };
+    });
+    cells = mergeContributionCells(labeled);
+  } else {
+    cells = fetched[0]!;
+  }
+
   const grid = cellsToGrid(cells);
   const snake = snake4;
 
@@ -60,7 +162,11 @@ export const generateSnakeAnimation = async (
   return Promise.all(
     outputs.map(async (out, i) => {
       if (!out) return;
-      const { format, drawOptions, animationOptions } = out;
+      const { format, animationOptions } = out;
+      const drawOptions = multi
+        ? applyMultiSourceDrawOptions(out.drawOptions, sourceList)
+        : out.drawOptions;
+
       switch (format) {
         case "svg": {
           console.log(`🖌 creating svg (outputs[${i}])`);
