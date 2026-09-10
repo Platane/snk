@@ -1,7 +1,10 @@
 import { describe, it, expect } from "bun:test";
 import {
   buildIntensityColorDots,
+  buildIntensityLegendColors,
+  colorAtHue,
   colorForCell,
+  dominantHueFromCells,
   EMPTY_DARK,
   EMPTY_LIGHT,
   formatOklch,
@@ -10,6 +13,7 @@ import {
   INTENSITY_LEGEND_COLORS,
   parseOklch,
   SOURCE_COLORS,
+  SOURCE_HUES,
   SOURCE_LEGEND_ORDER,
   strokeForCell,
   withHue,
@@ -70,6 +74,52 @@ describe("colorForCell / strokeForCell", () => {
   });
 });
 
+describe("dominantHueFromCells", () => {
+  const angularDist = (a: number, b: number) => {
+    const d = Math.abs(a - b) % 360;
+    return Math.min(d, 360 - d);
+  };
+
+  it("falls back to GitHub hue when there is no activity", () => {
+    expect(dominantHueFromCells([])).toBeCloseTo(GH_ACTIVE.h, 5);
+    expect(
+      dominantHueFromCells([{ sources: 0, level: 0 }, { sources: 1, level: 0 }]),
+    ).toBeCloseTo(GH_ACTIVE.h, 5);
+  });
+
+  it("pushes toward GitHub when GH-heavy", () => {
+    const hue = dominantHueFromCells([
+      { sources: 1, level: 4 },
+      { sources: 1, level: 4 },
+      { sources: 1, level: 3 },
+      { sources: 2, level: 1 },
+    ]);
+    expect(angularDist(hue, SOURCE_HUES.github)).toBeLessThan(
+      angularDist(hue, SOURCE_HUES.gitlab),
+    );
+  });
+
+  it("pushes toward GitLab when GL-heavy", () => {
+    const hue = dominantHueFromCells([
+      { sources: 2, level: 4 },
+      { sources: 2, level: 4 },
+      { sources: 2, level: 3 },
+      { sources: 1, level: 1 },
+    ]);
+    expect(angularDist(hue, SOURCE_HUES.gitlab)).toBeLessThan(
+      angularDist(hue, SOURCE_HUES.github),
+    );
+  });
+
+  it("weights by intensity across set bits", () => {
+    const hue = dominantHueFromCells([{ sources: 1 | 2, level: 4 }]);
+    const lo = Math.min(SOURCE_HUES.github, SOURCE_HUES.gitlab);
+    const hi = Math.max(SOURCE_HUES.github, SOURCE_HUES.gitlab);
+    expect(hue).toBeGreaterThan(lo);
+    expect(hue).toBeLessThan(hi);
+  });
+});
+
 describe("SOURCE_COLORS / legends", () => {
   it("emits oklch() for every source", () => {
     expect(SOURCE_COLORS.github).toMatch(/^oklch\(/);
@@ -93,5 +143,17 @@ describe("SOURCE_COLORS / legends", () => {
     const dots = buildIntensityColorDots(EMPTY_LIGHT);
     expect(dots).toHaveLength(5);
     expect(dots[0]).toBe(EMPTY_LIGHT);
+  });
+
+  it("tints stack and Less/More with the given hue at levels 1–4", () => {
+    const hue = SOURCE_HUES.gitlab;
+    const dots = buildIntensityColorDots(EMPTY_LIGHT, hue);
+    const legend = buildIntensityLegendColors(hue);
+    for (let lv = 1; lv <= 4; lv++) {
+      expect(parseOklch(dots[lv]!).h).toBeCloseTo(hue, 1);
+      expect(parseOklch(legend[lv]!).h).toBeCloseTo(hue, 1);
+      expect(dots[lv]).toMatch(/^oklch\(/);
+      expect(legend[lv]).toBe(colorAtHue(lv, hue));
+    }
   });
 });
