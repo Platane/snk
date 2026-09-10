@@ -15,10 +15,10 @@ inputs:
     required: false
     default: ${{ github.token }}
   gitlab_user:
-    description: "GitLab username, optionally host/username for self-hosted (e.g. gitlab.example.com/user)"
+    description: "GitLab username(s), optionally host/username. Multiple: one per line."
     required: false
   gitlab_base_url:
-    description: "Override GitLab base URL (e.g. https://gitlab.example.com)"
+    description: "Override GitLab base URL for all gitlab_user entries without a host (e.g. https://gitlab.example.com)"
     required: false
   wakatime:
     description: "If true, include WakaTime activity (requires WAKATIME_API_KEY env)"

@@ -38,12 +38,19 @@ const parseUser = (uri: string) => {
     }
 
     if (gitlabUser) {
-      const parsed = parseUser(gitlabUser);
-      sources.push({
-        platform: "gitlab",
-        username: parsed.username,
-        baseUrl: gitlabBaseUrl || parsed.baseUrl,
-      });
+      // One host/user per line (or comma-separated) for multiple GitLab instances
+      const entries = gitlabUser
+        .split(/[\n,]+/)
+        .map((x) => x.trim())
+        .filter(Boolean);
+      for (const entry of entries) {
+        const parsed = parseUser(entry);
+        sources.push({
+          platform: "gitlab",
+          username: parsed.username,
+          baseUrl: gitlabBaseUrl || parsed.baseUrl,
+        });
+      }
     }
 
     if (useWakatime) {
