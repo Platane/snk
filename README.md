@@ -35,11 +35,11 @@ Available as github action. It can automatically generate a new image each day. 
 Merge calendars from multiple platforms into one snake. Cell colors encode **where** activity came from (presence mix):
 
 - GitHub → green (`#40c463`)
+- WakaTime → yellow (`#f1e05a`)
 - GitLab → orange (`#fc6D26`)
-- WakaTime → blue (`#292FBB`)
 - Overlaps → equal RGB blend of active sources
 
-The SVG includes a header legend naming the enabled sources. Use palettes `sources` / `sources-dark`.
+The SVG includes a header legend in order **GitHub · WakaTime · GitLab**. Use palettes `sources` / `sources-dark` (dark empty cells use `#2d333b`).
 
 ```bash
 bun packages/generate-snake-animation/cli.ts \
