@@ -39,12 +39,13 @@ Merge calendars from multiple platforms into one snake. Each day encodes **sourc
 - Cells use native `oklch(...)` fills with a **1px stroke** slightly darker in lightness
 - SVG chrome: month labels, Mon/Wed/Fri, source legend (bottom-left), Less → More ladder (bottom-right)
 
-Use palettes `sources` / `sources-dark`.
+Use palettes `sources` / `sources-dark`. Pass `--gitlab_user` multiple times to merge several GitLab hosts (e.g. gitlab.com + self-hosted); they share the GitLab hue.
 
 ```bash
 bun packages/generate-snake-animation/cli.ts \
   --github_user=your-github \
-  --gitlab_user=gitlab.example.com/your-gitlab \
+  --gitlab_user=your-gitlab-com-user \
+  --gitlab_user=gitlab.example.com/your-self-hosted-user \
   --wakatime \
   --output=dist/multi-snake.svg?palette=sources \
   --output=dist/multi-snake-dark.svg?palette=sources-dark

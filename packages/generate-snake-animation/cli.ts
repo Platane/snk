@@ -12,7 +12,11 @@ import { parseOutputsOption } from "./outputsOptions";
  *   generate-snake-animation --forgejo_user=<host/username>   --output=<file> [--output=<file> ...]
  *   generate-snake-animation --wakatime --output=<file> [...]
  *
- * Combine GitHub + GitLab + WakaTime for a multi-source snake (presence-blended colors):
+ * Multiple GitLab instances (same orange hue, calendars merged):
+ *   --gitlab_user=Johann-Goncalves-Pereira \
+ *   --gitlab_user=gitlab.materialize.pro/johannpereira
+ *
+ * Combine GitHub + GitLab + WakaTime for a multi-source snake:
  *   generate-snake-animation \
  *     --github_user=platane \
  *     --gitlab_user=gitlab.example.com/user \
@@ -30,7 +34,7 @@ const { values } = parseArgs({
   options: {
     github_user: { type: "string" },
     github_token: { type: "string" },
-    gitlab_user: { type: "string" },
+    gitlab_user: { type: "string", multiple: true },
     forgejo_user: { type: "string" },
     wakatime: { type: "boolean", default: false },
     output: { type: "string", multiple: true },
@@ -46,12 +50,13 @@ const usage = [
   "  generate-snake-animation --gitlab_user=<[host/]username> --output=<file> [...]",
   "  generate-snake-animation --forgejo_user=<host/username> --output=<file> [...]",
   "  generate-snake-animation --wakatime --output=<file> [...]",
+  "  repeat --gitlab_user for multiple GitLab hosts",
   "  combine --github_user + --gitlab_user + --wakatime for multi-source",
   "",
   "Examples:",
   "  generate-snake-animation --github_user=platane --output=snake.svg",
   "  generate-snake-animation --gitlab_user=gitlab.mycompany.com/username --output=snake.svg",
-  "  generate-snake-animation --github_user=me --gitlab_user=host/me --wakatime --output=multi.svg?palette=sources",
+  "  generate-snake-animation --github_user=me --gitlab_user=me --gitlab_user=host/me --wakatime --output=multi.svg?palette=sources",
 ].join("\n");
 
 const parseUser = (uri: string) => {
@@ -77,8 +82,8 @@ if (github_user) {
   });
 }
 
-if (gitlab_user) {
-  const { username, baseUrl } = parseUser(gitlab_user);
+for (const gitlab of gitlab_user ?? []) {
+  const { username, baseUrl } = parseUser(gitlab);
   sources.push({
     platform: "gitlab",
     username,
