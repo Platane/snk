@@ -30,6 +30,30 @@ Generate a [gif](https://github.com/Platane/snk/raw/output/github-contribution-g
 
 Available as github action. It can automatically generate a new image each day. Which makes for great [github profile readme](https://docs.github.com/en/free-pro-team@latest/github/setting-up-and-managing-your-github-profile/managing-your-profile-readme)
 
+## Multi-source (GitHub + GitLab + WakaTime)
+
+Merge calendars from multiple platforms into one snake. Cell colors encode **where** activity came from (presence mix):
+
+- GitHub → green (`#40c463`)
+- GitLab → orange (`#fc6D26`)
+- WakaTime → blue (`#292FBB`)
+- Overlaps → equal RGB blend of active sources
+
+The SVG includes a header legend naming the enabled sources. Use palettes `sources` / `sources-dark`.
+
+```bash
+bun packages/generate-snake-animation/cli.ts \
+  --github_user=your-github \
+  --gitlab_user=gitlab.example.com/your-gitlab \
+  --wakatime \
+  --output=dist/multi-snake.svg?palette=sources \
+  --output=dist/multi-snake-dark.svg?palette=sources-dark
+```
+
+Requires `GITHUB_TOKEN` and `WAKATIME_API_KEY` in the environment when those sources are enabled.
+
+Bitbucket is reserved (bitmask `8`) for a later release.
+
 ## Usage
 
 ### **github action**
