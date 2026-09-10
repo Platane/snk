@@ -97,18 +97,25 @@ export const withHue = (base: Oklch, h: number): Oklch => ({
 
 export const hueOf = (color: string): number => parseOklch(color).h;
 
-/** Circular mean of hues in degrees. */
-export const circularMeanHue = (hues: number[]): number => {
+/** Circular mean of hues in degrees (optional equal or weighted samples). */
+export const circularMeanHue = (
+  hues: number[],
+  weights?: number[],
+): number => {
   if (hues.length === 0) return 0;
   let x = 0;
   let y = 0;
-  for (const h of hues) {
-    const r = (h * Math.PI) / 180;
-    x += Math.cos(r);
-    y += Math.sin(r);
+  let wSum = 0;
+  for (let i = 0; i < hues.length; i++) {
+    const w = weights?.[i] ?? 1;
+    if (w <= 0) continue;
+    const r = (hues[i]! * Math.PI) / 180;
+    x += w * Math.cos(r);
+    y += w * Math.sin(r);
+    wSum += w;
   }
-  const n = hues.length;
-  let deg = (Math.atan2(y / n, x / n) * 180) / Math.PI;
+  if (wSum <= 0) return 0;
+  let deg = (Math.atan2(y / wSum, x / wSum) * 180) / Math.PI;
   if (deg < 0) deg += 360;
   return deg;
 };
@@ -158,6 +165,45 @@ export const hueForSources = (sources: number): number => {
   return hues.length ? circularMeanHue(hues) : GH_LADDER[0]!.h;
 };
 
+/**
+ * Intensity-weighted circular mean of source hues across the year.
+ * Each active bit on a cell contributes `level` weight toward that brand hue.
+ */
+export const dominantHueFromCells = (
+  cells: { sources: number; level: number }[],
+): number => {
+  const weights: Record<SourceColorKey, number> = {
+    github: 0,
+    gitlab: 0,
+    wakatime: 0,
+  };
+
+  for (const c of cells) {
+    if (c.level <= 0 || c.sources <= 0) continue;
+    for (const [bit, key] of Object.entries(SOURCE_BIT_TO_KEY)) {
+      if (c.sources & Number(bit)) weights[key] += c.level;
+    }
+  }
+
+  const keys = (Object.keys(weights) as SourceColorKey[]).filter(
+    (k) => weights[k] > 0,
+  );
+  if (keys.length === 0) return GH_ACTIVE.h;
+
+  return circularMeanHue(
+    keys.map((k) => SOURCE_HUES[k]),
+    keys.map((k) => weights[k]),
+  );
+};
+
+/** Ladder fill at an explicit hue (level 0 keeps empty step as-is). */
+export const colorAtHue = (level: number, hue: number): string => {
+  const lv = Math.max(0, Math.min(4, Math.round(level))) as 0 | 1 | 2 | 3 | 4;
+  const step = GH_LADDER[lv]!;
+  if (lv === 0) return formatOklch({ ...GH_LADDER[0]! });
+  return formatOklch(withHue(step, hue));
+};
+
 export const oklchForCell = (sources: number, level: number): Oklch => {
   const lv = Math.max(0, Math.min(4, Math.round(level))) as 0 | 1 | 2 | 3 | 4;
   const step = GH_LADDER[lv]!;
@@ -198,21 +244,34 @@ export const SOURCE_LABELS: Record<SourceColorKey, string> = {
   wakatime: "WakaTime",
 };
 
-/** Intensity legend swatches (GitHub hue ladder, levels 0–4). */
-export const INTENSITY_LEGEND_COLORS = GH_LADDER.map((_, i) =>
-  colorForCell(1, i),
-);
+/** Intensity legend swatches (optional hue; default GitHub). */
+export const buildIntensityLegendColors = (
+  hue: number = GH_ACTIVE.h,
+  empty?: string,
+): string[] => {
+  const ladder = [0, 1, 2, 3, 4].map((lv) => colorAtHue(lv, hue));
+  if (empty && !empty.startsWith("oklch")) {
+    return [empty, ...ladder.slice(1)];
+  }
+  return ladder;
+};
+
+/** @deprecated Prefer buildIntensityLegendColors(hue). */
+export const INTENSITY_LEGEND_COLORS = buildIntensityLegendColors();
 
 /**
- * Stack / solver palette: empty + intensity 1–4 at GitHub hue
- * (pathfinding uses intensity only).
+ * Stack / solver palette: empty + intensity 1–4 at the given hue
+ * (pathfinding uses intensity only; stack CSS uses these dots).
  */
-export const buildIntensityColorDots = (empty: string): string[] => [
+export const buildIntensityColorDots = (
+  empty: string,
+  hue: number = GH_ACTIVE.h,
+): string[] => [
   empty,
-  colorForCell(1, 1),
-  colorForCell(1, 2),
-  colorForCell(1, 3),
-  colorForCell(1, 4),
+  colorAtHue(1, hue),
+  colorAtHue(2, hue),
+  colorAtHue(3, hue),
+  colorAtHue(4, hue),
 ];
 
 /** @deprecated Prefer colorForCell; kept for callers expecting 8 bitmask slots. */
