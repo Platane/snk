@@ -1,5 +1,10 @@
 import { describe, it, expect } from "bun:test";
-import { blendHex, buildSourcesColorDots, SOURCE_COLORS } from "../palettes";
+import {
+  blendHex,
+  buildSourcesColorDots,
+  SOURCE_COLORS,
+  SOURCE_LEGEND_ORDER,
+} from "../palettes";
 
 describe("blendHex", () => {
   it("returns the same color for a single input", () => {
@@ -8,6 +13,22 @@ describe("blendHex", () => {
 
   it("averages two colors", () => {
     expect(blendHex(["#000000", "#ffffff"])).toBe("#808080");
+  });
+});
+
+describe("SOURCE_COLORS", () => {
+  it("uses yellow for WakaTime", () => {
+    expect(SOURCE_COLORS.wakatime).toBe("#f1e05a");
+  });
+});
+
+describe("SOURCE_LEGEND_ORDER", () => {
+  it("places WakaTime between GitHub and GitLab", () => {
+    expect([...SOURCE_LEGEND_ORDER]).toEqual([
+      "github",
+      "wakatime",
+      "gitlab",
+    ]);
   });
 });
 
@@ -27,5 +48,10 @@ describe("buildSourcesColorDots", () => {
         SOURCE_COLORS.wakatime,
       ]),
     );
+  });
+
+  it("uses restored dark empty color #2d333b", () => {
+    const dots = buildSourcesColorDots("#2d333b");
+    expect(dots[0]).toBe("#2d333b");
   });
 });

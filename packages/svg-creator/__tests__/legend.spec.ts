@@ -24,8 +24,8 @@ it("should render sources legend in the svg header", async () => {
     colorSnake: "purple",
     sourcesLegend: [
       { label: "GitHub", color: "#40c463" },
+      { label: "WakaTime", color: "#f1e05a" },
       { label: "GitLab", color: "#fc6D26" },
-      { label: "WakaTime", color: "#292FBB" },
     ],
   };
 
@@ -35,9 +35,11 @@ it("should render sources legend in the svg header", async () => {
   });
 
   expect(svg).toContain("GitHub");
-  expect(svg).toContain("GitLab");
   expect(svg).toContain("WakaTime");
+  expect(svg).toContain("GitLab");
   expect(svg).toContain("#40c463");
+  expect(svg).toContain("#f1e05a");
   expect(svg).toContain("#fc6D26");
-  expect(svg).toContain("#292FBB");
+  expect(svg.indexOf("GitHub")).toBeLessThan(svg.indexOf("WakaTime"));
+  expect(svg.indexOf("WakaTime")).toBeLessThan(svg.indexOf("GitLab"));
 });

@@ -1,10 +1,17 @@
 export const SOURCE_COLORS = {
   github: "#40c463",
   gitlab: "#fc6D26",
-  wakatime: "#292FBB",
+  wakatime: "#f1e05a",
 } as const;
 
 export type SourceColorKey = keyof typeof SOURCE_COLORS;
+
+/** Fixed legend order: WakaTime between GitHub and GitLab. */
+export const SOURCE_LEGEND_ORDER: readonly SourceColorKey[] = [
+  "github",
+  "wakatime",
+  "gitlab",
+];
 
 export const SOURCE_LABELS: Record<SourceColorKey, string> = {
   github: "GitHub",
@@ -69,7 +76,7 @@ export const buildSourcesColorDots = (
 };
 
 const sourcesLightDots = buildSourcesColorDots("#ebedf0");
-const sourcesDarkDots = buildSourcesColorDots("#161b22");
+const sourcesDarkDots = buildSourcesColorDots("#2d333b");
 
 export const basePalettes = {
   "github-light": {
@@ -138,7 +145,7 @@ export const basePalettes = {
   "sources-dark": {
     colorBackground: "#0c1116",
     colorDotBorder: "#1b1f230a",
-    colorEmpty: "#161b22",
+    colorEmpty: "#2d333b",
     colorDots: sourcesDarkDots,
     colorSnake: "#a371f7",
   },

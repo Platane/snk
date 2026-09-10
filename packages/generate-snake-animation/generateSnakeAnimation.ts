@@ -17,6 +17,7 @@ import {
   buildSourcesColorDots,
   SOURCE_COLORS,
   SOURCE_LABELS,
+  SOURCE_LEGEND_ORDER,
   type SourceColorKey,
 } from "./palettes";
 
@@ -27,6 +28,7 @@ export {
   buildSourcesColorDots,
   SOURCE_COLORS,
   SOURCE_LABELS,
+  SOURCE_LEGEND_ORDER,
 } from "./palettes";
 
 export type Source =
@@ -78,17 +80,17 @@ const platformToSourceKey = (
 };
 
 export const buildSourcesLegend = (sources: Source[]) => {
-  const seen = new Set<SourceColorKey>();
-  const legend: { label: string; color: string }[] = [];
+  const enabled = new Set<SourceColorKey>();
 
   for (const s of sources) {
     const key = platformToSourceKey(s.platform);
-    if (!key || seen.has(key)) continue;
-    seen.add(key);
-    legend.push({ label: SOURCE_LABELS[key], color: SOURCE_COLORS[key] });
+    if (key) enabled.add(key);
   }
 
-  return legend;
+  return SOURCE_LEGEND_ORDER.filter((key) => enabled.has(key)).map((key) => ({
+    label: SOURCE_LABELS[key],
+    color: SOURCE_COLORS[key],
+  }));
 };
 
 const applyMultiSourceDrawOptions = (
