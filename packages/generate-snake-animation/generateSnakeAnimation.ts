@@ -15,8 +15,9 @@ import {
 } from "./mergeContributionCells";
 import {
   buildIntensityColorDots,
+  buildIntensityLegendColors,
   colorForCell,
-  INTENSITY_LEGEND_COLORS,
+  dominantHueFromCells,
   SOURCE_COLORS,
   SOURCE_LABELS,
   SOURCE_LEGEND_ORDER,
@@ -31,7 +32,9 @@ export {
   blendOklch,
   buildSourcesColorDots,
   buildIntensityColorDots,
+  buildIntensityLegendColors,
   colorForCell,
+  dominantHueFromCells,
   strokeForCell,
   INTENSITY_LEGEND_COLORS,
   SOURCE_COLORS,
@@ -140,19 +143,21 @@ const withCellStyles = (
 const applyMultiSourceDrawOptions = (
   drawOptions: DrawOptions,
   sources: Source[],
+  cells: ContributionCell[],
 ): DrawOptions => {
   const legend = buildSourcesLegend(sources);
   const empty = drawOptions.colorEmpty;
+  const hue = dominantHueFromCells(
+    cells.map((c) => ({ sources: c.sources ?? 0, level: c.level ?? 0 })),
+  );
   const colorDots = buildIntensityColorDots(
     empty,
+    hue,
   ) as unknown as DrawOptions["colorDots"];
 
-  // Intensity legend: light empty + ladder 1–4 (or full dark ladder including empty)
   const intensityLegendColors =
     drawOptions.intensityLegendColors ??
-    (empty.startsWith("oklch")
-      ? [...INTENSITY_LEGEND_COLORS]
-      : [empty, ...INTENSITY_LEGEND_COLORS.slice(1)]);
+    buildIntensityLegendColors(hue, empty);
 
   return {
     ...drawOptions,
@@ -214,7 +219,7 @@ export const generateSnakeAnimation = async (
       if (!out) return;
       const { format, animationOptions } = out;
       const drawOptions = multi
-        ? applyMultiSourceDrawOptions(out.drawOptions, sourceList)
+        ? applyMultiSourceDrawOptions(out.drawOptions, sourceList, cells)
         : out.drawOptions;
 
       const emptyStroke =
