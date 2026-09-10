@@ -10,15 +10,19 @@ import { parseOutputsOption } from "./outputsOptions";
  *   generate-snake-animation --github_user=<[host/]username> --output=<file> [--output=<file> ...]
  *   generate-snake-animation --gitlab_user=<[host/]username> --output=<file> [--output=<file> ...]
  *   generate-snake-animation --forgejo_user=<host/username>   --output=<file> [--output=<file> ...]
+ *   generate-snake-animation --wakatime --output=<file> [...]
  *
- * Examples:
- *   generate-snake-animation --github_user=platane --output=snake.svg
- *   generate-snake-animation --github_user=github.mycompany.com/platane --output=snake.svg   # GitHub Enterprise
- *   generate-snake-animation --gitlab_user=username --output=snake.svg?palette=gitlab
- *   generate-snake-animation --gitlab_user=gitlab.mycompany.com/username --output=snake.svg  # self-hosted
- *   generate-snake-animation --forgejo_user=codeberg.org/platane --output=snake.svg?palette=codeberg
+ * Combine GitHub + GitLab + WakaTime for a multi-source snake (presence-blended colors):
+ *   generate-snake-animation \
+ *     --github_user=platane \
+ *     --gitlab_user=gitlab.example.com/user \
+ *     --wakatime \
+ *     --output=dist/multi-snake.svg?palette=sources \
+ *     --output=dist/multi-snake-dark.svg?palette=sources-dark
  *
- * For GitHub, a github token it required ( read from GITHUB_TOKEN env var )
+ * Env:
+ *   GITHUB_TOKEN       required with --github_user
+ *   WAKATIME_API_KEY   required with --wakatime
  */
 
 const { values } = parseArgs({
@@ -28,81 +32,99 @@ const { values } = parseArgs({
     github_token: { type: "string" },
     gitlab_user: { type: "string" },
     forgejo_user: { type: "string" },
+    wakatime: { type: "boolean", default: false },
     output: { type: "string", multiple: true },
   },
 });
 
-const { github_user, github_token, gitlab_user, forgejo_user, output } = values;
+const { github_user, github_token, gitlab_user, forgejo_user, wakatime, output } =
+  values;
 
-const set = [github_user, gitlab_user, forgejo_user].filter(Boolean);
-if (set.length === 0) {
-  console.error(
-    [
-      "Usage:",
-      "  generate-snake-animation --github_user=<[host/]username> --output=<file> [--output=<file> ...]",
-      "  generate-snake-animation --gitlab_user=<[host/]username> --output=<file> [--output=<file> ...]",
-      "  generate-snake-animation --forgejo_user=<host/username>   --output=<file> [--output=<file> ...]",
-      "",
-      "Examples:",
-      "  generate-snake-animation --github_user=platane --output=snake.svg",
-      "  generate-snake-animation --github_user=github.mycompany.com/platane --output=snake.svg   # GitHub Enterprise",
-      "  generate-snake-animation --gitlab_user=username --output=snake.svg?palette=gitlab",
-      "  generate-snake-animation --gitlab_user=gitlab.mycompany.com/username --output=snake.svg  # self-hosted",
-      "  generate-snake-animation --forgejo_user=codeberg.org/platane --output=snake.svg?palette=codeberg",
-    ].join("\n"),
-  );
+const usage = [
+  "Usage:",
+  "  generate-snake-animation --github_user=<[host/]username> --output=<file> [...]",
+  "  generate-snake-animation --gitlab_user=<[host/]username> --output=<file> [...]",
+  "  generate-snake-animation --forgejo_user=<host/username> --output=<file> [...]",
+  "  generate-snake-animation --wakatime --output=<file> [...]",
+  "  combine --github_user + --gitlab_user + --wakatime for multi-source",
+  "",
+  "Examples:",
+  "  generate-snake-animation --github_user=platane --output=snake.svg",
+  "  generate-snake-animation --gitlab_user=gitlab.mycompany.com/username --output=snake.svg",
+  "  generate-snake-animation --github_user=me --gitlab_user=host/me --wakatime --output=multi.svg?palette=sources",
+].join("\n");
+
+const parseUser = (uri: string) => {
+  const i = uri.lastIndexOf("/");
+  if (i === -1) return { username: uri };
+  const username = uri.slice(i + 1);
+  let baseUrl = uri.slice(0, i);
+  if (!baseUrl.startsWith("https://")) baseUrl = "https://" + baseUrl;
+  return { username, baseUrl };
+};
+
+const sources: Source[] = [];
+
+if (github_user) {
+  const { username, baseUrl } = parseUser(github_user);
+  const githubToken = github_token ?? process.env.GITHUB_TOKEN;
+  if (!githubToken) throw "Missing github token (GITHUB_TOKEN)";
+  sources.push({
+    platform: "github",
+    githubToken,
+    username,
+    baseUrl,
+  });
+}
+
+if (gitlab_user) {
+  const { username, baseUrl } = parseUser(gitlab_user);
+  sources.push({
+    platform: "gitlab",
+    username,
+    baseUrl,
+  });
+}
+
+if (forgejo_user) {
+  if (sources.length > 0) {
+    throw "--forgejo_user cannot be combined with other sources";
+  }
+  const { username, baseUrl } = parseUser(forgejo_user);
+  if (!baseUrl) throw "Missing forgejo uri";
+  sources.push({
+    platform: "forgejo",
+    username,
+    baseUrl,
+  });
+}
+
+if (wakatime) {
+  const apiKey = process.env.WAKATIME_API_KEY;
+  if (!apiKey) throw "Missing WAKATIME_API_KEY";
+  sources.push({ platform: "wakatime", apiKey });
+}
+
+if (sources.length === 0) {
+  console.error(usage);
   process.exit(1);
 }
-if (set.length > 1)
-  throw "--github_user, --gitlab_user, and --forgejo_user are mutually exclusive";
 
-const source: Source = (() => {
-  const parseUser = (uri: string) => {
-    const i = uri.lastIndexOf("/");
-    if (i === -1) return { username: uri };
-    const username = uri.slice(i + 1);
-    let baseUrl = uri.slice(0, i + 1);
-    if (!baseUrl.startsWith("https://")) baseUrl = "https://" + baseUrl;
-    return { username, baseUrl };
-  };
+const rawOutputs = output ?? [];
+const withDefaultPalette =
+  sources.length > 1
+    ? rawOutputs.map((entry) =>
+        entry.includes("palette=") || entry.includes("color_dots=")
+          ? entry
+          : entry.includes("?")
+            ? `${entry}&palette=sources`
+            : `${entry}?palette=sources`,
+      )
+    : rawOutputs;
 
-  if (github_user) {
-    const { username, baseUrl } = parseUser(github_user);
-    const githubToken = github_token ?? process.env.GITHUB_TOKEN;
-    if (!githubToken) throw "Missing github token";
-    return {
-      platform: "github",
-      githubToken,
-      username,
-      baseUrl,
-    };
-  }
-
-  if (gitlab_user) {
-    const { username, baseUrl } = parseUser(gitlab_user);
-    return {
-      platform: "gitlab",
-      username,
-      baseUrl,
-    };
-  }
-
-  if (forgejo_user) {
-    const { username, baseUrl } = parseUser(forgejo_user);
-    if (!baseUrl) throw "Missing forgejo uri";
-    return {
-      platform: "forgejo",
-      username,
-      baseUrl,
-    };
-  }
-
-  throw "Missing user";
-})();
-
-const outputs = parseOutputsOption(output ?? []);
+const outputs = parseOutputsOption(withDefaultPalette);
 const { generateSnakeAnimation } = await import("./generateSnakeAnimation.js");
-const results = await generateSnakeAnimation(source, outputs);
+const results = await generateSnakeAnimation(sources, outputs);
 
 outputs.forEach((out, i) => {
   const result = results[i];
