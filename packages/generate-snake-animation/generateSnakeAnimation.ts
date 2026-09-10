@@ -14,10 +14,13 @@ import {
   type ContributionCell,
 } from "./mergeContributionCells";
 import {
-  buildSourcesColorDots,
+  buildIntensityColorDots,
+  colorForCell,
+  INTENSITY_LEGEND_COLORS,
   SOURCE_COLORS,
   SOURCE_LABELS,
   SOURCE_LEGEND_ORDER,
+  strokeForCell,
   type SourceColorKey,
 } from "./palettes";
 
@@ -27,6 +30,10 @@ export {
   blendHex,
   blendOklch,
   buildSourcesColorDots,
+  buildIntensityColorDots,
+  colorForCell,
+  strokeForCell,
+  INTENSITY_LEGEND_COLORS,
   SOURCE_COLORS,
   SOURCE_LABELS,
   SOURCE_LEGEND_ORDER,
@@ -53,23 +60,33 @@ export type Output = {
 export const getUserContribution = async (
   source: Source,
 ): Promise<ContributionCell[]> => {
-  switch (source.platform) {
-    case "github":
-      return getGithubUserContribution(source.username, {
-        githubToken: source.githubToken,
-        baseUrl: source.baseUrl,
-      });
-    case "gitlab":
-      return getGitlabUserContribution(source.username, {
-        baseUrl: source.baseUrl,
-      });
-    case "forgejo":
-      return getForgejoUserContribution(source.username, {
-        baseUrl: source.baseUrl,
-      });
-    case "wakatime":
-      return getWakatimeUserContribution({ apiKey: source.apiKey });
-  }
+  const cells = await (async () => {
+    switch (source.platform) {
+      case "github":
+        return getGithubUserContribution(source.username, {
+          githubToken: source.githubToken,
+          baseUrl: source.baseUrl,
+        });
+      case "gitlab":
+        return getGitlabUserContribution(source.username, {
+          baseUrl: source.baseUrl,
+        });
+      case "forgejo":
+        return getForgejoUserContribution(source.username, {
+          baseUrl: source.baseUrl,
+        });
+      case "wakatime":
+        return getWakatimeUserContribution({ apiKey: source.apiKey });
+    }
+  })();
+
+  const bit =
+    PLATFORM_BITS[source.platform as keyof typeof PLATFORM_BITS] ?? 0;
+
+  return cells.map((c) => ({
+    ...c,
+    sources: c.level > 0 ? bit : 0,
+  }));
 };
 
 const platformToSourceKey = (
@@ -94,32 +111,62 @@ export const buildSourcesLegend = (sources: Source[]) => {
   }));
 };
 
+const withCellStyles = (
+  cells: ContributionCell[],
+  emptyFill: string,
+  emptyStroke: string,
+) =>
+  cells.map((c) => {
+    const sources = c.sources ?? 0;
+    const level = c.level ?? 0;
+    if (level <= 0 || sources === 0) {
+      return {
+        ...c,
+        fill: emptyFill,
+        stroke: emptyStroke,
+        emptyFill,
+        emptyStroke,
+      };
+    }
+    return {
+      ...c,
+      fill: colorForCell(sources, level),
+      stroke: strokeForCell(sources, level),
+      emptyFill,
+      emptyStroke,
+    };
+  });
+
 const applyMultiSourceDrawOptions = (
   drawOptions: DrawOptions,
   sources: Source[],
 ): DrawOptions => {
   const legend = buildSourcesLegend(sources);
-  const dots = drawOptions.colorDots as unknown as string[] | Record<string, string>;
-  const len = Array.isArray(dots)
-    ? dots.length
-    : Object.keys(dots ?? {}).length;
+  const empty = drawOptions.colorEmpty;
+  const colorDots = buildIntensityColorDots(
+    empty,
+  ) as unknown as DrawOptions["colorDots"];
 
-  // Ensure bitmask palette (empty + 7 combos) unless caller already provided one.
-  const colorDots =
-    len >= 8
-      ? drawOptions.colorDots
-      : (buildSourcesColorDots(drawOptions.colorEmpty) as unknown as DrawOptions["colorDots"]);
+  // Intensity legend: light empty + ladder 1–4 (or full dark ladder including empty)
+  const intensityLegendColors =
+    drawOptions.intensityLegendColors ??
+    (empty.startsWith("oklch")
+      ? [...INTENSITY_LEGEND_COLORS]
+      : [empty, ...INTENSITY_LEGEND_COLORS.slice(1)]);
 
   return {
     ...drawOptions,
     colorDots,
+    colorDotBorder: drawOptions.colorDotBorder || strokeForCell(0, 0),
     sourcesLegend: drawOptions.sourcesLegend ?? legend,
+    intensityLegendColors,
+    calendarChrome: drawOptions.calendarChrome ?? true,
   };
 };
 
 /**
  * Generate snake animation from one or more contribution sources.
- * Multiple sources are merged by date with presence bitmasks and source colors.
+ * Multiple sources merge by date: source mask (hue) + max intensity (ladder).
  */
 export const generateSnakeAnimation = async (
   sources: Source | Source[],
@@ -170,11 +217,23 @@ export const generateSnakeAnimation = async (
         ? applyMultiSourceDrawOptions(out.drawOptions, sourceList)
         : out.drawOptions;
 
+      const emptyStroke =
+        drawOptions.colorDotBorder || strokeForCell(0, 0);
+      const drawCells = multi
+        ? withCellStyles(cells, drawOptions.colorEmpty, emptyStroke)
+        : cells;
+
       switch (format) {
         case "svg": {
           console.log(`🖌 creating svg (outputs[${i}])`);
           const { createSvg } = await import("@snk/svg-creator");
-          return createSvg(grid, cells, chain, drawOptions, animationOptions);
+          return createSvg(
+            grid,
+            drawCells,
+            chain,
+            drawOptions,
+            animationOptions,
+          );
         }
         case "gif": {
           console.log(`📹 creating gif (outputs[${i}])`);

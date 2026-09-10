@@ -7,14 +7,26 @@ import {
 } from "@snk/types/grid";
 import { getHeadX, getHeadY } from "@snk/types/snake";
 import type { Snake } from "@snk/types/snake";
-import type { Grid, Color, Empty } from "@snk/types/grid";
+import type { Grid, Color } from "@snk/types/grid";
 import type { Point } from "@snk/types/point";
 import { createSnake } from "./snake";
-import { createGrid } from "./grid";
+import { createGrid, type GridCell } from "./grid";
 import { createStack } from "./stack";
-import { createSourcesLegend, type SourceLegendItem } from "./legend";
+import { createCalendarChrome } from "./calendarChrome";
+import type { SourceLegendItem } from "./legend";
 import { h } from "./xml-utils";
 import { minifyCss } from "./css-utils";
+
+export type ContributionDrawCell = Point & {
+  date?: string;
+  level?: number;
+  sources?: number;
+  /** Precomputed multi-source OKLCH fill */
+  fill?: string;
+  stroke?: string;
+  emptyFill?: string;
+  emptyStroke?: string;
+};
 
 export type DrawOptions = {
   colorDots: Record<Color, string>;
@@ -25,6 +37,9 @@ export type DrawOptions = {
   sizeDot: number;
   sizeDotBorderRadius: number;
   sourcesLegend?: SourceLegendItem[];
+  intensityLegendColors?: string[];
+  /** Draw month/day labels and bottom legends (multi-source calendar). */
+  calendarChrome?: boolean;
   dark?: {
     colorDots: Record<Color, string>;
     colorEmpty: string;
@@ -41,17 +56,28 @@ const getCellsFromGrid = ({ width, height }: Grid) =>
 const createLivingCells = (
   grid0: Grid,
   chain: Snake[],
-  cells: Point[] | null,
-) => {
-  const livingCells: (Point & {
-    t: number | null;
-    color: Color | Empty;
-  })[] = (cells ?? getCellsFromGrid(grid0)).map(({ x, y }) => ({
-    x,
-    y,
-    t: null,
-    color: getColor(grid0, x, y),
-  }));
+  cells: ContributionDrawCell[] | null,
+): GridCell[] => {
+  const byKey = new Map(
+    (cells ?? []).map((c) => [`${c.x},${c.y}`, c] as const),
+  );
+
+  const livingCells: GridCell[] = (cells ?? getCellsFromGrid(grid0)).map(
+    ({ x, y }) => {
+      const meta = byKey.get(`${x},${y}`);
+      const color = getColor(grid0, x, y);
+      return {
+        x,
+        y,
+        t: null as number | null,
+        color,
+        fill: meta?.fill,
+        stroke: meta?.stroke,
+        emptyFill: meta?.emptyFill,
+        emptyStroke: meta?.emptyStroke,
+      };
+    },
+  );
 
   const grid = copyGrid(grid0);
   for (let i = 0; i < chain.length; i++) {
@@ -71,20 +97,45 @@ const createLivingCells = (
 
 export const createSvg = (
   grid: Grid,
-  cells: Point[] | null,
+  cells: ContributionDrawCell[] | null,
   chain: Snake[],
   drawOptions: DrawOptions,
   animationOptions: { stepDurationMs: number },
 ) => {
-  const legend = createSourcesLegend(drawOptions.sourcesLegend ?? [], {
-    sizeCell: drawOptions.sizeCell,
-    sizeDot: drawOptions.sizeDot,
-    sizeDotBorderRadius: drawOptions.sizeDotBorderRadius,
-  });
+  const useChrome =
+    !!drawOptions.calendarChrome &&
+    (drawOptions.sourcesLegend?.length ||
+      drawOptions.intensityLegendColors?.length);
 
-  const legendPad = legend.height;
-  const width = (grid.width + 2) * drawOptions.sizeCell;
-  const height = (grid.height + 5) * drawOptions.sizeCell + legendPad;
+  const chrome = useChrome
+    ? createCalendarChrome(cells ?? [], {
+        sizeCell: drawOptions.sizeCell,
+        sizeDot: drawOptions.sizeDot,
+        sizeDotBorderRadius: drawOptions.sizeDotBorderRadius,
+        gridWidth: grid.width,
+        gridHeight: grid.height,
+        intensityColors:
+          drawOptions.intensityLegendColors ??
+          (Object.values(drawOptions.colorDots) as string[]).slice(0, 5),
+        sourcesLegend: drawOptions.sourcesLegend ?? [],
+      })
+    : {
+        svgElements: [] as string[],
+        styles: [] as string[],
+        padLeft: drawOptions.sizeCell,
+        padTop: drawOptions.sizeCell * 2,
+        padBottom: drawOptions.sizeCell * 5,
+      };
+
+  const width =
+    grid.width * drawOptions.sizeCell +
+    chrome.padLeft +
+    drawOptions.sizeCell;
+  const height =
+    grid.height * drawOptions.sizeCell +
+    chrome.padTop +
+    chrome.padBottom +
+    drawOptions.sizeCell * 3;
 
   const duration = animationOptions.stepDurationMs * chain.length;
 
@@ -102,21 +153,13 @@ export const createSvg = (
     createSnake(chain, drawOptions, duration),
   ];
 
-  const viewBoxY = -drawOptions.sizeCell * 2 - legendPad;
-  const viewBox = [-drawOptions.sizeCell, viewBoxY, width, height].join(" ");
+  const viewBoxX = -chrome.padLeft;
+  const viewBoxY = -chrome.padTop;
+  const viewBox = [viewBoxX, viewBoxY, width, height].join(" ");
 
   const style =
     generateColorVar(drawOptions) +
-    [...legend.styles, ...elements.map((e) => e.styles).flat()].join("\n");
-
-  const legendGroup =
-    legend.svgElements.length > 0
-      ? [
-          `<g transform="translate(0, ${viewBoxY + drawOptions.sizeCell * 0.35})">`,
-          ...legend.svgElements,
-          "</g>",
-        ]
-      : [];
+    [...chrome.styles, ...elements.map((e) => e.styles).flat()].join("\n");
 
   const svg = [
     h("svg", {
@@ -134,7 +177,7 @@ export const createSvg = (
     optimizeCss(style),
     "</style>",
 
-    ...legendGroup,
+    ...chrome.svgElements,
     ...elements.map((e) => e.svgElements).flat(),
 
     "</svg>",
