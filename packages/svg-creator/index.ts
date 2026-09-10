@@ -12,6 +12,7 @@ import type { Point } from "@snk/types/point";
 import { createSnake } from "./snake";
 import { createGrid } from "./grid";
 import { createStack } from "./stack";
+import { createSourcesLegend, type SourceLegendItem } from "./legend";
 import { h } from "./xml-utils";
 import { minifyCss } from "./css-utils";
 
@@ -23,6 +24,7 @@ export type DrawOptions = {
   sizeCell: number;
   sizeDot: number;
   sizeDotBorderRadius: number;
+  sourcesLegend?: SourceLegendItem[];
   dark?: {
     colorDots: Record<Color, string>;
     colorEmpty: string;
@@ -74,8 +76,15 @@ export const createSvg = (
   drawOptions: DrawOptions,
   animationOptions: { stepDurationMs: number },
 ) => {
+  const legend = createSourcesLegend(drawOptions.sourcesLegend ?? [], {
+    sizeCell: drawOptions.sizeCell,
+    sizeDot: drawOptions.sizeDot,
+    sizeDotBorderRadius: drawOptions.sizeDotBorderRadius,
+  });
+
+  const legendPad = legend.height;
   const width = (grid.width + 2) * drawOptions.sizeCell;
-  const height = (grid.height + 5) * drawOptions.sizeCell;
+  const height = (grid.height + 5) * drawOptions.sizeCell + legendPad;
 
   const duration = animationOptions.stepDurationMs * chain.length;
 
@@ -93,19 +102,21 @@ export const createSvg = (
     createSnake(chain, drawOptions, duration),
   ];
 
-  const viewBox = [
-    -drawOptions.sizeCell,
-    -drawOptions.sizeCell * 2,
-    width,
-    height,
-  ].join(" ");
+  const viewBoxY = -drawOptions.sizeCell * 2 - legendPad;
+  const viewBox = [-drawOptions.sizeCell, viewBoxY, width, height].join(" ");
 
   const style =
     generateColorVar(drawOptions) +
-    elements
-      .map((e) => e.styles)
-      .flat()
-      .join("\n");
+    [...legend.styles, ...elements.map((e) => e.styles).flat()].join("\n");
+
+  const legendGroup =
+    legend.svgElements.length > 0
+      ? [
+          `<g transform="translate(0, ${viewBoxY + drawOptions.sizeCell * 0.35})">`,
+          ...legend.svgElements,
+          "</g>",
+        ]
+      : [];
 
   const svg = [
     h("svg", {
@@ -123,6 +134,7 @@ export const createSvg = (
     optimizeCss(style),
     "</style>",
 
+    ...legendGroup,
     ...elements.map((e) => e.svgElements).flat(),
 
     "</svg>",
