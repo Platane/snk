@@ -12,7 +12,8 @@ export type LegendOptions = {
 };
 
 /**
- * Compact source legend drawn above the contribution grid.
+ * @deprecated Prefer createCalendarChrome bottom-left sources.
+ * Kept for tests that draw a compact header legend.
  */
 export const createSourcesLegend = (
   items: SourceLegendItem[],
@@ -60,7 +61,6 @@ export const createSourcesLegend = (
     x = textX + item.label.length * charWidth + gap;
   }
 
-  // Reserve one cell row of vertical space above the grid.
   const height = sizeCell;
 
   return { svgElements, styles, height };

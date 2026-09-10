@@ -3,6 +3,7 @@
  *
  * Uses GET /api/v1/users/current/summaries with Basic auth (apiKey as username).
  * Builds the same Sunday-aligned ~365-day grid as the GitLab fetcher.
+ * Intensity levels 1–4 are bucketed from total_seconds like GitLab.
  *
  * @example
  *   getWakatimeUserContribution({ apiKey: process.env.WAKATIME_API_KEY! })
@@ -50,6 +51,15 @@ export const getWakatimeUserContribution = async (o: { apiKey: string }) => {
     secondsByDate.set(date, day.grand_total?.total_seconds ?? 0);
   }
 
+  const max = Math.max(0, ...secondsByDate.values());
+
+  const levelForCount = (count: number): 0 | 1 | 2 | 3 | 4 =>
+    count <= 0 || max === 0
+      ? 0
+      : count >= max
+        ? 4
+        : (Math.ceil((count / max) * 3) as 1 | 2 | 3);
+
   const cells = [];
   const cursor = new Date(start);
   let x = 0;
@@ -58,10 +68,8 @@ export const getWakatimeUserContribution = async (o: { apiKey: string }) => {
     const y = cursor.getDay(); // 0 = Sunday
     const date = formatDate(cursor);
     const count = secondsByDate.get(date) ?? 0;
-    // Presence only for multi-source blend; keep seconds as count for debugging.
-    const level = count > 0 ? 1 : 0;
 
-    cells.push({ x, y, date, count, level });
+    cells.push({ x, y, date, count, level: levelForCount(count) });
 
     cursor.setDate(cursor.getDate() + 1);
     if (y === 6) x++;

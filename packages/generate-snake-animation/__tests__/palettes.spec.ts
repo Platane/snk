@@ -1,32 +1,68 @@
 import { describe, it, expect } from "bun:test";
 import {
-  blendOklch,
-  buildSourcesColorDots,
+  buildIntensityColorDots,
+  colorForCell,
   EMPTY_DARK,
   EMPTY_LIGHT,
   formatOklch,
   GH_ACTIVE,
+  GH_LADDER,
+  INTENSITY_LEGEND_COLORS,
   parseOklch,
   SOURCE_COLORS,
   SOURCE_LEGEND_ORDER,
+  strokeForCell,
   withHue,
 } from "../palettes";
 
-describe("formatOklch / parseOklch", () => {
-  it("formats GH_ACTIVE as an oklch() CSS color", () => {
-    expect(formatOklch(GH_ACTIVE)).toMatch(/^oklch\(/);
-    expect(SOURCE_COLORS.github).toBe(formatOklch(GH_ACTIVE));
+describe("GH_LADDER", () => {
+  it("has 5 steps matching the GitHub dark scale", () => {
+    expect(GH_LADDER).toHaveLength(5);
+    expect(GH_ACTIVE).toEqual(GH_LADDER[4]);
+    expect(formatOklch(GH_LADDER[0]!)).toBe(EMPTY_DARK);
+  });
+});
+
+describe("colorForCell / strokeForCell", () => {
+  it("uses ladder L/C with GitHub hue at level 4", () => {
+    const c = parseOklch(colorForCell(1, 4));
+    expect(c.l).toBeCloseTo(GH_LADDER[4]!.l, 3);
+    expect(c.c).toBeCloseTo(GH_LADDER[4]!.c, 3);
+    expect(c.h).toBeCloseTo(GH_LADDER[4]!.h, 1);
   });
 
-  it("round-trips oklch strings", () => {
-    const s = formatOklch(GH_ACTIVE);
-    const parsed = parseOklch(s);
-    expect(parsed.l).toBeCloseTo(GH_ACTIVE.l, 3);
-    expect(parsed.c).toBeCloseTo(GH_ACTIVE.c, 3);
-    expect(parsed.h).toBeCloseTo(GH_ACTIVE.h, 1);
+  it("changes only hue for GitLab / WakaTime at same level", () => {
+    const gh = parseOklch(colorForCell(1, 3));
+    const gl = parseOklch(colorForCell(2, 3));
+    const wt = parseOklch(colorForCell(4, 3));
+    expect(gl.l).toBeCloseTo(gh.l, 4);
+    expect(gl.c).toBeCloseTo(gh.c, 4);
+    expect(wt.l).toBeCloseTo(gh.l, 4);
+    expect(gl.h).not.toBeCloseTo(gh.h, 0);
+    expect(wt.h).not.toBeCloseTo(gh.h, 0);
   });
 
-  it("preserves L/C when withHue is applied", () => {
+  it("blends hue for multi-source masks", () => {
+    const mixed = parseOklch(colorForCell(1 | 4, 4));
+    const gh = parseOklch(colorForCell(1, 4));
+    const wt = parseOklch(colorForCell(4, 4));
+    expect(mixed.l).toBeCloseTo(gh.l, 4);
+    // circular mean sits between the two hues
+    const lo = Math.min(gh.h, wt.h);
+    const hi = Math.max(gh.h, wt.h);
+    expect(mixed.h).toBeGreaterThan(lo);
+    expect(mixed.h).toBeLessThan(hi);
+  });
+
+  it("makes stroke slightly darker in L than fill", () => {
+    const fill = parseOklch(colorForCell(1, 4));
+    const stroke = parseOklch(strokeForCell(1, 4));
+    expect(stroke.l).toBeLessThan(fill.l);
+    expect(stroke.h).toBeCloseTo(fill.h, 2);
+    expect(stroke.c).toBeCloseTo(fill.c, 4);
+  });
+
+  it("preserves L/C with withHue", () => {
     const shifted = withHue(GH_ACTIVE, 40);
     expect(shifted.l).toBe(GH_ACTIVE.l);
     expect(shifted.c).toBe(GH_ACTIVE.c);
@@ -34,53 +70,13 @@ describe("formatOklch / parseOklch", () => {
   });
 });
 
-describe("blendOklch", () => {
-  it("returns oklch() for a single input", () => {
-    expect(blendOklch([SOURCE_COLORS.github])).toMatch(/^oklch\(/);
-    expect(parseOklch(blendOklch([SOURCE_COLORS.github])).h).toBeCloseTo(
-      GH_ACTIVE.h,
-      1,
-    );
-  });
-
-  it("averages L and circular-mean H in OKLCH space", () => {
-    const mixed = parseOklch(blendOklch(["#000000", "#ffffff"]));
-    expect(mixed.l).toBeGreaterThan(0.4);
-    expect(mixed.l).toBeLessThan(0.6);
-  });
-
-  it("blends two source colors by averaging L and C", () => {
-    const mixed = parseOklch(
-      blendOklch([SOURCE_COLORS.github, SOURCE_COLORS.gitlab]),
-    );
-    const gh = parseOklch(SOURCE_COLORS.github);
-    const gl = parseOklch(SOURCE_COLORS.gitlab);
-    expect(mixed.l).toBeCloseTo((gh.l + gl.l) / 2, 5);
-    expect(mixed.c).toBeCloseTo((gh.c + gl.c) / 2, 5);
-  });
-});
-
-describe("SOURCE_COLORS", () => {
-  it("emits oklch() strings for every source", () => {
+describe("SOURCE_COLORS / legends", () => {
+  it("emits oklch() for every source", () => {
     expect(SOURCE_COLORS.github).toMatch(/^oklch\(/);
     expect(SOURCE_COLORS.gitlab).toMatch(/^oklch\(/);
     expect(SOURCE_COLORS.wakatime).toMatch(/^oklch\(/);
   });
 
-  it("keeps shared L/C across sources (hue-only shift)", () => {
-    const gh = parseOklch(SOURCE_COLORS.github);
-    const gl = parseOklch(SOURCE_COLORS.gitlab);
-    const wt = parseOklch(SOURCE_COLORS.wakatime);
-    expect(gl.l).toBeCloseTo(gh.l, 4);
-    expect(gl.c).toBeCloseTo(gh.c, 4);
-    expect(wt.l).toBeCloseTo(gh.l, 4);
-    expect(wt.c).toBeCloseTo(gh.c, 4);
-    expect(gl.h).not.toBeCloseTo(gh.h, 0);
-    expect(wt.h).not.toBeCloseTo(gh.h, 0);
-  });
-});
-
-describe("SOURCE_LEGEND_ORDER", () => {
   it("places WakaTime between GitHub and GitLab", () => {
     expect([...SOURCE_LEGEND_ORDER]).toEqual([
       "github",
@@ -88,31 +84,14 @@ describe("SOURCE_LEGEND_ORDER", () => {
       "gitlab",
     ]);
   });
-});
 
-describe("buildSourcesColorDots", () => {
-  it("builds 8 entries for empty + 7 bitmasks", () => {
-    const dots = buildSourcesColorDots(EMPTY_LIGHT);
-    expect(dots).toHaveLength(8);
-    expect(dots[0]).toBe(EMPTY_LIGHT);
-    expect(dots[1]).toBe(SOURCE_COLORS.github);
-    expect(dots[2]).toBe(SOURCE_COLORS.gitlab);
-    expect(dots[4]).toBe(SOURCE_COLORS.wakatime);
-    expect(dots[3]).toBe(
-      blendOklch([SOURCE_COLORS.github, SOURCE_COLORS.gitlab]),
-    );
-    expect(dots[7]).toBe(
-      blendOklch([
-        SOURCE_COLORS.github,
-        SOURCE_COLORS.gitlab,
-        SOURCE_COLORS.wakatime,
-      ]),
-    );
+  it("builds intensity legend with 5 ladder colors", () => {
+    expect(INTENSITY_LEGEND_COLORS).toHaveLength(5);
   });
 
-  it("uses dark empty oklch from the GitHub ladder", () => {
-    expect(EMPTY_DARK).toBe("oklch(31.03% 0.0227 256.41)");
-    const dots = buildSourcesColorDots(EMPTY_DARK);
-    expect(dots[0]).toBe(EMPTY_DARK);
+  it("builds intensity colorDots empty + 4 levels", () => {
+    const dots = buildIntensityColorDots(EMPTY_LIGHT);
+    expect(dots).toHaveLength(5);
+    expect(dots[0]).toBe(EMPTY_LIGHT);
   });
 });
