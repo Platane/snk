@@ -1,5 +1,11 @@
+#[cfg(test)]
+use crate::debug_world::read_world;
 use snk_grid::{
-    color::Color, grid::Grid, grid_samples::get_grid_sample, point::Point, snake::Snake4,
+    color::Color,
+    grid::Grid,
+    grid_samples::get_grid_sample,
+    point::Point,
+    snake::{Snake, Snake4},
 };
 
 use crate::{cost::Cost, exit_grid::ExitGrid, snake_path_to_outside::get_snake_path_to_outside};
@@ -60,41 +66,42 @@ pub fn get_best_tunnel_to_collect_point(
     // since we modified the grid_color
 
     // from that snake, seek the outside without self-colliding
-    let (path_out, out_cost) = get_snake_path_to_outside(
-        |p| exit_grid.is_outside(p),
-        |p| grid.get_color(p).into(),
-        &snake,
-    );
-    for dir in path_out {
-        let p = *path.last().unwrap();
-        path.push(p + dir);
-    }
+    // let (path_out, out_cost) = get_snake_path_to_outside(
+    //     &grid,
+    //     &exit_grid,
+    //     // |p| exit_grid.is_outside(p),
+    //     // |p| grid.get_color(p).into(),
+    //     &snake.iter_head_to_tail().collect::<Vec<_>>(),
+    // );
+    // for dir in path_out {
+    //     let p = *path.last().unwrap();
+    //     path.push(p + dir);
+    // }
     path.pop();
 
     Tunnel {
         path,
         in_cost,
-        out_cost,
+        out_cost: Cost::zero(),
     }
 }
 
 #[test]
 fn it_should_compute_the_tunnel_for_enclaved_dot() {
-    let grid = Grid::<_>::from(
+    let (grid, _, _, poi) = read_world(
         r#"
-_        _
-_  ###   _
-_  #.#   _
-_  ###   _
-_        _
-
-"#,
+        ··········
+        ···███····
+        ···█x█····
+        ···███····
+        ··········
+        "#,
     );
-    assert_eq!(grid.get_color(Point { x: 4, y: 2 }), Color::Color1);
+    let x = *poi.get(&'x').unwrap();
 
     let exit_grid = ExitGrid::create_from_grid_color(&grid);
 
-    let tunnel = get_best_tunnel_to_collect_point(&grid, &exit_grid, Point { x: 4, y: 2 });
+    let tunnel = get_best_tunnel_to_collect_point(&grid, &exit_grid, x);
 
     assert_eq!(tunnel.in_cost.get_color_count(Color::Color4), 1);
     assert_eq!(tunnel.out_cost.get_color_count(Color::Color4), 1);
@@ -105,24 +112,22 @@ _        _
 
 #[test]
 fn it_should_compute_the_tunnel_for_enclaved_dot_in_large_cave() {
-    let grid = Grid::<_>::from(
+    let (grid, _, _, poi) = read_world(
         r#"
-_          _
-_  #####   _
-_  #   #   _
-_  # . #   _
-_  #   #   _
-_  #####   _
-_        _
-
-"#,
+        ············
+        ···█████····
+        ···█···█····
+        ···█·x·█····
+        ···█···█····
+        ···█████····
+        ············
+        "#,
     );
-
-    assert_eq!(grid.get_color(Point { x: 5, y: 3 }), Color::Color1);
+    let x = *poi.get(&'x').unwrap();
 
     let exit_grid = ExitGrid::create_from_grid_color(&grid);
 
-    let tunnel = get_best_tunnel_to_collect_point(&grid, &exit_grid, Point { x: 5, y: 3 });
+    let tunnel = get_best_tunnel_to_collect_point(&grid, &exit_grid, x);
     assert_eq!(tunnel.in_cost.get_color_count(Color::Color4), 1);
     assert_eq!(tunnel.out_cost.get_color_count(Color::Color4), 0);
 
@@ -132,23 +137,21 @@ _        _
 
 #[test]
 fn it_should_compute_the_tunnel_for_enclaved_dot_in_large_cave_2() {
-    let grid = Grid::<_>::from(
+    let (grid, _, _, poi) = read_world(
         r#"
-_           _
-_  ######   _
-_  ##   #   _
-_  ## . #   _
-_  ######   _
-_           _
-
-"#,
+        ·············
+        ···██████····
+        ···██···█····
+        ···██·x·█····
+        ···██████····
+        ·············
+        "#,
     );
-
-    assert_eq!(grid.get_color(Point { x: 6, y: 3 }), Color::Color1);
+    let x = *poi.get(&'x').unwrap();
 
     let exit_grid = ExitGrid::create_from_grid_color(&grid);
 
-    let tunnel = get_best_tunnel_to_collect_point(&grid, &exit_grid, Point { x: 6, y: 3 });
+    let tunnel = get_best_tunnel_to_collect_point(&grid, &exit_grid, x);
     assert_eq!(tunnel.in_cost.get_color_count(Color::Color4), 1);
     assert_eq!(tunnel.out_cost.get_color_count(Color::Color4), 0);
 

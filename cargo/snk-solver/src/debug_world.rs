@@ -56,7 +56,7 @@ pub fn render_world(
                                 _ => panic!("Invalid path {:?} {:?}", dir0, dir1),
                             }
                         } else {
-                            match (dir0) {
+                            match dir0 {
                                 Direction::LEFT => '╴',
                                 Direction::RIGHT => '╶',
                                 Direction::UP => '╵',
@@ -188,6 +188,35 @@ pub fn assert_world_equal(actual: &str, expected: &str) -> () {
         panic!("\nexpected:\n{expected}\ngot:\n{actual}")
     }
 }
+// make the snake walk all the instruction directions (from start to end)
+// return the list of cells visited in snake order (head first)
+pub fn get_full_path(snake: &[Point], directions: &[Direction]) -> Vec<Point> {
+    let mut full_path = snake.iter().map(|p| *p).collect::<Vec<_>>();
+    full_path.reverse();
+    for dir in directions.iter() {
+        let p = full_path.last().unwrap();
+        full_path.push(*p + *dir);
+    }
+    full_path.reverse();
+    full_path
+}
+
+pub fn get_last_snake(snake: &[Point], directions: &[Direction]) -> Vec<Point> {
+    let mut s = get_full_path(snake, directions);
+    s.truncate(snake.len());
+    s
+}
+
+pub fn print_sequence(grid: &Grid<Color>, snake: &[Point], directions: &[Direction]) {
+    let full = get_full_path(snake, directions);
+    println!("{}", render_world(grid, snake, None));
+    for i in (0..directions.len()).rev() {
+        println!(
+            "\n{}",
+            render_world(grid, &full[i..(i + snake.len())], None)
+        );
+    }
+}
 
 #[test]
 fn it_should_render_world() {
@@ -217,9 +246,19 @@ fn it_should_read_render_world() {
     ············
     ··░·▒·▓·█···
     ········▓···
-    ············"#;
+    ····x·······
+    "#;
     let (grid, path, poi, _) = read_world(g);
     assert_world_equal(render_world(&grid, &path, Some(poi)).as_str(), g);
+    assert_world_equal(
+        render_world(&grid, &[], None).as_str(),
+        r#"
+            ············
+            ··░·▒·▓·█···
+            ········▓···
+            ············
+        "#,
+    );
 }
 
 #[test]

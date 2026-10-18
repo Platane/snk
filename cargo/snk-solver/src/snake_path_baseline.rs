@@ -12,6 +12,12 @@ use std::{
 use crate::cost::Cost;
 
 // move a snake from a position to a point (that it reaches with its head)
+//
+// this is a naive a quite brutal algorithm
+// it kind of sucks because if the snake has to eat a wall, i will prefer visiting ALL the cells before doing that
+// which will likely explode the loop_count
+//
+// there must be a better solution
 pub fn get_snake_path(
     grid: &Grid<Color>,
     starting_snake_head_to_tail: &[Point],

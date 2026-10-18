@@ -47,34 +47,34 @@ pub fn get_best_tunnel_to_collect_point(grid: &IColorGrid, to: &IPoint) -> Vec<I
 
     res.path.into_iter().map(IPoint::from).collect()
 }
-#[wasm_bindgen]
-pub fn get_snake_path_to_outside(grid: &IColorGrid, snake: Vec<IPoint>) -> Vec<IPoint> {
-    let grid = snk_grid::grid::Grid::from(grid);
-    let exit_grid = snk_solver::exit_grid::ExitGrid::create_from_grid_color(&grid);
-    let snake = Snake4::from_points(
-        snake
-            .into_iter()
-            .map(|p| Point::from(p))
-            .collect::<Vec<_>>()
-            .try_into()
-            .expect("snake should be 4 points"),
-    );
-    let res = snk_solver::snake_path_to_outside::get_snake_path_to_outside(
-        |p| exit_grid.is_outside(p),
-        |p| grid.get_color(p).into(),
-        &snake,
-    );
+// #[wasm_bindgen]
+// pub fn get_snake_path_to_outside(grid: &IColorGrid, snake: Vec<IPoint>) -> Vec<IPoint> {
+//     let grid = snk_grid::grid::Grid::from(grid);
+//     let exit_grid = snk_solver::exit_grid::ExitGrid::create_from_grid_color(&grid);
+//     let snake = Snake4::from_points(
+//         snake
+//             .into_iter()
+//             .map(|p| Point::from(p))
+//             .collect::<Vec<_>>()
+//             .try_into()
+//             .expect("snake should be 4 points"),
+//     );
+//     let res = snk_solver::snake_path_to_outside::get_snake_path_to_outside(
+//         |p| exit_grid.is_outside(p),
+//         |p| grid.get_color(p).into(),
+//         &snake,
+//     );
 
-    let mut p = snake.get_head();
-    res.0
-        .into_iter()
-        .map(|dir| {
-            p = p + dir.to_point();
-            p
-        })
-        .map(IPoint::from)
-        .collect()
-}
+//     let mut p = snake.get_head();
+//     res.0
+//         .into_iter()
+//         .map(|dir| {
+//             p = p + dir.to_point();
+//             p
+//         })
+//         .map(IPoint::from)
+//         .collect()
+// }
 
 #[wasm_bindgen]
 pub fn solve(grid: &IColorGrid, snake: Vec<IPoint>) -> Vec<IPoint> {

@@ -1,14 +1,17 @@
+use crate::cost::Cost;
 use snk_grid::{
     color::Color,
-    direction::{Direction, add_direction, iter_directions},
+    direction::{Direction, iter_directions},
     grid::{Grid, iter_rectangle_hull},
-    grid_ascii::{get_ascii_grid, grid_to_ascii_transformed},
-    grid_samples::{SampleGrid, get_grid_sample},
     point::Point,
 };
 use std::collections::HashSet;
 
-use crate::cost::Cost;
+#[cfg(test)]
+use snk_grid::grid_ascii::get_ascii_grid;
+
+#[cfg(test)]
+use crate::debug_world::read_world;
 
 #[derive(Copy, Clone, Debug)]
 struct ExitDirection {
@@ -110,14 +113,15 @@ impl ExitGrid {
 
 #[test]
 fn it_should_compute_the_cost_to_outside() {
-    let grid = Grid::<_>::from(
+    let (grid, _, _, _) = read_world(
         r#"
-_...._
-_.  ._
-_.. ._
-_.   _
-"#,
+            ·░░░░·
+            ·░··░·
+            ·░░·░·
+            ·░····
+        "#,
     );
+
     let pto = ExitGrid::create_from_grid_color(&grid);
 
     assert_eq!(

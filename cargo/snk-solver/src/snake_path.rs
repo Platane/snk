@@ -94,6 +94,16 @@ pub fn get_snake_path(
 
             path.append(&mut o);
 
+            if rc_parent.cost < Cost::from(Color::Color4) {
+                use crate::debug_world::render_world;
+
+                println!(
+                    "{} {}",
+                    render_world(&grid, &path[0..snake_len], None),
+                    loop_count
+                );
+            }
+
             // println!("---\npath:{:?}", path);
 
             // for each step of the path, the snake should not self collide
@@ -115,37 +125,28 @@ pub fn get_snake_path(
                 continue;
             }
 
+            if loop_count == 7 {
+                println!("{:?} {} {}", dir, n, snake_len);
+            }
+
             // if the path is smaller than the snake length,
             // it can self collide
             if n < snake_len {
-                // we might have already tried with a greater n,
-                // no need to retry then
-                if let Some(o) = close_list.get(&next_point) {
-                    // we already processed this point,
-
-                    // it safe to ignore if we tried with a greater n
-                    // because the case where the snake self collide would already have been tested
-                    if o.n >= n {
-                        continue;
+                // it stills forbidden to go self collide, so check that
+                // walk the ancestor and check
+                let mut ancestor = &rc_parent;
+                let mut collision = false;
+                while let Some(parent) = ancestor.parent.as_ref()
+                    && !collision
+                {
+                    if parent.point == next_point {
+                        collision = true
                     }
-
-                    // it stills forbidden to go self collide, so check that
-                    // walk the ancestor and check
-                    let mut ancestor = &rc_parent;
-                    let mut collision = false;
-                    while let Some(parent) = ancestor.parent.as_ref()
-                        && !collision
-                    {
-                        if parent.point == next_point {
-                            collision = true
-                        }
-                        ancestor = &parent;
-                    }
-                    if collision {
-                        continue;
-                    }
+                    ancestor = &parent;
                 }
-
+                if collision {
+                    continue;
+                }
                 // check if it self collide
                 let collide = starting_snake_head_to_tail
                     .iter()
@@ -202,13 +203,6 @@ impl Eq for Node {}
 impl PartialEq for Node {
     fn eq(&self, other: &Self) -> bool {
         self.point.eq(&other.point)
-            && match self.parent {
-                Some(ref parent) => match other.parent {
-                    Some(ref other_parent) => parent.point.eq(&other_parent.point),
-                    None => false,
-                },
-                None => other.parent.is_none(),
-            }
     }
 }
 impl Ord for Node {
@@ -226,7 +220,28 @@ impl PartialOrd for Node {
         Some(self.cmp(other))
     }
 }
+impl Node {
+    fn ancestors_contains(&self, p: Point, n: usize) -> bool {
+        if self.point == p {
+            return true;
+        }
 
+        let mut u = &self.parent;
+        let mut i = 1;
+
+        while let Some(node) = u
+            && i < n
+        {
+            if node.point == p {
+                return true;
+            }
+            u = &node.parent;
+            i += 1;
+        }
+
+        false
+    }
+}
 struct CloseEntry {
     n: usize,
 }
@@ -372,6 +387,38 @@ mod tests {
 
         print_sequence(&grid, &snake, &path);
 
+        assert_world_equal(
+            &render_world(&grid, &get_last_snake(&snake, &path), None),
+            r#"
+                ······┌─────┐···
+                ····┌┐└────┐│···
+                ··┌─┘└─────┘│···
+                ··└───╴·····│···
+                ·········@──┘···
+            "#,
+        );
+    }
+
+    #[test]
+    fn it_should_coil_to_exit() {
+        let (grid, snake, _, poi) = read_world(
+            r#"
+                ······x·········
+                ····█████·······
+                ····█···█·······
+                ····█···█·······
+                ····██·██·······
+                ·····█·█········
+                ·····█·@───╴····
+                ·····███········
+            "#,
+        );
+        let target = *poi.get(&'x').unwrap();
+
+        let (path, _cost) = get_snake_path(&grid, &snake, target, Cost::max()).unwrap();
+
+        // print_sequence(&grid, &snake, &path);
+        //
         assert_world_equal(
             &render_world(&grid, &get_last_snake(&snake, &path), None),
             r#"
