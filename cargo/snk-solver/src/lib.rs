@@ -8,6 +8,7 @@ mod debug_world;
 pub mod exit_grid;
 #[cfg(test)]
 mod fitness;
+pub mod max_flow;
 pub mod snake_path;
 pub mod snake_path_baseline;
 pub mod snake_path_to_outside;

@@ -1,4 +1,4 @@
-use std::ops::{Add, AddAssign, Mul};
+use std::ops::{Add, AddAssign, Mul, Sub, SubAssign};
 
 use snk_grid::color::Color;
 
@@ -27,9 +27,21 @@ impl Add for Cost {
         sum
     }
 }
+impl Sub for Cost {
+    type Output = Self;
+
+    fn sub(self, rhs: Self) -> Self {
+        Self(self.0 - rhs.0)
+    }
+}
 impl AddAssign for Cost {
     fn add_assign(&mut self, rhs: Self) {
         *self = self.add(rhs)
+    }
+}
+impl SubAssign for Cost {
+    fn sub_assign(&mut self, rhs: Self) {
+        *self = self.sub(rhs)
     }
 }
 impl Mul<u64> for Cost {
@@ -80,6 +92,11 @@ impl Cost {
     pub fn is_free(&self) -> bool {
         self.0 < 256
     }
+
+    pub fn is_only_empty(&self) -> bool {
+        self < &Cost::from(Color::Color1)
+    }
+
     pub fn set_empty_to_zero(&self) -> Self {
         Self((self.0 / 256) * 256)
     }

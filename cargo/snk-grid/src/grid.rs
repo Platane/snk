@@ -32,6 +32,9 @@ impl<T: Copy> Grid<T> {
         let i = self.get_index(p.x, p.y);
         return self.cells[i];
     }
+    pub fn get_inside(&self, p: Point) -> Option<T> {
+        self.is_inside(p).then(|| self.get(p))
+    }
     pub fn get_mut(&mut self, p: Point) -> &mut T {
         let i = self.get_index(p.x, p.y);
         return self.cells.get_mut(i).unwrap();
